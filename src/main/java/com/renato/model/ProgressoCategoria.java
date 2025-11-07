@@ -87,6 +87,18 @@ public class ProgressoCategoria {
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
+
+    public void adicionarPontos(int pontos) {
+        this.pontosMaestria += pontos;
+        if (this.pontosMaestria < 0) {
+            this.pontosMaestria = 0;
+        }
+        atualizarNivel();
+    }
+
+    private void atualizarNivel() {
+    
+    }
 }
 
 

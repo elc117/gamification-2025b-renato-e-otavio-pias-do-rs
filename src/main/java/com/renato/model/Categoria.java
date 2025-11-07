@@ -39,7 +39,7 @@ public class Categoria {
         return descricao;
     }
 
-    public  void setDescricao(String descricao) {
+    public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
     public int getTotalNiveis() {

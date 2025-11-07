@@ -5,6 +5,8 @@ public class Usuario {
     private String nome;
     private String email;
     private int nivel;
+    private int pontuacaoTotal;
+    private String tituloAtual;
 
     public Usuario() {
     }
@@ -46,5 +48,14 @@ public class Usuario {
 
     public void setNivel(int nivel) {
         this.nivel = nivel;
+    }
+
+    public void adicionarPontos(int pontos) {
+        this.pontuacaoTotal += pontos;
+        atualizarNivel();
+    }
+
+    private void atualizarNivel() {
+        
     }
 }

@@ -9,6 +9,7 @@ public class Noticia {
     private boolean ehVerdadeira;
     private String explicacao;
     private int dificuldade;
+    private String fontes;
 
     public Noticia() {
     }
