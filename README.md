@@ -17,3 +17,5 @@ Foram implementadas as seguintes classes para iniciar o projeto:
 - **ConquistaUsuario** — Relaciona conquistas desbloqueadas por usuários com data de desbloqueio e status de visualização.
 
 - **ProgressoCategoria** — Acompanha o progresso do usuário em cada categoria: nível atual, pontos de maestria e peças desbloqueadas.
+
+- **DadosService** - Contém métodos que lidam com a lógica nas requisições, lidando com GET e POST.
