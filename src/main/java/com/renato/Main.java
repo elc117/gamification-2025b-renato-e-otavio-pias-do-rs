@@ -1,6 +1,3 @@
-// commit com novas rotas para categorias, progressos e conquistas. Por ora, utiliza arrays para a base,
-// mas a estrutura será alterada nos próximos commits.
-
 // a classe Main está com bastante responsabilidades. Isso também será alterado nos próximos commits,
 // para separar estas responsabilidades.
 
@@ -11,28 +8,24 @@ import com.renato.model.*;
 import java.util.*;
 
 public class Main {   
-    private static final List<Usuario> usuarios = new ArrayList<>(); // ainda não utilizando banco de dados
-    private static final List<Categoria> categorias = new ArrayList<>();
     private static final List<Noticia> noticias = new ArrayList<>();
     private static final List<Resposta> respostas = new ArrayList<>();
     private static final List<ProgressoCategoria> progressos = new ArrayList<>();
     private static final List<Conquista> conquistas = new ArrayList<>();
     private static final List<ConquistaUsurario> conquistasUsuario = new ArrayList<>();
     
-    private static Long nextUsuarioId = 1L;
     private static Long nextNoticiaId = 1L;
     private static Long nextRespostaId = 1L;
     private static Long nextProgressoId = 1L;
     private static Long nextConquistaUsuarioId = 1L;
     
     public static void main(String[] args) {
-        inicializarDados(); // só para exemplo
         int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "3000"));
         var app = Javalin.create(); // cria a aplicação Javalin
-        var dadosService = new DadosService(usuarios, categorias, noticias, respostas, progressos, conquistasUsuario); // cria a instância do service com métodos de lógica
+        var dadosService = new DadosService(noticias, respostas, progressos, conquistasUsuario); // cria a instância do service com métodos de lógica
         
         ////////// rotas para usuários //////////
-        app.get("/usuarios", ctx -> ctx.json(usuarios)); // lista todos os usuários
+        app.get("/usuarios", ctx -> ctx.json(dadosService.listarUsuarios())); // lista todos os usuários
         
         app.get("/usuarios/{id}", ctx -> { // lista usuário por ID
             Long id = Long.parseLong(ctx.pathParam("id"));
@@ -46,11 +39,10 @@ public class Main {
         });
         
         app.post("/usuarios", ctx -> { // cria novo usuário
-            Usuario novoUsuario = ctx.bodyAsClass(Usuario.class); // usei pra converter JSON em objeto Java
-            novoUsuario.setId(nextUsuarioId++);
+            Usuario novoUsuario = ctx.bodyAsClass(Usuario.class); // converte JSON em objeto Java
             novoUsuario.setNivel(1);
-            usuarios.add(novoUsuario);
-            ctx.status(201).json(novoUsuario);
+            Usuario usuarioSalvo = dadosService.salvarUsuario(novoUsuario);
+            ctx.status(201).json(usuarioSalvo);
         });
         
         app.get("/usuarios/{id}/perfil", ctx -> { //  busca perfil do usuário
@@ -81,7 +73,7 @@ public class Main {
         /////////////////////////////////////////
         
         ///////// rotas para categorias ////////
-        app.get("/categorias", ctx -> ctx.json(categorias)); // lista todas as categorias
+        app.get("/categorias", ctx -> ctx.json(dadosService.listarCategorias())); // lista todas as categorias
 
         app.get("/categorias/{id}", ctx -> { // categoria por ID
             Long id = Long.parseLong(ctx.pathParam("id"));
@@ -94,7 +86,7 @@ public class Main {
             }
         });
         
-        app.get("/categorias/{id}/progresso/{usuarioId}", ctx -> { // progresso do usuário na categoria
+        /*app.get("/categorias/{id}/progresso/{usuarioId}", ctx -> { // progresso do usuário na categoria
             Long categoriaId = Long.parseLong(ctx.pathParam("id"));
             Long usuarioId = Long.parseLong(ctx.pathParam("usuarioId"));            
             ProgressoCategoria progresso = dadosService.obtemProgressoCategoria(categoriaId, usuarioId);
@@ -105,6 +97,26 @@ public class Main {
             else {
                 ctx.status(404).result("Progresso não encontrado");
             }
+        });*/
+
+        app.post("/categorias", ctx -> { // cria nova categoria
+            Categoria novaCategoria = ctx.bodyAsClass(Categoria.class);
+            Categoria categoriaSalva = dadosService.salvarCategoria(novaCategoria);
+            ctx.status(201).json(categoriaSalva);
+        });
+
+        app.put("/categorias/{id}", ctx -> { // atualiza categoria
+            Long id = Long.parseLong(ctx.pathParam("id"));
+            Categoria categoria = ctx.bodyAsClass(Categoria.class);
+            categoria.setId(id);
+            dadosService.atualizarCategoria(categoria);
+            ctx.json(categoria);
+        });
+
+        app.delete("/categorias/{id}", ctx -> { // deleta categoria
+            Long id = Long.parseLong(ctx.pathParam("id"));
+            dadosService.deletarCategoria(id);
+            ctx.status(204);
         });
         /////////////////////////////////////////
 
@@ -171,7 +183,7 @@ public class Main {
                                              respostaUsuario, acertou, pontosGanhos);
             respostas.add(resposta); // registra a resposta
 
-            ProgressoCategoria progresso = dadosService.obtemProgressoCategoria(noticia.getCategoriaId(), usuarioId);
+            /*ProgressoCategoria progresso = dadosService.obtemProgressoCategoria(noticia.getCategoriaId(), usuarioId);
             if (progresso == null) {
                 progresso = new ProgressoCategoria(nextProgressoId++, usuarioId, 
                                                    noticia.getCategoriaId(), 0, 0, new ArrayList<>()); // cria novo progresso
@@ -190,16 +202,16 @@ public class Main {
             boolean subiuNivel = novoNivel > nivelAnterior; // se subiu de nível, desbloqueia uma peça
             if (subiuNivel && !progresso.getPecasDesbloqueadas().contains(novoNivel)) {
                 progresso.getPecasDesbloqueadas().add(novoNivel);
-            }
+            }*/
             
             Map<String, Object> resultado = new HashMap<>();
             resultado.put("acertou", acertou);
             resultado.put("pontosGanhos", pontosGanhos);
             resultado.put("explicacao", noticia.getExplicacao());
-            resultado.put("subiuNivel", subiuNivel);
-            resultado.put("nivelAtual", novoNivel);
-            resultado.put("pontosCategoria", novosPontos);
-            resultado.put("pecasDesbloqueadas", progresso.getPecasDesbloqueadas());
+            //resultado.put("subiuNivel", subiuNivel);
+            //resultado.put("nivelAtual", novoNivel);
+            //resultado.put("pontosCategoria", novosPontos);
+            //resultado.put("pecasDesbloqueadas", progresso.getPecasDesbloqueadas());
             ctx.status(201).json(resultado);
         });
         

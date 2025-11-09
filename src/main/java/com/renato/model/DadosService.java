@@ -3,19 +3,21 @@
 package com.renato.model;
 
 import java.util.*;
+import com.renato.repository.UsuarioRepository;
+import com.renato.repository.CategoriaRepository;
 
 public class DadosService {
-    private List<Usuario> usuarios;
-    private List<Categoria> categorias;
+    private UsuarioRepository usuarioRepository;
+    private CategoriaRepository categoriaRepository;
     private List<Noticia> noticias;
     private List<Resposta> respostas;
     private List<ProgressoCategoria> progressos;
     private List<ConquistaUsurario> conquistasUsuario;
 
-    public DadosService(List<Usuario> usuarios, List<Categoria> categorias, List<Noticia> noticias, List<Resposta> respostas, 
+    public DadosService(List<Noticia> noticias, List<Resposta> respostas, 
             List<ProgressoCategoria> progressos, List<ConquistaUsurario> conquistasUsuario) {
-        this.usuarios = usuarios;
-        this.categorias = categorias;
+        this.usuarioRepository = new UsuarioRepository();
+        this.categoriaRepository = new CategoriaRepository();
         this.noticias = noticias;
         this.respostas = respostas;
         this.progressos = progressos;
@@ -45,15 +47,27 @@ public class DadosService {
     }
 
     public Usuario encontrarUsuario(Long id) {
-        Usuario encontrado = null;
-        for (int i = 0; i < usuarios.size(); i++) {
-            Usuario u = usuarios.get(i);
-            if (u.getId() == id) {
-                encontrado = u;
-                break;
-            }
-        }
-        return encontrado;
+        return usuarioRepository.findById(id);
+    }
+
+    public Usuario salvarUsuario(Usuario usuario) {
+        return usuarioRepository.save(usuario);
+    }
+
+    public List<Usuario> listarUsuarios() {
+        return usuarioRepository.findAll();
+    }
+    
+    public Usuario atualizarUsuario(Usuario usuario) {
+        return usuarioRepository.update(usuario);
+    }
+
+    public void deletarUsuario(Usuario usuario) {
+        usuarioRepository.delete(usuario);
+    }
+
+    public Usuario encontrarUsuarioPorEmail(String email) {
+        return usuarioRepository.findByEmail(email);
     }
     
     public List<Noticia> obtemNoticiasNaoRespondidas(Long usuarioId) {
@@ -140,25 +154,43 @@ public class DadosService {
         return conquistasUsuarioLista;
     }
 
-    public Categoria encontrarCategoria(Long categoriaId) {
-        for (int i = 0; i < categorias.size(); i++) {
-            Categoria c = categorias.get(i);
-            if (c.getId() == categoriaId) {
-                return c;
-            }
-        }
-        return null;
+    public List<Categoria> listarCategorias() {
+        return categoriaRepository.findAll();
     }
 
-    public ProgressoCategoria obtemProgressoCategoria(Long categoriaId, Long usuarioId) {
-       for (int i = 0; i < progressos.size(); i++) {
-           ProgressoCategoria p = progressos.get(i);
-           if (p.getCategoriaId() == categoriaId && p.getUsuarioId() == usuarioId) {
-               return p;
-           }
-       }
-       return null;
+    public Categoria encontrarCategoria(Long categoriaId) {
+        return categoriaRepository.findById(categoriaId);
     }
+
+    public Categoria encontrarCategoriaPorNome(String nome) {
+        return categoriaRepository.findByNome(nome);
+    }
+
+    public Categoria salvarCategoria(Categoria categoria) {
+        // o banco de dados ignora o id informado e gera ele mesmo
+        if (categoria != null) {
+            categoria.setId(null);
+        }
+        return categoriaRepository.save(categoria);
+    }
+
+    public void atualizarCategoria(Categoria categoria) {
+        categoriaRepository.update(categoria);
+    }
+
+    public void deletarCategoria(Long id) {
+        Categoria categoria = categoriaRepository.findById(id);
+        if (categoria != null) {
+            categoriaRepository.delete(categoria);
+        }
+        else {
+            throw new RuntimeException("Categoria não encontrada");
+        }
+    }
+
+    /*public ProgressoCategoria obtemProgressoCategoria(Long categoriaId, Long usuarioId) {
+       return categoriaRepository.obtemProgressoCategoria(usuarioId, categoriaId);
+    }*/
     
     public List<Noticia> obtemNoticiasDaCategoria(Long categoriaId) {
         List<Noticia> noticiasDaCategoria = new ArrayList<>();

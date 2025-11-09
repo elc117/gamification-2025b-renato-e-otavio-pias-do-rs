@@ -1,11 +1,27 @@
 package com.renato.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "usuarios")
 public class Usuario {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String nome;
+
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(nullable = false)
     private int nivel;
+
+    @Column(name = "pontuacao_total")
     private int pontuacaoTotal;
+
+    @Column(name = "titulo_atual")
     private String tituloAtual;
 
     public Usuario() {
