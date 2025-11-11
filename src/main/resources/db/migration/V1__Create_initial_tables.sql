@@ -19,7 +19,7 @@ CREATE TABLE categorias (
 
 CREATE TABLE noticias (
     id BIGSERIAL PRIMARY KEY,
-    categoria_id BIGINT REFERENCES categorias(id),
+    categoria_id BIGINT REFERENCES categorias(id) ON DELETE CASCADE,
     titulo VARCHAR(255) NOT NULL,
     conteudo TEXT NOT NULL,
     eh_verdadeira BOOLEAN NOT NULL,
@@ -30,8 +30,8 @@ CREATE TABLE noticias (
 
 CREATE TABLE respostas (
     id BIGSERIAL PRIMARY KEY,
-    usuario_id BIGINT REFERENCES usuarios(id),
-    noticia_id BIGINT REFERENCES noticias(id),
+    usuario_id BIGINT REFERENCES usuarios(id) ON DELETE CASCADE,
+    noticia_id BIGINT REFERENCES noticias(id) ON DELETE CASCADE,
     resposta_usuario BOOLEAN NOT NULL,
     esta_correta BOOLEAN NOT NULL,
     pontos_ganhos INTEGER NOT NULL,
@@ -40,8 +40,8 @@ CREATE TABLE respostas (
 
 CREATE TABLE progresso_categoria (
     id BIGSERIAL PRIMARY KEY,
-    usuario_id BIGINT REFERENCES usuarios(id),
-    categoria_id BIGINT REFERENCES categorias(id),
+    usuario_id BIGINT REFERENCES usuarios(id) ON DELETE CASCADE,
+    categoria_id BIGINT REFERENCES categorias(id) ON DELETE CASCADE,
     nivel_atual INTEGER NOT NULL DEFAULT 0,
     pontos_maestria INTEGER NOT NULL DEFAULT 0,
     pecas_desbloqueadas INTEGER[],
@@ -60,8 +60,8 @@ CREATE TABLE conquistas (
 
 CREATE TABLE conquistas_usuario (
     id BIGSERIAL PRIMARY KEY,
-    usuario_id BIGINT REFERENCES usuarios(id),
-    conquista_id BIGINT REFERENCES conquistas(id),
+    usuario_id BIGINT REFERENCES usuarios(id) ON DELETE CASCADE,
+    conquista_id BIGINT REFERENCES conquistas(id) ON DELETE CASCADE,
     data_desbloqueio TIMESTAMP NOT NULL,
     visualizada BOOLEAN NOT NULL DEFAULT FALSE,
     UNIQUE(usuario_id, conquista_id)
@@ -69,7 +69,7 @@ CREATE TABLE conquistas_usuario (
 
 CREATE TABLE pecas_recompensa (
     id BIGSERIAL PRIMARY KEY,
-    categoria_id BIGINT REFERENCES categorias(id),
+    categoria_id BIGINT REFERENCES categorias(id) ON DELETE CASCADE,
     nivel_requerido INTEGER NOT NULL,
     imagem_path VARCHAR(255),
     posicao_x INTEGER NOT NULL,
@@ -78,8 +78,8 @@ CREATE TABLE pecas_recompensa (
 
 CREATE TABLE pecas_usuario (
     id BIGSERIAL PRIMARY KEY,
-    usuario_id BIGINT REFERENCES usuarios(id),
-    peca_id BIGINT REFERENCES pecas_recompensa(id),
+    usuario_id BIGINT REFERENCES usuarios(id) ON DELETE CASCADE,
+    peca_id BIGINT REFERENCES pecas_recompensa(id) ON DELETE CASCADE,
     data_desbloqueio TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(usuario_id, peca_id)
 );
