@@ -1,51 +1,30 @@
-// Métodos para controlar lógica.
+// Métodos para controlar lógica com banco de dados.
 
 package com.renato.model;
 
 import java.util.*;
-import com.renato.repository.UsuarioRepository;
-import com.renato.repository.CategoriaRepository;
+import com.renato.repository.*;
 
 public class DadosService {
-    private UsuarioRepository usuarioRepository;
-    private CategoriaRepository categoriaRepository;
-    private List<Noticia> noticias;
-    private List<Resposta> respostas;
-    private List<ProgressoCategoria> progressos;
-    private List<ConquistaUsurario> conquistasUsuario;
+    private final UsuarioRepository usuarioRepository;
+    private final CategoriaRepository categoriaRepository;
+    private final NoticiaRepository noticiaRepository;
+    private final RespostaRepository respostaRepository;
+    private final ConquistaRepository conquistaRepository;
+    private final ConquistaUsuarioRepository conquistaUsuarioRepository;
+    private final ProgressoCategoriaRepository progressoCategoriaRepository;
 
-    public DadosService(List<Noticia> noticias, List<Resposta> respostas, 
-            List<ProgressoCategoria> progressos, List<ConquistaUsurario> conquistasUsuario) {
+    public DadosService() {
         this.usuarioRepository = new UsuarioRepository();
         this.categoriaRepository = new CategoriaRepository();
-        this.noticias = noticias;
-        this.respostas = respostas;
-        this.progressos = progressos;
-        this.conquistasUsuario = conquistasUsuario;
+        this.noticiaRepository = new NoticiaRepository();
+        this.respostaRepository = new RespostaRepository();
+        this.conquistaRepository = new ConquistaRepository();
+        this.conquistaUsuarioRepository = new ConquistaUsuarioRepository();
+        this.progressoCategoriaRepository = new ProgressoCategoriaRepository();
     }
 
-    public int obtemTotalRespostasUsuario(Long usuarioId) {
-        int total = 0;
-        for (int i = 0; i < respostas.size(); i++) {
-            Resposta r = respostas.get(i);
-            if (r.getUsuarioId() == usuarioId) {
-                total++;
-            }
-        }
-        return total;
-    }
-
-    public int obtemTotalAcertosUsuario(Long usuarioId) {
-        int total = 0;
-        for (int i = 0; i < respostas.size(); i++) {
-            Resposta r = respostas.get(i);
-            if (r.getUsuarioId() == usuarioId && r.isEstaCorreta()) {
-                total++;
-            }
-        }
-        return total;
-    }
-
+    // ========== Métodos de Usuário ==========
     public Usuario encontrarUsuario(Long id) {
         return usuarioRepository.findById(id);
     }
@@ -57,7 +36,7 @@ public class DadosService {
     public List<Usuario> listarUsuarios() {
         return usuarioRepository.findAll();
     }
-    
+
     public Usuario atualizarUsuario(Usuario usuario) {
         return usuarioRepository.update(usuario);
     }
@@ -69,91 +48,8 @@ public class DadosService {
     public Usuario encontrarUsuarioPorEmail(String email) {
         return usuarioRepository.findByEmail(email);
     }
-    
-    public List<Noticia> obtemNoticiasNaoRespondidas(Long usuarioId) {
-        List<Long> noticiasRespondidas = new ArrayList<>();
-        for (int i = 0; i < respostas.size(); i++) {
-            Resposta r = respostas.get(i);
-            if (r.getUsuarioId() == usuarioId) {
-                noticiasRespondidas.add(r.getNoticiaId());
-            }
-        }
 
-        List<Noticia> noticiasDisponiveis = new ArrayList<>();
-        for (int i = 0; i < noticias.size(); i++) {
-            Noticia n = noticias.get(i);
-            boolean jaRespondeu = false;
-
-            for (int j = 0; j < noticiasRespondidas.size(); j++) {
-                if (n.getId() == noticiasRespondidas.get(j)) {
-                    jaRespondeu = true;
-                    break;
-                }
-            }
-
-            if (!jaRespondeu) {
-                noticiasDisponiveis.add(n);
-            }
-        }
-
-        return noticiasDisponiveis;
-    }
-
-    public Noticia encontrarNoticia(Long id) {
-        Noticia noticia = null;
-        for (int i = 0; i < noticias.size(); i++) {
-            Noticia n = noticias.get(i);
-            if (n.getId() == id) {
-                noticia = n;
-                break;
-            }
-        }
-        return noticia;
-    }
-
-    public boolean jaRespondeuNoticia(Long usuarioId, Long noticiaId) {
-        for (int i = 0; i < respostas.size(); i++) {
-            Resposta r = respostas.get(i);
-            if (r.getUsuarioId() == usuarioId && r.getNoticiaId() == noticiaId) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public List<Resposta> obtemRespostasUsuario(Long usuarioId) {
-        List<Resposta> respostasUsuario = new ArrayList<>();
-        for (int i = 0; i < respostas.size(); i++) {
-            Resposta r = respostas.get(i);
-            if (r.getUsuarioId() == usuarioId) {
-                respostasUsuario.add(r);
-            }
-        }
-        return respostasUsuario;
-    }
-
-    public List<ProgressoCategoria> obtemProgressosUsuario(Long usuarioId) {
-        List<ProgressoCategoria> progressosUsuario = new ArrayList<>();
-        for (int i = 0; i < progressos.size(); i++) {
-            ProgressoCategoria p = progressos.get(i);
-            if (p.getUsuarioId() == usuarioId) {
-                progressosUsuario.add(p);
-            }
-        }
-        return progressosUsuario;
-    }
-
-    public List<ConquistaUsurario> obtemConquistasUsuario(Long usuarioId) {
-        List<ConquistaUsurario> conquistasUsuarioLista = new ArrayList<>();
-        for (int i = 0; i < conquistasUsuario.size(); i++) {
-            ConquistaUsurario conqU = conquistasUsuario.get(i);
-            if (conqU.getUsuarioId() == usuarioId) {
-                conquistasUsuarioLista.add(conqU);
-            }
-        }
-        return conquistasUsuarioLista;
-    }
-
+    // ========== Métodos de Categoria ==========
     public List<Categoria> listarCategorias() {
         return categoriaRepository.findAll();
     }
@@ -167,7 +63,6 @@ public class DadosService {
     }
 
     public Categoria salvarCategoria(Categoria categoria) {
-        // o banco de dados ignora o id informado e gera ele mesmo
         if (categoria != null) {
             categoria.setId(null);
         }
@@ -182,27 +77,88 @@ public class DadosService {
         Categoria categoria = categoriaRepository.findById(id);
         if (categoria != null) {
             categoriaRepository.delete(categoria);
-        }
-        else {
+        } else {
             throw new RuntimeException("Categoria não encontrada");
         }
     }
 
-    /*public ProgressoCategoria obtemProgressoCategoria(Long categoriaId, Long usuarioId) {
-       return categoriaRepository.obtemProgressoCategoria(usuarioId, categoriaId);
-    }*/
-    
-    public List<Noticia> obtemNoticiasDaCategoria(Long categoriaId) {
-        List<Noticia> noticiasDaCategoria = new ArrayList<>();
-        for (int i = 0; i < noticias.size(); i++) {
-            Noticia n = noticias.get(i);
-            if (n.getCategoriaId().equals(categoriaId)) {
-                noticiasDaCategoria.add(n);
-            }
-        }
-        return noticiasDaCategoria;
+    // ========== Métodos de Notícia ==========
+    public List<Noticia> listarNoticias() {
+        return noticiaRepository.findAll();
     }
 
+    public Noticia encontrarNoticia(Long id) {
+        return noticiaRepository.findById(id);
+    }
+
+    public Noticia salvarNoticia(Noticia noticia) {
+        return noticiaRepository.save(noticia);
+    }
+
+    public List<Noticia> obtemNoticiasDaCategoria(Long categoriaId) {
+        return noticiaRepository.findByCategoria(categoriaId);
+    }
+
+    public List<Noticia> obtemNoticiasNaoRespondidas(Long usuarioId) {
+        return noticiaRepository.findNaoRespondidasPorUsuario(usuarioId);
+    }
+
+    // ========== Métodos de Resposta ==========
+    public Resposta salvarResposta(Resposta resposta) {
+        return respostaRepository.save(resposta);
+    }
+
+    public boolean jaRespondeuNoticia(Long usuarioId, Long noticiaId) {
+        return respostaRepository.existsByUsuarioAndNoticia(usuarioId, noticiaId);
+    }
+
+    public List<Resposta> obtemRespostasUsuario(Long usuarioId) {
+        return respostaRepository.findByUsuario(usuarioId);
+    }
+
+    public int obtemTotalRespostasUsuario(Long usuarioId) {
+        return (int) respostaRepository.countByUsuario(usuarioId);
+    }
+
+    public int obtemTotalAcertosUsuario(Long usuarioId) {
+        return (int) respostaRepository.countAcertosByUsuario(usuarioId);
+    }
+
+    // ========== Métodos de Conquista ==========
+    public List<Conquista> listarConquistas() {
+        return conquistaRepository.findAll();
+    }
+
+    public Conquista salvarConquista(Conquista conquista) {
+        return conquistaRepository.save(conquista);
+    }
+
+    public List<ConquistaUsuario> obtemConquistasUsuario(Long usuarioId) {
+        return conquistaUsuarioRepository.findByUsuario(usuarioId);
+    }
+
+    public ConquistaUsuario salvarConquistaUsuario(ConquistaUsuario conquistaUsuario) {
+        return conquistaUsuarioRepository.save(conquistaUsuario);
+    }
+
+    // ========== Métodos de Progresso ==========
+    public List<ProgressoCategoria> obtemProgressosUsuario(Long usuarioId) {
+        return progressoCategoriaRepository.findByUsuario(usuarioId);
+    }
+
+    public ProgressoCategoria obtemProgressoCategoria(Long usuarioId, Long categoriaId) {
+        return progressoCategoriaRepository.findByUsuarioAndCategoria(usuarioId, categoriaId);
+    }
+
+    public ProgressoCategoria salvarProgressoCategoria(ProgressoCategoria progresso) {
+        return progressoCategoriaRepository.save(progresso);
+    }
+
+    public ProgressoCategoria atualizarProgressoCategoria(ProgressoCategoria progresso) {
+        return progressoCategoriaRepository.update(progresso);
+    }
+
+    // ========== Métodos Auxiliares ==========
     public int calcularNivel(int pontos) {
         if (pontos >= 1000) return 6;
         if (pontos >= 700) return 5;

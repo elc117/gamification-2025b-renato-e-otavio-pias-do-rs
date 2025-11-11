@@ -1,12 +1,30 @@
 package com.renato.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "conquistas")
 public class Conquista {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, length = 100)
     private String nome;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String descricao;
+
+    @Column(length = 50)
     private String icone;
+
+    @Column(nullable = false, length = 100)
     private String criterio;
+
+    @Column(nullable = false, length = 50)
     private String tipo;
+
+    @Column(name = "valor_requerido", nullable = false)
     private int valorRequerido;
 
     public Conquista() {

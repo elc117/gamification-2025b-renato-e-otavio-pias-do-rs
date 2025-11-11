@@ -1,14 +1,37 @@
 package com.renato.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "noticias")
 public class Noticia {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "categoria_id", nullable = false)
     private Long categoriaId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoria_id", insertable = false, updatable = false)
     private Categoria categoria;
+
+    @Column(nullable = false, length = 255)
     private String titulo;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String conteudo;
+
+    @Column(name = "eh_verdadeira", nullable = false)
     private boolean ehVerdadeira;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String explicacao;
+
+    @Column(nullable = false)
     private int dificuldade;
+
+    @Column(columnDefinition = "TEXT")
     private String fontes;
 
     public Noticia() {
@@ -86,5 +109,13 @@ public class Noticia {
 
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
+    }
+
+    public void setFontes(String fontes) {
+        this.fontes = fontes;
+    }
+
+    public String getFontes() {
+        return fontes;
     }
 }

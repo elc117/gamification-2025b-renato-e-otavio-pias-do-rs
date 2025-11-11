@@ -1,15 +1,38 @@
 package com.renato.model;
 
+import jakarta.persistence.*;
 import java.util.List;
 
+@Entity
+@Table(name = "progresso_categoria")
 public class ProgressoCategoria {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "usuario_id", nullable = false)
     private Long usuarioId;
+
+    @Column(name = "categoria_id", nullable = false)
     private Long categoriaId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", insertable = false, updatable = false)
     private Usuario usuario;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoria_id", insertable = false, updatable = false)
     private Categoria categoria;
+
+    @Column(name = "nivel_atual", nullable = false)
     private int nivelAtual;
+
+    @Column(name = "pontos_maestria", nullable = false)
     private int pontosMaestria;
+
+    @ElementCollection
+    @CollectionTable(name = "pecas_desbloqueadas", joinColumns = @JoinColumn(name = "progresso_id"))
+    @Column(name = "peca")
     private List<Integer> pecasDesbloqueadas;
 
     public ProgressoCategoria() {

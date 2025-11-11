@@ -66,3 +66,21 @@ CREATE TABLE conquistas_usuario (
     visualizada BOOLEAN NOT NULL DEFAULT FALSE,
     UNIQUE(usuario_id, conquista_id)
 );
+
+CREATE TABLE pecas_recompensa (
+    id BIGSERIAL PRIMARY KEY,
+    categoria_id BIGINT REFERENCES categorias(id),
+    nivel_requerido INTEGER NOT NULL,
+    imagem_path VARCHAR(255),
+    posicao_x INTEGER NOT NULL,
+    posicao_y INTEGER NOT NULL
+);
+
+CREATE TABLE pecas_usuario (
+    id BIGSERIAL PRIMARY KEY,
+    usuario_id BIGINT REFERENCES usuarios(id),
+    peca_id BIGINT REFERENCES pecas_recompensa(id),
+    data_desbloqueio TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(usuario_id, peca_id)
+);
+

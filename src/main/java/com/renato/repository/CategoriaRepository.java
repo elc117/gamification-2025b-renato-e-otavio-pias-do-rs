@@ -21,17 +21,4 @@ public class CategoriaRepository extends GenericRepository<Categoria> {
             throw e;
         }
     }
-
-    /*public progressoCategoria obtemProgressoCategoria(Long categoriaId, Long usuarioId) {
-        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-            return session.createQuery("FROM Categoria WHERE categoriaId = :categoriaId AND usuarioId = :usuarioId", Categoria.class)
-                    .setParameter("categoriaId", categoriaId)
-                    .setParameter("usuarioId", usuarioId)
-                    .uniqueResult();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
-    }*/
 }

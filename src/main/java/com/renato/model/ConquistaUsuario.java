@@ -1,20 +1,39 @@
 package com.renato.model;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-public class ConquistaUsurario {
+@Entity
+@Table(name = "conquistas_usuario")
+public class ConquistaUsuario {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "usuario_id", nullable = false)
     private Long usuarioId;
+
+    @Column(name = "conquista_id", nullable = false)
     private Long conquistaId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", insertable = false, updatable = false)
     private Usuario usuario;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "conquista_id", insertable = false, updatable = false)
     private Conquista conquista;
+
+    @Column(name = "data_desbloqueio", nullable = false)
     private LocalDateTime dataDesbloqueio;
+
+    @Column(nullable = false)
     private boolean visualizada;
 
-    public ConquistaUsurario() {
+    public ConquistaUsuario() {
     }
 
-    public ConquistaUsurario(Long id, Long usuarioId, Long conquistaId, LocalDateTime dataDesbloqueio, boolean visualizada) {
+    public ConquistaUsuario(Long id, Long usuarioId, Long conquistaId, LocalDateTime dataDesbloqueio, boolean visualizada) {
         this.id = id;
         this.usuarioId = usuarioId;
         this.conquistaId = conquistaId;
@@ -78,3 +97,4 @@ public class ConquistaUsurario {
         this.conquista = conquista;
     }
 }
+

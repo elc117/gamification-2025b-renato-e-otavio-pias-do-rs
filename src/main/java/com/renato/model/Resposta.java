@@ -1,13 +1,35 @@
 package com.renato.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "respostas")
 public class Resposta {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "usuario_id", nullable = false)
     private Long usuarioId;
+
+    @Column(name = "noticia_id", nullable = false)
     private Long noticiaId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", insertable = false, updatable = false)
     private Usuario usuario;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "noticia_id", insertable = false, updatable = false)
     private Noticia noticia;
+
+    @Column(name = "resposta_usuario", nullable = false)
     private boolean respostaUsuario;
+
+    @Column(name = "esta_correta", nullable = false)
     private boolean estaCorreta;
+
+    @Column(name = "pontos_ganhos", nullable = false)
     private int pontosGanhos;
 
     public Resposta(Long id) {

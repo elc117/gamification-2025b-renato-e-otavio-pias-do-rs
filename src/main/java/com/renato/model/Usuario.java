@@ -72,6 +72,5 @@ public class Usuario {
     }
 
     private void atualizarNivel() {
-        
     }
 }

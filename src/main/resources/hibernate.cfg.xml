@@ -8,16 +8,24 @@
         <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
         <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/fact_or_fake</property>
         <property name="hibernate.connection.username">postgres</property>
-        <property name="hibernate.connection.password">implementation2255</property> <!-- No futuro, alterar isso-->
+        <property name="hibernate.connection.password">implementation2255</property>
 
         <!-- Configurações do Hibernate -->
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
-        <property name="hibernate.hbm2ddl.auto">validate</property>
+        <!-- alterado de validate para update para ambiente de desenvolvimento -->
+        <property name="hibernate.hbm2ddl.auto">update</property>
 
         <!-- Mapeamento das classes para o banco de dados-->
         <mapping class="com.renato.model.Usuario"/>
         <mapping class="com.renato.model.Categoria"/>
+        <mapping class="com.renato.model.Noticia"/>
+        <mapping class="com.renato.model.Resposta"/>
+        <mapping class="com.renato.model.Conquista"/>
+        <mapping class="com.renato.model.ConquistaUsuario"/>
+        <mapping class="com.renato.model.ProgressoCategoria"/>
+        <mapping class="com.renato.model.PecaRecompensa"/>
+        <mapping class="com.renato.model.PecaUsuario"/>
     </session-factory>
 </hibernate-configuration>

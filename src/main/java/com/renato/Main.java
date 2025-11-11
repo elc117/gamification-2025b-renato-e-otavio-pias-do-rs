@@ -5,28 +5,25 @@ package com.renato;
 
 import io.javalin.Javalin;
 import com.renato.model.*;
+import com.renato.repository.*;
 import java.util.*;
 
-public class Main {   
-    private static final List<Noticia> noticias = new ArrayList<>();
-    private static final List<Resposta> respostas = new ArrayList<>();
-    private static final List<ProgressoCategoria> progressos = new ArrayList<>();
-    private static final List<Conquista> conquistas = new ArrayList<>();
-    private static final List<ConquistaUsurario> conquistasUsuario = new ArrayList<>();
-    
-    private static Long nextNoticiaId = 1L;
-    private static Long nextRespostaId = 1L;
-    private static Long nextProgressoId = 1L;
-    private static Long nextConquistaUsuarioId = 1L;
-    
+public class Main {
+    // Repositórios para acesso ao banco de dados
+    private static final NoticiaRepository noticiaRepository = new NoticiaRepository();
+    private static final RespostaRepository respostaRepository = new RespostaRepository();
+    private static final ProgressoCategoriaRepository progressoRepository = new ProgressoCategoriaRepository();
+    private static final ConquistaRepository conquistaRepository = new ConquistaRepository();
+    private static final ConquistaUsuarioRepository conquistaUsuarioRepository = new ConquistaUsuarioRepository();
+
     public static void main(String[] args) {
         int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "3000"));
         var app = Javalin.create(); // cria a aplicação Javalin
-        var dadosService = new DadosService(noticias, respostas, progressos, conquistasUsuario); // cria a instância do service com métodos de lógica
-        
+        var dadosService = new DadosService(); // Novo construtor sem parâmetros - usa repositórios
+
         ////////// rotas para usuários //////////
         app.get("/usuarios", ctx -> ctx.json(dadosService.listarUsuarios())); // lista todos os usuários
-        
+
         app.get("/usuarios/{id}", ctx -> { // lista usuário por ID
             Long id = Long.parseLong(ctx.pathParam("id"));
             Usuario usuario = dadosService.encontrarUsuario(id);
@@ -44,31 +41,65 @@ public class Main {
             Usuario usuarioSalvo = dadosService.salvarUsuario(novoUsuario);
             ctx.status(201).json(usuarioSalvo);
         });
-        
-        app.get("/usuarios/{id}/perfil", ctx -> { //  busca perfil do usuário
+
+        app.put("/usuarios/{id}", ctx -> { // atualiza usuário
+            Long id = Long.parseLong(ctx.pathParam("id"));
+            Usuario usuarioExistente = dadosService.encontrarUsuario(id);
+
+            if (usuarioExistente == null) {
+                ctx.status(404).result("Usuário não encontrado");
+                return;
+            }
+
+            Usuario usuarioAtualizado = ctx.bodyAsClass(Usuario.class);
+            usuarioAtualizado.setId(id);
+            dadosService.atualizarUsuario(usuarioAtualizado);
+            ctx.json(usuarioAtualizado);
+        });
+
+        app.delete("/usuarios/{id}", ctx -> { // deleta usuário
             Long id = Long.parseLong(ctx.pathParam("id"));
             Usuario usuario = dadosService.encontrarUsuario(id);
-            
+
             if (usuario == null) {
                 ctx.status(404).result("Usuário não encontrado");
                 return;
             }
 
-            List<ProgressoCategoria> progressosUsuario = dadosService.obtemProgressosUsuario(id);
-            List<ConquistaUsurario> conquistasUsuarioLista = dadosService.obtemConquistasUsuario(id);
-            int totalRespostas = dadosService.obtemTotalRespostasUsuario(id);
-            int totalAcertos = dadosService.obtemTotalAcertosUsuario(id);
-            double taxaAcerto = totalRespostas > 0 ? (totalAcertos * 100.0 / totalRespostas) : 0;
-            
-            Map<String, Object> perfil = new HashMap<>(); // para montar a resposta, eu usei HashMap
-            perfil.put("usuario", usuario);
-            perfil.put("progressos", progressosUsuario);
-            perfil.put("conquistas", conquistasUsuarioLista);
-            perfil.put("totalRespostas", totalRespostas);
-            perfil.put("totalAcertos", totalAcertos);
-            perfil.put("taxaAcerto", taxaAcerto);
-            
-            ctx.json(perfil);
+            dadosService.deletarUsuario(usuario);
+            ctx.status(204);
+        });
+
+        app.get("/usuarios/{id}/perfil", ctx -> { //  busca perfil do usuário
+            try {
+                Long id = Long.parseLong(ctx.pathParam("id"));
+                Usuario usuario = dadosService.encontrarUsuario(id);
+
+                if (usuario == null) {
+                    ctx.status(404).result("Usuário não encontrado");
+                    return;
+                }
+
+                List<ProgressoCategoria> progressosUsuario = dadosService.obtemProgressosUsuario(id);
+                List<ConquistaUsuario> conquistasUsuarioLista = dadosService.obtemConquistasUsuario(id);
+                int totalRespostas = dadosService.obtemTotalRespostasUsuario(id);
+                int totalAcertos = dadosService.obtemTotalAcertosUsuario(id);
+                double taxaAcerto = totalRespostas > 0 ? (totalAcertos * 100.0 / totalRespostas) : 0;
+
+                Map<String, Object> perfil = new HashMap<>(); // para montar a resposta, eu usei HashMap
+                perfil.put("usuario", usuario);
+                perfil.put("progressos", progressosUsuario != null ? progressosUsuario : new ArrayList<>());
+                perfil.put("conquistas", conquistasUsuarioLista != null ? conquistasUsuarioLista : new ArrayList<>());
+                perfil.put("totalRespostas", totalRespostas);
+                perfil.put("totalAcertos", totalAcertos);
+                perfil.put("taxaAcerto", taxaAcerto);
+
+                ctx.json(perfil);
+            } catch (Exception e) {
+                System.err.println("Erro ao buscar perfil: " + e.getMessage());
+                e.printStackTrace();
+                ctx.status(500).result("Erro interno: " + e.getMessage());
+            }
         });
         /////////////////////////////////////////
         
@@ -86,18 +117,18 @@ public class Main {
             }
         });
         
-        /*app.get("/categorias/{id}/progresso/{usuarioId}", ctx -> { // progresso do usuário na categoria
+        app.get("/categorias/{id}/progresso/{usuarioId}", ctx -> { // progresso do usuário na categoria
             Long categoriaId = Long.parseLong(ctx.pathParam("id"));
             Long usuarioId = Long.parseLong(ctx.pathParam("usuarioId"));            
-            ProgressoCategoria progresso = dadosService.obtemProgressoCategoria(categoriaId, usuarioId);
-            
+            ProgressoCategoria progresso = dadosService.obtemProgressoCategoria(usuarioId, categoriaId);
+
             if (progresso != null) {
                 ctx.json(progresso);
             }
             else {
                 ctx.status(404).result("Progresso não encontrado");
             }
-        });*/
+        });
 
         app.post("/categorias", ctx -> { // cria nova categoria
             Categoria novaCategoria = ctx.bodyAsClass(Categoria.class);
@@ -121,11 +152,16 @@ public class Main {
         /////////////////////////////////////////
 
         ////////// rotas para notícias //////////
-        app.get("/noticias", ctx -> ctx.json(noticias)); // lista todas as notícias
-        
+        app.get("/noticias", ctx -> ctx.json(noticiaRepository.findAll())); // lista todas as notícias
+
         app.get("/noticias/random", ctx -> { // notícia aleatória
+            List<Noticia> todasNoticias = noticiaRepository.findAll();
+            if (todasNoticias.isEmpty()) {
+                ctx.status(404).result("Nenhuma notícia disponível");
+                return;
+            }
             Random random = new Random();
-            Noticia noticia = noticias.get(random.nextInt(noticias.size()));
+            Noticia noticia = todasNoticias.get(random.nextInt(todasNoticias.size()));
             ctx.json(noticia);
         });
         
@@ -151,9 +187,47 @@ public class Main {
 
         app.post("/noticias", ctx -> { // cria nova notícia
             Noticia novaNoticia = ctx.bodyAsClass(Noticia.class);
-            novaNoticia.setId(nextNoticiaId++);
-            noticias.add(novaNoticia);
-            ctx.status(201).json(novaNoticia);
+            Noticia noticiaSalva = noticiaRepository.save(novaNoticia);
+            ctx.status(201).json(noticiaSalva);
+        });
+
+        app.get("/noticias/{id}", ctx -> { // busca notícia por ID
+            Long id = Long.parseLong(ctx.pathParam("id"));
+            Noticia noticia = dadosService.encontrarNoticia(id);
+
+            if (noticia != null) {
+                ctx.json(noticia);
+            } else {
+                ctx.status(404).result("Notícia não encontrada");
+            }
+        });
+
+        app.put("/noticias/{id}", ctx -> { // atualiza notícia
+            Long id = Long.parseLong(ctx.pathParam("id"));
+            Noticia noticiaExistente = dadosService.encontrarNoticia(id);
+
+            if (noticiaExistente == null) {
+                ctx.status(404).result("Notícia não encontrada");
+                return;
+            }
+
+            Noticia noticiaAtualizada = ctx.bodyAsClass(Noticia.class);
+            noticiaAtualizada.setId(id);
+            noticiaRepository.update(noticiaAtualizada);
+            ctx.json(noticiaAtualizada);
+        });
+
+        app.delete("/noticias/{id}", ctx -> { // deleta notícia
+            Long id = Long.parseLong(ctx.pathParam("id"));
+            Noticia noticia = dadosService.encontrarNoticia(id);
+
+            if (noticia == null) {
+                ctx.status(404).result("Notícia não encontrada");
+                return;
+            }
+
+            noticiaRepository.delete(noticia);
+            ctx.status(204);
         });
         /////////////////////////////////////////
         
@@ -179,39 +253,42 @@ public class Main {
             boolean acertou = (respostaUsuario == noticia.isEhVerdadeira());
             int pontosGanhos = acertou ? 10 : -5;
             
-            Resposta resposta = new Resposta(nextRespostaId++, usuarioId, noticiaId, 
+            Resposta resposta = new Resposta(null, usuarioId, noticiaId,
                                              respostaUsuario, acertou, pontosGanhos);
-            respostas.add(resposta); // registra a resposta
+            respostaRepository.save(resposta); // salva a resposta no banco
 
-            /*ProgressoCategoria progresso = dadosService.obtemProgressoCategoria(noticia.getCategoriaId(), usuarioId);
+            // Atualiza progresso na categoria
+            ProgressoCategoria progresso = progressoRepository.findByUsuarioAndCategoria(usuarioId, noticia.getCategoriaId());
             if (progresso == null) {
-                progresso = new ProgressoCategoria(nextProgressoId++, usuarioId, 
+                progresso = new ProgressoCategoria(null, usuarioId,
                                                    noticia.getCategoriaId(), 0, 0, new ArrayList<>()); // cria novo progresso
-                progressos.add(progresso);
+                progressoRepository.save(progresso);
             }
-            
-            // abaixo, é atualizado o progresso na categoria
+
+            // Atualiza o progresso na categoria
             int nivelAnterior = progresso.getNivelAtual();
             int novosPontos = progresso.getPontosMaestria() + pontosGanhos;
             if (novosPontos < 0) novosPontos = 0;
             progresso.setPontosMaestria(novosPontos);
-            
-            int novoNivel = dadosService.calcularNivel(novosPontos); // atualiza o nível, com base nos pontos
+
+            int novoNivel = calcularNivel(novosPontos); // atualiza o nível, com base nos pontos
             progresso.setNivelAtual(novoNivel);
-            
+
             boolean subiuNivel = novoNivel > nivelAnterior; // se subiu de nível, desbloqueia uma peça
             if (subiuNivel && !progresso.getPecasDesbloqueadas().contains(novoNivel)) {
                 progresso.getPecasDesbloqueadas().add(novoNivel);
-            }*/
-            
+            }
+
+            progressoRepository.update(progresso); // salva progresso atualizado
+
             Map<String, Object> resultado = new HashMap<>();
             resultado.put("acertou", acertou);
             resultado.put("pontosGanhos", pontosGanhos);
             resultado.put("explicacao", noticia.getExplicacao());
-            //resultado.put("subiuNivel", subiuNivel);
-            //resultado.put("nivelAtual", novoNivel);
-            //resultado.put("pontosCategoria", novosPontos);
-            //resultado.put("pecasDesbloqueadas", progresso.getPecasDesbloqueadas());
+            resultado.put("subiuNivel", subiuNivel);
+            resultado.put("nivelAtual", novoNivel);
+            resultado.put("pontosCategoria", novosPontos);
+            resultado.put("pecasDesbloqueadas", progresso.getPecasDesbloqueadas());
             ctx.status(201).json(resultado);
         });
         
@@ -223,11 +300,11 @@ public class Main {
         /////////////////////////////////////////
         
         ///////// rotas para conquistas ////////
-        app.get("/conquistas", ctx -> ctx.json(conquistas)); // lista todas as conquistas
-        
+        app.get("/conquistas", ctx -> ctx.json(conquistaRepository.findAll())); // lista todas as conquistas
+
         app.get("/usuarios/{id}/conquistas", ctx -> { // lista conquistas de um usuário
             Long id = Long.parseLong(ctx.pathParam("id"));
-            List<ConquistaUsurario> conquistasDoUsuario = dadosService.obtemConquistasUsuario(id);
+            List<ConquistaUsuario> conquistasDoUsuario = dadosService.obtemConquistasUsuario(id);
             ctx.json(conquistasDoUsuario);
         });
         /////////////////////////////////////////
@@ -241,30 +318,14 @@ public class Main {
         app.start(port);
         System.out.println("servidor rodando na porta " + port);
     }
-    
-    private static void inicializarDados() {
-        // abaixo, eu fiz algumas notícias de exemplo
-        noticias.add(new Noticia(1L, 1L, "Vacina COVID-19", 
-            "As vacinas contra COVID-19 foram aprovadas após rigorosos testes clínicos com milhares de participantes.", 
-            true, "As vacinas passaram por todas as fases de testes e foram aprovadas por agências reguladoras.", 1));
-        
-        noticias.add(new Noticia(2L, 1L, "Chá milagroso", 
-            "Chá de alho com limão cura COVID-19 em 24 horas.", 
-            false, "Não existe comprovação científica de cura para COVID-19 por chás caseiros.", 1));
-        
-        noticias.add(new Noticia(3L, 3L, "Aquecimento Global", 
-            "O planeta Terra está aquecendo devido às atividades humanas, segundo 97% dos cientistas climáticos.", 
-            true, "Existe consenso científico sobre o aquecimento global antropogênico.", 2));
-        
-        noticias.add(new Noticia(4L, 2L, "Política", 
-            "Político X prometeu acabar com todos os impostos se eleito.", 
-            false, "Essa declaração nunca foi feita pelo político. Verifique fontes oficiais.", 1));
 
-        conquistas.add(new Conquista(1L, "Primeiro Passo", "Responda sua primeira notícia", 
-            "🎯", "total_respostas", "bronze", 1));
-        conquistas.add(new Conquista(2L, "Sequência Perfeita", "Acerte 5 notícias seguidas", 
-            "🔥", "acertos_seguidos", "prata", 5));
-        conquistas.add(new Conquista(3L, "Mestre de Categoria", "Complete uma categoria", 
-            "👑", "completar_categoria", "ouro", 1));
+    // Método auxiliar para calcular nível baseado em pontos de maestria
+    private static int calcularNivel(int pontos) {
+        if (pontos < 50) return 1;
+        if (pontos < 100) return 2;
+        if (pontos < 200) return 3;
+        if (pontos < 350) return 4;
+        if (pontos < 550) return 5;
+        return 6; // nível máximo
     }
 }

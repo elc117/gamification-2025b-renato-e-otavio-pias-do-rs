@@ -1,8 +1,0 @@
-CREATE TABLE usuarios (
-    id BIGSERIAL PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    nivel INTEGER NOT NULL DEFAULT 1,
-    pontuacao_total INTEGER NOT NULL DEFAULT 0,
-    titulo_atual VARCHAR(100)
-);
