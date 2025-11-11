@@ -99,9 +99,8 @@ O arquivo **Main.java** implementa a API REST usando Javalin, com endpoints para
 **Notícias:**
 - `GET /noticias` — lista todas as notícias
 - `GET /noticias/{id}` — busca notícia por ID
-- `GET /noticias/random` — retorna notícia aleatória
-- `GET /noticias/random/{usuarioId}` — retorna notícia não respondida pelo usuário
-- `GET /noticias/categoria/{categoriaId}` — lista notícias de uma categoria
+- `GET /noticias/random/{usuarioId}/categoria/{categoriaId}` — retorna notícia aleatória não respondida de uma categoria específica
+- `GET /noticias/categoria/{categoriaId}` — lista todas as notícias de uma categoria
 - `POST /noticias` — cria nova notícia
 - `PUT /noticias/{id}` — atualiza notícia existente
 - `DELETE /noticias/{id}` — deleta notícia

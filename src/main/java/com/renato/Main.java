@@ -6,6 +6,7 @@ package com.renato;
 import io.javalin.Javalin;
 import com.renato.model.*;
 import com.renato.repository.*;
+import com.renato.service.*;
 import java.util.*;
 
 public class Main {
@@ -15,6 +16,10 @@ public class Main {
     private static final ProgressoCategoriaRepository progressoRepository = new ProgressoCategoriaRepository();
     private static final ConquistaRepository conquistaRepository = new ConquistaRepository();
     private static final ConquistaUsuarioRepository conquistaUsuarioRepository = new ConquistaUsuarioRepository();
+
+    // Serviços
+    private static final JogoService jogoService = new JogoService();
+    private static final PontuacaoService pontuacaoService = new PontuacaoService();
 
     public static void main(String[] args) {
         int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "3000"));
@@ -154,32 +159,21 @@ public class Main {
         ////////// rotas para notícias //////////
         app.get("/noticias", ctx -> ctx.json(noticiaRepository.findAll())); // lista todas as notícias
 
-        app.get("/noticias/random", ctx -> { // notícia aleatória
-            List<Noticia> todasNoticias = noticiaRepository.findAll();
-            if (todasNoticias.isEmpty()) {
-                ctx.status(404).result("Nenhuma notícia disponível");
-                return;
-            }
-            Random random = new Random();
-            Noticia noticia = todasNoticias.get(random.nextInt(todasNoticias.size()));
-            ctx.json(noticia);
-        });
-        
-        app.get("/noticias/random/{usuarioId}", ctx -> { // notícia por ID
+        app.get("/noticias/random/{usuarioId}/categoria/{categoriaId}", ctx -> { // notícia aleatória de categoria específica não respondida
             Long usuarioId = Long.parseLong(ctx.pathParam("usuarioId"));
-            List<Noticia> noticiasDisponiveis = dadosService.obtemNoticiasNaoRespondidas(usuarioId);
-            
-            if (noticiasDisponiveis.size() == 0) {
-                ctx.status(404).result("Todas as notícias já foram respondidas");
+            Long categoriaId = Long.parseLong(ctx.pathParam("categoriaId"));
+
+            Noticia noticia = jogoService.obterNoticiaAleatoriaDaCategoria(usuarioId, categoriaId);
+
+            if (noticia == null) {
+                ctx.status(404).result("Todas as notícias desta categoria já foram respondidas");
                 return;
             }
-            
-            Random random = new Random();
-            Noticia noticia = noticiasDisponiveis.get(random.nextInt(noticiasDisponiveis.size()));
+
             ctx.json(noticia);
         });
         
-        app.get("/noticias/categoria/{categoriaId}", ctx -> { // notícias por categoria
+        app.get("/noticias/categoria/{categoriaId}", ctx -> { // lista todas as notícias de uma categoria
             Long categoriaId = Long.parseLong(ctx.pathParam("categoriaId"));
             List<Noticia> noticiasDaCategoria = dadosService.obtemNoticiasDaCategoria(categoriaId);
             ctx.json(noticiasDaCategoria);
@@ -233,63 +227,23 @@ public class Main {
         
         ///////// rotas para respostas //////////
         app.post("/noticias/{id}/responder", ctx -> { // responde notícia
-            Long noticiaId = Long.parseLong(ctx.pathParam("id"));
-            Map<String, Object> body = ctx.bodyAsClass(Map.class);
-            Long usuarioId = ((Number) body.get("usuarioId")).longValue();
-            boolean respostaUsuario = (boolean) body.get("resposta");
-            
-            Noticia noticia = dadosService.encontrarNoticia(noticiaId);
-            if (noticia == null) {
-                ctx.status(404).result("Notícia não encontrada");
-                return;
+            try {
+                Long noticiaId = Long.parseLong(ctx.pathParam("id"));
+                Map<String, Object> body = ctx.bodyAsClass(Map.class);
+                Long usuarioId = ((Number) body.get("usuarioId")).longValue();
+                boolean respostaUsuario = (boolean) body.get("resposta");
+
+                // Usa o JogoService para processar a resposta
+                Map<String, Object> resultado = jogoService.processarResposta(usuarioId, noticiaId, respostaUsuario);
+
+                ctx.status(201).json(resultado);
+            } catch (IllegalArgumentException e) {
+                ctx.status(404).result(e.getMessage());
+            } catch (IllegalStateException e) {
+                ctx.status(400).result(e.getMessage());
+            } catch (Exception e) {
+                ctx.status(500).result("Erro ao processar resposta: " + e.getMessage());
             }
-
-            boolean jaRespondeu = dadosService.jaRespondeuNoticia(usuarioId, noticiaId);
-            if (jaRespondeu) {
-                ctx.status(400).result("O usuário já respondeu esta notícia");
-                return;
-            }
-            
-            boolean acertou = (respostaUsuario == noticia.isEhVerdadeira());
-            int pontosGanhos = acertou ? 10 : -5;
-            
-            Resposta resposta = new Resposta(null, usuarioId, noticiaId,
-                                             respostaUsuario, acertou, pontosGanhos);
-            respostaRepository.save(resposta); // salva a resposta no banco
-
-            // Atualiza progresso na categoria
-            ProgressoCategoria progresso = progressoRepository.findByUsuarioAndCategoria(usuarioId, noticia.getCategoriaId());
-            if (progresso == null) {
-                progresso = new ProgressoCategoria(null, usuarioId,
-                                                   noticia.getCategoriaId(), 0, 0, new ArrayList<>()); // cria novo progresso
-                progressoRepository.save(progresso);
-            }
-
-            // Atualiza o progresso na categoria
-            int nivelAnterior = progresso.getNivelAtual();
-            int novosPontos = progresso.getPontosMaestria() + pontosGanhos;
-            if (novosPontos < 0) novosPontos = 0;
-            progresso.setPontosMaestria(novosPontos);
-
-            int novoNivel = calcularNivel(novosPontos); // atualiza o nível, com base nos pontos
-            progresso.setNivelAtual(novoNivel);
-
-            boolean subiuNivel = novoNivel > nivelAnterior; // se subiu de nível, desbloqueia uma peça
-            if (subiuNivel && !progresso.getPecasDesbloqueadas().contains(novoNivel)) {
-                progresso.getPecasDesbloqueadas().add(novoNivel);
-            }
-
-            progressoRepository.update(progresso); // salva progresso atualizado
-
-            Map<String, Object> resultado = new HashMap<>();
-            resultado.put("acertou", acertou);
-            resultado.put("pontosGanhos", pontosGanhos);
-            resultado.put("explicacao", noticia.getExplicacao());
-            resultado.put("subiuNivel", subiuNivel);
-            resultado.put("nivelAtual", novoNivel);
-            resultado.put("pontosCategoria", novosPontos);
-            resultado.put("pecasDesbloqueadas", progresso.getPecasDesbloqueadas());
-            ctx.status(201).json(resultado);
         });
         
         app.get("/usuarios/{id}/respostas", ctx -> { // respostas do usuário
@@ -317,15 +271,5 @@ public class Main {
 
         app.start(port);
         System.out.println("servidor rodando na porta " + port);
-    }
-
-    // Método auxiliar para calcular nível baseado em pontos de maestria
-    private static int calcularNivel(int pontos) {
-        if (pontos < 50) return 1;
-        if (pontos < 100) return 2;
-        if (pontos < 200) return 3;
-        if (pontos < 350) return 4;
-        if (pontos < 550) return 5;
-        return 6; // nível máximo
     }
 }
