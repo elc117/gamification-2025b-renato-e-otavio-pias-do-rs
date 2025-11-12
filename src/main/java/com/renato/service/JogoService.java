@@ -5,8 +5,8 @@ import com.renato.repository.*;
 import java.util.*;
 
 /**
- * Serviço responsável pela lógica principal do jogo.
- * Processa respostas, calcula pontos, atualiza progresso e verifica conquistas.
+ * serviço responsável pela lógica principal do jogo.
+ * processa respostas, calcula pontos, atualiza progresso e verifica conquistas.
  */
 public class JogoService {
     private final NoticiaRepository noticiaRepository;
@@ -28,7 +28,7 @@ public class JogoService {
     }
 
     /**
-     * Processa a resposta do usuário para uma notícia.
+     * processa a resposta do usuário para uma notícia.
      *
      * @param usuarioId ID do usuário
      * @param noticiaId ID da notícia
@@ -36,34 +36,36 @@ public class JogoService {
      * @return Map com informações sobre o resultado da resposta
      */
     public Map<String, Object> processarResposta(Long usuarioId, Long noticiaId, boolean respostaUsuario) {
-        // 1. Buscar notícia e verificar se existe
+        // 1. buscar notícia e verificar se existe
         Noticia noticia = noticiaRepository.findById(noticiaId);
         if (noticia == null) {
             throw new IllegalArgumentException("Notícia não encontrada");
         }
 
-        // 2. Verificar se o usuário já respondeu esta notícia
-        if (jaRespondeuNoticia(usuarioId, noticiaId)) {
-            throw new IllegalStateException("Usuário já respondeu esta notícia");
+        // 2. verificar se o usuário já acertou esta notícia
+        if (jaAcertouNoticia(usuarioId, noticiaId)) {
+            throw new IllegalStateException("Usuário já acertou esta notícia");
         }
 
-        // 3. Verificar se a resposta está correta
+        // 3. verificar se a resposta está correta
         boolean acertou = (respostaUsuario == noticia.isEhVerdadeira());
 
-        // 4. Calcular pontos ganhos
+        // 4. calcular pontos ganhos
         int pontosGanhos = pontuacaoService.calcularPontos(acertou);
 
-        // 5. Salvar a resposta no banco de dados
-        Resposta resposta = new Resposta(null, usuarioId, noticiaId, respostaUsuario, acertou, pontosGanhos);
-        respostaRepository.save(resposta);
+        // 5. salvar a resposta no banco de dados apenas se acertou
+        if (acertou) {
+            Resposta resposta = new Resposta(null, usuarioId, noticiaId, respostaUsuario, acertou, pontosGanhos);
+            respostaRepository.save(resposta);
+        }
 
-        // 6. Atualizar progresso na categoria
+        // 6. atualizar progresso na categoria
         Map<String, Object> infoProgresso = atualizarProgressoCategoria(usuarioId, noticia.getCategoriaId(), pontosGanhos);
 
-        // 7. Verificar e atribuir conquistas (se houver)
+        // 7. verificar e atribuir conquistas (se houver)
         verificarConquistas(usuarioId);
 
-        // 8. Montar e retornar resultado
+        // 8. montar e retornar resultado
         Map<String, Object> resultado = new HashMap<>();
         resultado.put("acertou", acertou);
         resultado.put("pontosGanhos", pontosGanhos);
@@ -77,51 +79,57 @@ public class JogoService {
     }
 
     /**
-     * Verifica se o usuário já respondeu uma notícia específica.
+     * verifica se o usuário já acertou uma notícia específica.
+     * as notícias erradas podem ser tentadas novamente.
      */
-    private boolean jaRespondeuNoticia(Long usuarioId, Long noticiaId) {
+    private boolean jaAcertouNoticia(Long usuarioId, Long noticiaId) {
         return respostaRepository.existsByUsuarioAndNoticia(usuarioId, noticiaId);
     }
 
     /**
-     * Atualiza o progresso do usuário em uma categoria específica.
+     * atualiza o progresso do usuário em uma categoria específica.
      *
      * @param usuarioId ID do usuário
      * @param categoriaId ID da categoria
-     * @param pontosGanhos pontos a adicionar (pode ser negativo)
+     * @param pontosGanhos pontos a adicionar
      * @return Map com informações sobre o progresso atualizado
      */
     private Map<String, Object> atualizarProgressoCategoria(Long usuarioId, Long categoriaId, int pontosGanhos) {
         ProgressoCategoria progresso = progressoRepository.findByUsuarioAndCategoria(usuarioId, categoriaId);
 
-        // Se não existe progresso, criar um novo
+        // se não existe progresso, criar um novo
         if (progresso == null) {
             progresso = new ProgressoCategoria(null, usuarioId, categoriaId, 0, 0, new ArrayList<>());
             progressoRepository.save(progresso);
         }
 
-        // Salvar nível anterior para verificar se subiu de nível
+        // salvar nível anterior para verificar se subiu de nível
         int nivelAnterior = progresso.getNivelAtual();
 
-        // Atualizar pontos (não pode ficar negativo)
+        // atualizar pontos (eles não podem ficar negativos)
         int novosPontos = progresso.getPontosMaestria() + pontosGanhos;
         if (novosPontos < 0) novosPontos = 0;
         progresso.setPontosMaestria(novosPontos);
 
-        // Calcular novo nível baseado nos pontos
+        // calcular novo nível baseado nos pontos
         int novoNivel = pontuacaoService.calcularNivel(novosPontos);
         progresso.setNivelAtual(novoNivel);
 
-        // Verificar se subiu de nível e desbloquear peça
+        // verificar se subiu de nível e desbloquear peça
+        // o nível 0 não desbloqueia peça (começa com 0%)
+        // nível 1 = peça 1, nível 2 = peça 2, nível 3 = peça 3, nível 4 = peça 4
         boolean subiuNivel = novoNivel > nivelAnterior;
-        if (subiuNivel && !progresso.getPecasDesbloqueadas().contains(novoNivel)) {
-            progresso.getPecasDesbloqueadas().add(novoNivel);
+        if (subiuNivel && novoNivel > 0) {
+            int numeroPeca = novoNivel; // nível 1 = peça 1, nível 2 = peça 2, etc
+            if (!progresso.getPecasDesbloqueadas().contains(numeroPeca)) {
+                progresso.getPecasDesbloqueadas().add(numeroPeca);
+            }
         }
 
-        // Salvar progresso atualizado
+        // salvar o progresso atualizado
         progressoRepository.update(progresso);
 
-        // Retornar informações do progresso
+        // retornar informações do progresso
         Map<String, Object> resultado = new HashMap<>();
         resultado.put("subiuNivel", subiuNivel);
         resultado.put("nivelAtual", novoNivel);
@@ -132,8 +140,8 @@ public class JogoService {
     }
 
     /**
-     * Verifica e atribui conquistas ao usuário baseado em seu progresso.
-     * (Implementação futura - deixar para próximas iterações)
+     * verifica e atribui conquistas ao usuário baseado em seu progresso.
+     * (implementação futura - deixar para próximas iterações)
      */
     private void verificarConquistas(Long usuarioId) {
         // TODO: Implementar lógica de conquistas
@@ -146,25 +154,26 @@ public class JogoService {
     }
 
     /**
-     * Obtém uma notícia aleatória de uma categoria específica que o usuário ainda não respondeu.
+     * obtém uma notícia aleatória de uma categoria específica que o usuário ainda não acertou.
+     * notícias erradas podem aparecer novamente.
      *
      * @param usuarioId ID do usuário
      * @param categoriaId ID da categoria escolhida
-     * @return notícia aleatória da categoria não respondida, ou null se já respondeu todas
+     * @return notícia aleatória da categoria não acertada, ou null se já acertou todas
      */
     public Noticia obterNoticiaAleatoriaDaCategoria(Long usuarioId, Long categoriaId) {
         List<Noticia> noticiasDaCategoria = noticiaRepository.findByCategoria(categoriaId);
         List<Resposta> respostasUsuario = respostaRepository.findByUsuario(usuarioId);
 
-        // Filtrar notícias não respondidas
-        Set<Long> noticiasRespondidas = new HashSet<>();
+        // filtrar notícias já acertadas (apenas respostas corretas estão salvas)
+        Set<Long> noticiasAcertadas = new HashSet<>();
         for (Resposta resposta : respostasUsuario) {
-            noticiasRespondidas.add(resposta.getNoticiaId());
+            noticiasAcertadas.add(resposta.getNoticiaId());
         }
 
         List<Noticia> noticiasDisponiveis = new ArrayList<>();
         for (Noticia noticia : noticiasDaCategoria) {
-            if (!noticiasRespondidas.contains(noticia.getId())) {
+            if (!noticiasAcertadas.contains(noticia.getId())) {
                 noticiasDisponiveis.add(noticia);
             }
         }
@@ -173,9 +182,8 @@ public class JogoService {
             return null;
         }
 
-        // Retornar notícia aleatória
+        // retornar notícia aleatória
         Random random = new Random();
         return noticiasDisponiveis.get(random.nextInt(noticiasDisponiveis.size()));
     }
 }
-

@@ -1,5 +1,6 @@
 package com.renato.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +13,7 @@ public class Noticia {
     @Column(name = "categoria_id", nullable = false)
     private Long categoriaId;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id", insertable = false, updatable = false)
     private Categoria categoria;
@@ -28,23 +30,16 @@ public class Noticia {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String explicacao;
 
-    @Column(nullable = false)
-    private int dificuldade;
-
-    @Column(columnDefinition = "TEXT")
-    private String fontes;
-
     public Noticia() {
     }
 
-    public Noticia(Long id, Long categoriaId, String titulo, String conteudo, boolean ehVerdadeira, String explicacao, int dificuldade) {
+    public Noticia(Long id, Long categoriaId, String titulo, String conteudo, boolean ehVerdadeira, String explicacao) {
         this.id = id;
         this.categoriaId = categoriaId;
         this.titulo = titulo;
         this.conteudo = conteudo;
         this.ehVerdadeira = ehVerdadeira;
         this.explicacao = explicacao;
-        this.dificuldade = dificuldade;
     }
 
     public Long getId() {
@@ -95,27 +90,11 @@ public class Noticia {
         this.explicacao = explicacao;
     }
 
-    public int getDificuldade() {
-        return dificuldade;
-    }
-
-    public void setDificuldade(int dificuldade) {
-        this.dificuldade = dificuldade;
-    }
-
     public Categoria getCategoria() {
         return categoria;
     }
 
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
-    }
-
-    public void setFontes(String fontes) {
-        this.fontes = fontes;
-    }
-
-    public String getFontes() {
-        return fontes;
     }
 }

@@ -1,5 +1,6 @@
 package com.renato.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -16,10 +17,12 @@ public class ProgressoCategoria {
     @Column(name = "categoria_id", nullable = false)
     private Long categoriaId;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", insertable = false, updatable = false)
     private Usuario usuario;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id", insertable = false, updatable = false)
     private Categoria categoria;
@@ -30,7 +33,7 @@ public class ProgressoCategoria {
     @Column(name = "pontos_maestria", nullable = false)
     private int pontosMaestria;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "pecas_desbloqueadas", joinColumns = @JoinColumn(name = "progresso_id"))
     @Column(name = "peca")
     private List<Integer> pecasDesbloqueadas;

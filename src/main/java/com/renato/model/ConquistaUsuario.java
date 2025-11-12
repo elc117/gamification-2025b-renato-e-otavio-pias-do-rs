@@ -1,5 +1,6 @@
 package com.renato.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -16,10 +17,12 @@ public class ConquistaUsuario {
     @Column(name = "conquista_id", nullable = false)
     private Long conquistaId;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", insertable = false, updatable = false)
     private Usuario usuario;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "conquista_id", insertable = false, updatable = false)
     private Conquista conquista;

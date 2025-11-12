@@ -1,25 +1,26 @@
 package com.renato.service;
 
 /**
- * Serviço responsável pelos cálculos relacionados a pontuação e níveis.
- * Centraliza as regras de progressão do jogo.
+ * serviço responsável pelos cálculos relacionados a pontuação e níveis.
+ * centraliza as regras de progressão do jogo.
  */
 public class PontuacaoService {
 
-    // Constantes de pontuação
+    // constantes de pontuação
     private static final int PONTOS_ACERTO = 10;
-    private static final int PONTOS_ERRO = -5;
+    private static final int PONTOS_ERRO = 0;
 
-    // Constantes de níveis (pontos necessários para cada nível)
-    private static final int PONTOS_NIVEL_1 = 0;    // Iniciante
-    private static final int PONTOS_NIVEL_2 = 50;   // Aprendiz
-    private static final int PONTOS_NIVEL_3 = 100;  // Conhecedor
-    private static final int PONTOS_NIVEL_4 = 200;  // Especialista
-    private static final int PONTOS_NIVEL_5 = 350;  // Mestre
-    private static final int PONTOS_NIVEL_6 = 550;  // Lenda (nível máximo)
+    // constantes de níveis (pontos necessários para cada nível)
+    // por ora, sistema simplificado: 1 acerto = 10 pontos = 1 nível
+    // níveis vão de 0 a 4
+    private static final int PONTOS_NIVEL_0 = 0;    // Nível 0 (0% - sem peças)
+    private static final int PONTOS_NIVEL_1 = 10;   // Nível 1 (25% - 1ª peça)
+    private static final int PONTOS_NIVEL_2 = 20;   // Nível 2 (50% - 2ª peça)
+    private static final int PONTOS_NIVEL_3 = 30;   // Nível 3 (75% - 3ª peça)
+    private static final int PONTOS_NIVEL_4 = 40;   // Nível 4 (100% - 4ª peça) - máximo
 
     /**
-     * Calcula os pontos ganhos baseado se o usuário acertou ou errou.
+     * calcula os pontos ganhos baseado se o usuário acertou ou errou.
      *
      * @param acertou true se acertou, false se errou
      * @return pontos ganhos (positivo para acerto, negativo para erro)
@@ -29,40 +30,38 @@ public class PontuacaoService {
     }
 
     /**
-     * Calcula o nível baseado nos pontos de maestria acumulados.
+     * calcula o nível baseado nos pontos de maestria acumulados.
      *
      * @param pontosMaestria total de pontos de maestria
-     * @return nível atual (1 a 6)
+     * @return nível atual (0 a 4)
      */
     public int calcularNivel(int pontosMaestria) {
+        if (pontosMaestria < PONTOS_NIVEL_1) return 0;
         if (pontosMaestria < PONTOS_NIVEL_2) return 1;
         if (pontosMaestria < PONTOS_NIVEL_3) return 2;
         if (pontosMaestria < PONTOS_NIVEL_4) return 3;
-        if (pontosMaestria < PONTOS_NIVEL_5) return 4;
-        if (pontosMaestria < PONTOS_NIVEL_6) return 5;
-        return 6; // nível máximo
+        return 4; // nível máximo
     }
 
     /**
-     * Retorna o nome do nível baseado no número do nível.
+     * retorna o nome do nível baseado no número do nível.
      *
-     * @param nivel número do nível (1 a 6)
+     * @param nivel número do nível (0 a 4)
      * @return nome do nível
      */
     public String obterNomeNivel(int nivel) {
         switch (nivel) {
-            case 1: return "Iniciante";
-            case 2: return "Aprendiz";
-            case 3: return "Conhecedor";
-            case 4: return "Especialista";
-            case 5: return "Mestre";
-            case 6: return "Lenda";
+            case 0: return "Iniciante";
+            case 1: return "Aprendiz";
+            case 2: return "Conhecedor";
+            case 3: return "Especialista";
+            case 4: return "Mestre";
             default: return "Desconhecido";
         }
     }
 
     /**
-     * Calcula quantos pontos faltam para o próximo nível.
+     * calcula quantos pontos faltam para o próximo nível.
      *
      * @param pontosMaestria pontos atuais de maestria
      * @return pontos faltantes para o próximo nível (0 se já está no nível máximo)
@@ -70,7 +69,7 @@ public class PontuacaoService {
     public int pontosParaProximoNivel(int pontosMaestria) {
         int nivelAtual = calcularNivel(pontosMaestria);
 
-        if (nivelAtual >= 6) {
+        if (nivelAtual >= 4) {
             return 0; // já está no nível máximo
         }
 
@@ -79,25 +78,24 @@ public class PontuacaoService {
     }
 
     /**
-     * Retorna os pontos necessários para atingir um determinado nível.
+     * retorna os pontos necessários para atingir um determinado nível.
      *
      * @param nivel número do nível desejado
      * @return pontos necessários
      */
     private int obterPontosNecessariosParaNivel(int nivel) {
         switch (nivel) {
+            case 0: return PONTOS_NIVEL_0;
             case 1: return PONTOS_NIVEL_1;
             case 2: return PONTOS_NIVEL_2;
             case 3: return PONTOS_NIVEL_3;
             case 4: return PONTOS_NIVEL_4;
-            case 5: return PONTOS_NIVEL_5;
-            case 6: return PONTOS_NIVEL_6;
             default: return 0;
         }
     }
 
     /**
-     * Calcula a porcentagem de progresso no nível atual.
+     * calcula a porcentagem de progresso no nível atual.
      *
      * @param pontosMaestria pontos atuais de maestria
      * @return porcentagem de progresso (0 a 100)
@@ -105,7 +103,7 @@ public class PontuacaoService {
     public double calcularPorcentagemProgressoNivel(int pontosMaestria) {
         int nivelAtual = calcularNivel(pontosMaestria);
 
-        if (nivelAtual >= 6) {
+        if (nivelAtual >= 4) {
             return 100.0; // já está no nível máximo
         }
 
@@ -118,24 +116,25 @@ public class PontuacaoService {
     }
 
     /**
-     * Verifica se os pontos são suficientes para desbloquear uma peça específica.
+     * verifica se os pontos são suficientes para desbloquear uma peça específica.
+     * nível 0 não desbloqueia peça (imagem em branco no frontend).
      *
      * @param pontosMaestria pontos atuais de maestria
-     * @param numeroPeca número da peça (1 a 6)
+     * @param numeroPeca número da peça (1 a 4)
      * @return true se pode desbloquear a peça, false caso contrário
      */
     public boolean podeDesbloquearPeca(int pontosMaestria, int numeroPeca) {
         int nivelAtual = calcularNivel(pontosMaestria);
+        // nível 0 não desbloqueia nada, então peça 1 só no nível 1
         return nivelAtual >= numeroPeca;
     }
 
     /**
-     * Retorna o total de peças disponíveis no jogo.
+     * retorna o total de peças disponíveis no jogo.
      *
-     * @return número total de peças (igual ao número de níveis)
+     * @return número total de peças (4 peças para 5 níveis)
      */
     public int getTotalPecas() {
-        return 6;
+        return 4;
     }
 }
-

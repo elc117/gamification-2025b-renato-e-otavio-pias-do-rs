@@ -1,4 +1,4 @@
-// a classe Main está com bastante responsabilidades. Isso também será alterado nos próximos commits,
+// a classe Main está com bastante responsabilidades. Isso será alterado nos próximos commits,
 // para separar estas responsabilidades.
 
 package com.renato;
@@ -17,14 +17,77 @@ public class Main {
     private static final ConquistaRepository conquistaRepository = new ConquistaRepository();
     private static final ConquistaUsuarioRepository conquistaUsuarioRepository = new ConquistaUsuarioRepository();
 
-    // Serviços
+    // serviços
     private static final JogoService jogoService = new JogoService();
     private static final PontuacaoService pontuacaoService = new PontuacaoService();
+
+    // chave para armazenar o ID do usuário na sessão
+    private static final String SESSION_USER_ID = "usuarioId";
+
+    // uma espécie de ajuda para obter o usuário autenticado da sessão
+    private static Long getUsuarioAutenticado(io.javalin.http.Context ctx) {
+        Long usuarioId = ctx.sessionAttribute(SESSION_USER_ID);
+        if (usuarioId == null) {
+            ctx.status(401).result("Usuário não autenticado. Faça login primeiro.");
+            return null;
+        }
+        return usuarioId;
+    }
 
     public static void main(String[] args) {
         int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "3000"));
         var app = Javalin.create(); // cria a aplicação Javalin
-        var dadosService = new DadosService(); // Novo construtor sem parâmetros - usa repositórios
+        var dadosService = new DadosService(); // construtor sem parâmetros - usa repositórios
+
+        ////////// rotas de autenticação (sessão simples) //////////
+        app.post("/login", ctx -> { // login simples sem senha (só com email)
+            Map<String, Object> body = ctx.bodyAsClass(Map.class);
+            String email = (String) body.get("email");
+            
+            if (email == null || email.trim().isEmpty()) {
+                ctx.status(400).result("Email é obrigatório");
+                return;
+            }
+
+            // buscar usuário por email
+            UsuarioRepository usuarioRepository = new UsuarioRepository();
+            Usuario usuario = usuarioRepository.findByEmail(email);
+            
+            if (usuario == null) {
+                ctx.status(404).result("Usuário não encontrado com este email");
+                return;
+            }
+
+            // criar sessão
+            ctx.sessionAttribute(SESSION_USER_ID, usuario.getId());
+            
+            Map<String, Object> resposta = new HashMap<>();
+            resposta.put("mensagem", "Login realizado com sucesso");
+            resposta.put("usuario", usuario);
+            ctx.json(resposta);
+        });
+
+        app.post("/logout", ctx -> { // logout
+            ctx.req().getSession().invalidate();
+            ctx.result("Logout realizado com sucesso");
+        });
+
+        app.get("/session/usuario", ctx -> { // verifica usuário logado
+            Long usuarioId = ctx.sessionAttribute(SESSION_USER_ID);
+            if (usuarioId == null) {
+                ctx.status(401).result("Nenhum usuário autenticado");
+                return;
+            }
+            
+            Usuario usuario = dadosService.encontrarUsuario(usuarioId);
+            if (usuario != null) {
+                ctx.json(usuario);
+            }
+            else {
+                ctx.status(404).result("Usuário da sessão não encontrado");
+            }
+        });
+        /////////////////////////////////////////
 
         ////////// rotas para usuários //////////
         app.get("/usuarios", ctx -> ctx.json(dadosService.listarUsuarios())); // lista todos os usuários
@@ -75,20 +138,22 @@ public class Main {
             ctx.status(204);
         });
 
-        app.get("/usuarios/{id}/perfil", ctx -> { //  busca perfil do usuário
+        app.get("/meu-perfil", ctx -> { //  busca perfil do usuário logado - usa sessão
             try {
-                Long id = Long.parseLong(ctx.pathParam("id"));
-                Usuario usuario = dadosService.encontrarUsuario(id);
+                Long usuarioId = getUsuarioAutenticado(ctx);
+                if (usuarioId == null) return; // erro 401
+                
+                Usuario usuario = dadosService.encontrarUsuario(usuarioId);
 
                 if (usuario == null) {
                     ctx.status(404).result("Usuário não encontrado");
                     return;
                 }
 
-                List<ProgressoCategoria> progressosUsuario = dadosService.obtemProgressosUsuario(id);
-                List<ConquistaUsuario> conquistasUsuarioLista = dadosService.obtemConquistasUsuario(id);
-                int totalRespostas = dadosService.obtemTotalRespostasUsuario(id);
-                int totalAcertos = dadosService.obtemTotalAcertosUsuario(id);
+                List<ProgressoCategoria> progressosUsuario = dadosService.obtemProgressosUsuario(usuarioId);
+                List<ConquistaUsuario> conquistasUsuarioLista = dadosService.obtemConquistasUsuario(usuarioId);
+                int totalRespostas = dadosService.obtemTotalRespostasUsuario(usuarioId);
+                int totalAcertos = dadosService.obtemTotalAcertosUsuario(usuarioId);
                 double taxaAcerto = totalRespostas > 0 ? (totalAcertos * 100.0 / totalRespostas) : 0;
 
                 Map<String, Object> perfil = new HashMap<>(); // para montar a resposta, eu usei HashMap
@@ -100,7 +165,8 @@ public class Main {
                 perfil.put("taxaAcerto", taxaAcerto);
 
                 ctx.json(perfil);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 System.err.println("Erro ao buscar perfil: " + e.getMessage());
                 e.printStackTrace();
                 ctx.status(500).result("Erro interno: " + e.getMessage());
@@ -122,9 +188,11 @@ public class Main {
             }
         });
         
-        app.get("/categorias/{id}/progresso/{usuarioId}", ctx -> { // progresso do usuário na categoria
+        app.get("/categorias/{id}/meu-progresso", ctx -> { // progresso do usuário logado na categoria - usa sessão
+            Long usuarioId = getUsuarioAutenticado(ctx);
+            if (usuarioId == null) return; // erro 401
+            
             Long categoriaId = Long.parseLong(ctx.pathParam("id"));
-            Long usuarioId = Long.parseLong(ctx.pathParam("usuarioId"));            
             ProgressoCategoria progresso = dadosService.obtemProgressoCategoria(usuarioId, categoriaId);
 
             if (progresso != null) {
@@ -159,8 +227,11 @@ public class Main {
         ////////// rotas para notícias //////////
         app.get("/noticias", ctx -> ctx.json(noticiaRepository.findAll())); // lista todas as notícias
 
-        app.get("/noticias/random/{usuarioId}/categoria/{categoriaId}", ctx -> { // notícia aleatória de categoria específica não respondida
-            Long usuarioId = Long.parseLong(ctx.pathParam("usuarioId"));
+        app.get("/noticias/random/categoria/{categoriaId}", ctx -> { // notícia aleatória de categoria - usa sessão
+            // pega usuário da sessão
+            Long usuarioId = getUsuarioAutenticado(ctx);
+            if (usuarioId == null) return; // erro 401
+            
             Long categoriaId = Long.parseLong(ctx.pathParam("categoriaId"));
 
             Noticia noticia = jogoService.obterNoticiaAleatoriaDaCategoria(usuarioId, categoriaId);
@@ -191,7 +262,8 @@ public class Main {
 
             if (noticia != null) {
                 ctx.json(noticia);
-            } else {
+            }
+            else {
                 ctx.status(404).result("Notícia não encontrada");
             }
         });
@@ -226,29 +298,37 @@ public class Main {
         /////////////////////////////////////////
         
         ///////// rotas para respostas //////////
-        app.post("/noticias/{id}/responder", ctx -> { // responde notícia
+        app.post("/noticias/{id}/responder", ctx -> { // responde notícia - usa sessão
             try {
+                // pega usuário da sessão
+                Long usuarioId = getUsuarioAutenticado(ctx);
+                if (usuarioId == null) return; // erro 401
+                
                 Long noticiaId = Long.parseLong(ctx.pathParam("id"));
                 Map<String, Object> body = ctx.bodyAsClass(Map.class);
-                Long usuarioId = ((Number) body.get("usuarioId")).longValue();
                 boolean respostaUsuario = (boolean) body.get("resposta");
 
-                // Usa o JogoService para processar a resposta
+                // usa o JogoService para processar a resposta
                 Map<String, Object> resultado = jogoService.processarResposta(usuarioId, noticiaId, respostaUsuario);
 
                 ctx.status(201).json(resultado);
-            } catch (IllegalArgumentException e) {
+            }
+            catch (IllegalArgumentException e) {
                 ctx.status(404).result(e.getMessage());
-            } catch (IllegalStateException e) {
+            }
+            catch (IllegalStateException e) {
                 ctx.status(400).result(e.getMessage());
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 ctx.status(500).result("Erro ao processar resposta: " + e.getMessage());
             }
         });
         
-        app.get("/usuarios/{id}/respostas", ctx -> { // respostas do usuário
-            Long id = Long.parseLong(ctx.pathParam("id"));
-            List<Resposta> respostasUsuario = dadosService.obtemRespostasUsuario(id);
+        app.get("/minhas-respostas", ctx -> { // respostas do usuário logado - usa sessão
+            Long usuarioId = getUsuarioAutenticado(ctx);
+            if (usuarioId == null) return; // erro 401
+            
+            List<Resposta> respostasUsuario = dadosService.obtemRespostasUsuario(usuarioId);
             ctx.json(respostasUsuario);
         });
         /////////////////////////////////////////
@@ -256,10 +336,33 @@ public class Main {
         ///////// rotas para conquistas ////////
         app.get("/conquistas", ctx -> ctx.json(conquistaRepository.findAll())); // lista todas as conquistas
 
-        app.get("/usuarios/{id}/conquistas", ctx -> { // lista conquistas de um usuário
-            Long id = Long.parseLong(ctx.pathParam("id"));
-            List<ConquistaUsuario> conquistasDoUsuario = dadosService.obtemConquistasUsuario(id);
+        app.get("/minhas-conquistas", ctx -> { // lista conquistas do usuário logado - usa sessão
+            Long usuarioId = getUsuarioAutenticado(ctx);
+            if (usuarioId == null) return; // erro 401
+            
+            List<ConquistaUsuario> conquistasDoUsuario = dadosService.obtemConquistasUsuario(usuarioId);
             ctx.json(conquistasDoUsuario);
+        });
+        /////////////////////////////////////////
+
+        ///////// rotas para recompensas ////////
+        app.get("/minhas-recompensas", ctx -> { // lista todas as recompensas do usuário logado - usa sessão
+            Long usuarioId = getUsuarioAutenticado(ctx);
+            if (usuarioId == null) return; // erro 401
+            
+            RecompensaService recompensaService = new RecompensaService();
+            List<Map<String, Object>> recompensas = recompensaService.obterTodasRecompensasUsuario(usuarioId);
+            ctx.json(recompensas);
+        });
+
+        app.get("/categorias/{categoriaId}/progresso-imagem", ctx -> { // progresso visual de uma categoria - usa sessão
+            Long usuarioId = getUsuarioAutenticado(ctx);
+            if (usuarioId == null) return; // erro 401
+            
+            Long categoriaId = Long.parseLong(ctx.pathParam("categoriaId"));
+            RecompensaService recompensaService = new RecompensaService();
+            Map<String, Object> progressoImagem = recompensaService.calcularProgressoImagem(usuarioId, categoriaId);
+            ctx.json(progressoImagem);
         });
         /////////////////////////////////////////
 

@@ -23,9 +23,7 @@ CREATE TABLE noticias (
     titulo VARCHAR(255) NOT NULL,
     conteudo TEXT NOT NULL,
     eh_verdadeira BOOLEAN NOT NULL,
-    explicacao TEXT NOT NULL,
-    dificuldade INTEGER NOT NULL DEFAULT 1,
-    fontes TEXT
+    explicacao TEXT NOT NULL
 );
 
 CREATE TABLE respostas (

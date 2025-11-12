@@ -1,5 +1,6 @@
 package com.renato.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -15,10 +16,12 @@ public class Resposta {
     @Column(name = "noticia_id", nullable = false)
     private Long noticiaId;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", insertable = false, updatable = false)
     private Usuario usuario;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "noticia_id", insertable = false, updatable = false)
     private Noticia noticia;
@@ -31,6 +34,10 @@ public class Resposta {
 
     @Column(name = "pontos_ganhos", nullable = false)
     private int pontosGanhos;
+
+    // Construtor vazio necessário para o Hibernate
+    public Resposta() {
+    }
 
     public Resposta(Long id) {
         this.id = id;
