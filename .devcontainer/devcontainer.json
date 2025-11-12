@@ -1,0 +1,67 @@
+{
+  "name": "Fact-or-Fake Dev Container",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "remoteUser": "vscode",
+  "workspaceFolder": "/workspace",
+  "forwardPorts": [3000, 5432],
+  "portsAttributes": {
+    "3000": {
+      "label": "Javalin API",
+      "onAutoForward": "notify"
+    },
+    "5432": {
+      "label": "PostgreSQL"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "redhat.java",
+        "vscjava.vscode-java-dependency",
+        "vscjava.vscode-java-debug",
+        "vscjava.vscode-java-test",
+        "ms-azuretools.vscode-docker",
+        "cweijan.vscode-postgresql-client2"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "java.configuration.runtimes": [
+          {
+            "name": "JavaSE-17",
+            "path": "/usr/local/sdkman/candidates/java/current"
+          }
+        ]
+      }
+    },
+    "codespaces": {
+      "repositories": {
+        "elc117/gamification-2025b-renato-e-otavio-pias-do-rs": {
+          "permissions": {
+            "contents": "write"
+          }
+        }
+      }
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "containerEnv": {
+    "MAVEN_OPTS": "-Xmx1024m",
+    "DB_HOST": "localhost",
+    "DB_PORT": "5432",
+    "DB_NAME": "fact_or_fake",
+    "DB_USER": "postgres",
+    "DB_PASSWORD": "postgres"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17",
+      "installMaven": "true"
+    },
+    "ghcr.io/devcontainers-contrib/features/postgres-asdf:1": {
+      "version": "latest"
+    }
+  }
+}
+
