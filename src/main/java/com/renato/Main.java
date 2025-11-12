@@ -4,6 +4,9 @@
 package com.renato;
 
 import io.javalin.Javalin;
+import io.javalin.json.JavalinJackson;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.renato.model.*;
 import com.renato.repository.*;
 import com.renato.service.*;
@@ -36,7 +39,16 @@ public class Main {
 
     public static void main(String[] args) {
         int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "3000"));
-        var app = Javalin.create(); // cria a aplicação Javalin
+
+        // Configurar ObjectMapper para suportar LocalDateTime
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+
+        // Criar aplicação Javalin com Jackson configurado
+        var app = Javalin.create(config -> {
+            config.jsonMapper(new JavalinJackson(objectMapper, true));
+        });
+
         var dadosService = new DadosService(); // construtor sem parâmetros - usa repositórios
 
         ////////// rotas de autenticação (sessão simples) //////////

@@ -141,16 +141,63 @@ public class JogoService {
 
     /**
      * verifica e atribui conquistas ao usuário baseado em seu progresso.
-     * (implementação futura - deixar para próximas iterações)
+     * analisa todas as conquistas disponíveis e verifica se o usuário atende aos critérios.
      */
     private void verificarConquistas(Long usuarioId) {
-        // TODO: Implementar lógica de conquistas
-        // Exemplos:
-        // - Primeira resposta correta
-        // - 10 respostas corretas seguidas
-        // - Completar todas as notícias de uma categoria
-        // - Atingir nível máximo em uma categoria
-        // etc.
+        // 1. buscar todas as conquistas disponíveis no sistema
+        List<Conquista> todasConquistas = conquistaRepository.findAll();
+        if (todasConquistas == null || todasConquistas.isEmpty()) {
+            return; // não há conquistas cadastradas
+        }
+
+        // 2. buscar conquistas já desbloqueadas pelo usuário
+        List<ConquistaUsuario> conquistasUsuario = conquistaUsuarioRepository.findByUsuario(usuarioId);
+        Set<Long> conquistasJaDesbloqueadas = new HashSet<>();
+        for (ConquistaUsuario cu : conquistasUsuario) {
+            conquistasJaDesbloqueadas.add(cu.getConquistaId());
+        }
+
+        // 3. calcular pontos totais do usuário (soma dos pontos de todas as respostas corretas)
+        int pontosTotais = calcularPontosTotais(usuarioId);
+
+        // 4. verificar cada conquista para ver se deve ser desbloqueada
+        for (Conquista conquista : todasConquistas) {
+            // se já desbloqueou esta conquista, pular
+            if (conquistasJaDesbloqueadas.contains(conquista.getId())) {
+                continue;
+            }
+
+            boolean desbloqueou = false;
+
+            if ("PONTOS_TOTAIS".equalsIgnoreCase(conquista.getTipo())) {
+                desbloqueou = pontosTotais >= conquista.getValorRequerido();
+            }
+
+            // se desbloqueou a conquista, salvar no banco
+            if (desbloqueou) {
+                ConquistaUsuario novaConquista = new ConquistaUsuario(
+                    null,
+                    usuarioId,
+                    conquista.getId(),
+                    java.time.LocalDateTime.now()
+                );
+                conquistaUsuarioRepository.save(novaConquista);
+                System.out.println("Conquista desbloqueada: " + conquista.getNome() + " para usuário " + usuarioId);
+            }
+        }
+    }
+
+    /**
+     * calcula o total de pontos acumulados pelo usuário.
+     * soma os pontos de todas as respostas corretas.
+     */
+    private int calcularPontosTotais(Long usuarioId) {
+        List<Resposta> respostas = respostaRepository.findByUsuario(usuarioId);
+        int total = 0;
+        for (Resposta resposta : respostas) {
+            total += resposta.getPontosGanhos();
+        }
+        return total;
     }
 
     /**

@@ -14,7 +14,7 @@
 
 - **Conquista.java** — Define conquistas desbloqueáveis com nome, descrição, ícone, critério, tipo e valor requerido.
 
-- **ConquistaUsuario.java** — Relaciona conquistas desbloqueadas por usuários com data de desbloqueio e status de visualização.
+- **ConquistaUsuario.java** — Relaciona conquistas desbloqueadas por usuários com data de desbloqueio.
 
 - **ProgressoCategoria.java** — Acompanha o progresso do usuário em cada categoria: nível atual, pontos de maestria e peças desbloqueadas.
 
@@ -25,6 +25,49 @@
 ### Camada de Serviço
 
 - **DadosService.java** — Camada de serviço que contém a lógica de negócio da aplicação. Gerencia operações CRUD e regras de negócio utilizando os repositórios para acessar o banco de dados. Inclui métodos para usuários, categorias, notícias, respostas, conquistas e progressos.
+
+- **JogoService.java** — Serviço responsável pela lógica principal do jogo:
+  - Processa respostas dos usuários
+  - Calcula pontuação
+  - Atualiza progresso em categorias
+  - Verifica e desbloqueia conquistas automaticamente
+  - Gerencia desbloqueio de peças do quebra-cabeça
+
+- **PontuacaoService.java** — Serviço de cálculo de pontuação e níveis:
+  - Calcula pontos por resposta (5 pontos por acerto, 0 por erro)
+  - Determina nível baseado em pontos acumulados
+  - Sistema de 5 níveis (0 a 4):
+    - Nível 0: 0 pontos (Iniciante - sem peças)
+    - Nível 1: 10 pontos (Aprendiz - 25% - 2 acertos)
+    - Nível 2: 20 pontos (Conhecedor - 50% - 4 acertos)
+    - Nível 3: 30 pontos (Especialista - 75% - 6 acertos)
+    - Nível 4: 40 pontos (Mestre - 100% - 8 acertos)
+  - Calcula porcentagem de progresso e pontos para próximo nível
+
+### Sistema de Gamificação
+
+#### Pontuação
+- **Acerto:** +5 pontos
+- **Erro:** 0 pontos (pode tentar novamente)
+- Apenas respostas corretas são salvas no banco
+- Notícias erradas podem ser respondidas novamente
+
+#### Conquistas
+O sistema de conquistas é desbloqueado automaticamente quando o usuário atinge determinados marcos:
+
+**Conquista Alfa - "Primeiros Passos":**
+- **Critério:** Acumular 20 pontos totais
+- **Equivalente:** 4 acertos (4 × 5 pontos)
+- **Tipo:** PONTOS_TOTAIS
+
+O sistema é extensível para futuros tipos de conquistas
+
+#### Progressão por Categoria
+Cada categoria possui sistema independente de maestria:
+- 5 níveis de progresso (0 a 4)
+- Desbloqueio de peças do quebra-cabeça por nível
+- Cada nível desbloqueia 25% da imagem completa
+- Imagem final revelada ao atingir nível 4 (Mestre)
 
 ### Camada de Persistência (Repositórios)
 

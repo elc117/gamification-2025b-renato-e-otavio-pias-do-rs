@@ -50,7 +50,7 @@ CREATE TABLE conquistas (
     id BIGSERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     descricao TEXT NOT NULL,
-    icone VARCHAR(50) NOT NULL,
+    caminho_imagem_completa VARCHAR(255),
     criterio VARCHAR(50) NOT NULL,
     tipo VARCHAR(50) NOT NULL,
     valor_requerido INTEGER NOT NULL
@@ -61,7 +61,6 @@ CREATE TABLE conquistas_usuario (
     usuario_id BIGINT REFERENCES usuarios(id) ON DELETE CASCADE,
     conquista_id BIGINT REFERENCES conquistas(id) ON DELETE CASCADE,
     data_desbloqueio TIMESTAMP NOT NULL,
-    visualizada BOOLEAN NOT NULL DEFAULT FALSE,
     UNIQUE(usuario_id, conquista_id)
 );
 

@@ -30,18 +30,14 @@ public class ConquistaUsuario {
     @Column(name = "data_desbloqueio", nullable = false)
     private LocalDateTime dataDesbloqueio;
 
-    @Column(nullable = false)
-    private boolean visualizada;
-
     public ConquistaUsuario() {
     }
 
-    public ConquistaUsuario(Long id, Long usuarioId, Long conquistaId, LocalDateTime dataDesbloqueio, boolean visualizada) {
+    public ConquistaUsuario(Long id, Long usuarioId, Long conquistaId, LocalDateTime dataDesbloqueio) {
         this.id = id;
         this.usuarioId = usuarioId;
         this.conquistaId = conquistaId;
         this.dataDesbloqueio = dataDesbloqueio;
-        this.visualizada = visualizada;
     }
 
     public Long getId() {
@@ -76,13 +72,6 @@ public class ConquistaUsuario {
         this.dataDesbloqueio = dataDesbloqueio;
     }
 
-    public boolean isVisualizada() {
-        return visualizada;
-    }
-
-    public void setVisualizada(boolean visualizada) {
-        this.visualizada = visualizada;
-    }
 
     public Usuario getUsuario() {
         return usuario;

@@ -7,17 +7,17 @@ package com.renato.service;
 public class PontuacaoService {
 
     // constantes de pontuação
-    private static final int PONTOS_ACERTO = 10;
+    private static final int PONTOS_ACERTO = 5;  // cada acerto vale 5 pontos
     private static final int PONTOS_ERRO = 0;
 
     // constantes de níveis (pontos necessários para cada nível)
-    // por ora, sistema simplificado: 1 acerto = 10 pontos = 1 nível
+    // sistema simplificado: cada acerto = 5 pontos
     // níveis vão de 0 a 4
     private static final int PONTOS_NIVEL_0 = 0;    // Nível 0 (0% - sem peças)
-    private static final int PONTOS_NIVEL_1 = 10;   // Nível 1 (25% - 1ª peça)
-    private static final int PONTOS_NIVEL_2 = 20;   // Nível 2 (50% - 2ª peça)
-    private static final int PONTOS_NIVEL_3 = 30;   // Nível 3 (75% - 3ª peça)
-    private static final int PONTOS_NIVEL_4 = 40;   // Nível 4 (100% - 4ª peça) - máximo
+    private static final int PONTOS_NIVEL_1 = 5;   // Nível 1 (25% - 1 peça) - 2 acertos
+    private static final int PONTOS_NIVEL_2 = 10;   // Nível 2 (50% - 2 peça) - 4 acertos
+    private static final int PONTOS_NIVEL_3 = 15;   // Nível 3 (75% - 3 peça) - 6 acertos
+    private static final int PONTOS_NIVEL_4 = 20;   // Nível 4 (100% - 4 peça) - 8 acertos (máximo)
 
     /**
      * calcula os pontos ganhos baseado se o usuário acertou ou errou.
