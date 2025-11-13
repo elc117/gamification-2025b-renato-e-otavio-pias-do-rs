@@ -66,11 +66,80 @@ public class Usuario {
         this.nivel = nivel;
     }
 
+    public int getPontuacaoTotal() {
+        return pontuacaoTotal;
+    }
+
+    public void setPontuacaoTotal(int pontuacaoTotal) {
+        this.pontuacaoTotal = pontuacaoTotal;
+    }
+
+    public String getTituloAtual() {
+        return tituloAtual;
+    }
+
+    public void setTituloAtual(String tituloAtual) {
+        this.tituloAtual = tituloAtual;
+    }
+
+    /**
+     * Adiciona pontos à pontuação total e atualiza o nível automaticamente.
+     * @param pontos pontos a adicionar (pode ser negativo para penalidades)
+     */
     public void adicionarPontos(int pontos) {
         this.pontuacaoTotal += pontos;
+        // Garantir que a pontuação não fique negativa
+        if (this.pontuacaoTotal < 0) {
+            this.pontuacaoTotal = 0;
+        }
         atualizarNivel();
     }
 
+    /**
+     * Atualiza o nível e título do usuário baseado na pontuação total.
+     * Sistema de progressão: a cada 50 pontos = 1 nível
+     * Nível máximo: 20
+     */
     private void atualizarNivel() {
+        // Calcular nível baseado na pontuação total
+        // A cada 50 pontos = 1 nível (começando do nível 1)
+        int novoNivel = (this.pontuacaoTotal / 50) + 1;
+
+        // Garantir que não passa do nível máximo
+        if (novoNivel > 20) {
+            novoNivel = 20;
+        }
+
+        this.nivel = novoNivel;
+        this.tituloAtual = obterTituloPorNivel(novoNivel);
+    }
+
+    /**
+     * Retorna o título baseado no nível do usuário.
+     * @param nivel nível do usuário
+     * @return título correspondente ao nível
+     */
+    private String obterTituloPorNivel(int nivel) {
+        if (nivel >= 18) return "Caçador Supremo";      // 850+ pontos
+        if (nivel >= 15) return "Detetive Master";      // 700+ pontos
+        if (nivel >= 12) return "Detetive";             // 550+ pontos
+        if (nivel >= 10) return "Investigador Sênior";  // 450+ pontos
+        if (nivel >= 7) return "Investigador";          // 300+ pontos
+        if (nivel >= 5) return "Analista";              // 200+ pontos
+        if (nivel >= 3) return "Reporter";              // 100+ pontos
+        return "Novato";                                // 0-99 pontos
+    }
+
+    /**
+     * Calcula quantos pontos faltam para o próximo nível.
+     * @return pontos necessários para o próximo nível (0 se já está no máximo)
+     */
+    public int pontosParaProximoNivel() {
+        if (this.nivel >= 20) {
+            return 0; // Já está no nível máximo
+        }
+
+        int pontosProximoNivel = this.nivel * 50;
+        return pontosProximoNivel - this.pontuacaoTotal;
     }
 }

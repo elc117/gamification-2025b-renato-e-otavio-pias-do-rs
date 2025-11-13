@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Combata a desinformação! Jogo educativo para desenvolver pensamento crítico">
+    <meta name="theme-color" content="#667eea">
+    <title>🎯 Fact or Fake - Combate à Desinformação</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Tela de Login -->
+    <div id="login-screen" class="screen active">
+        <div class="container">
+            <h1>🎯 Fact or Fake</h1>
+            <p class="subtitle">Combate à Desinformação</p>
+            <div class="login-box">
+                <h2>Entrar no Jogo</h2>
+                <input type="email" id="email-input" placeholder="📧 Digite seu e-mail" required />
+                <button id="login-btn" class="btn-primary">Entrar</button>
+                <p class="small-text">Novo por aqui? <a href="#" id="register-link">Criar conta</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tela de Registro -->
+    <div id="register-screen" class="screen">
+        <div class="container">
+            <h1>📝 Criar Conta</h1>
+            <div class="login-box">
+                <input type="text" id="nome-input" placeholder="👤 Digite seu nome" required />
+                <input type="email" id="email-reg-input" placeholder="📧 Digite seu e-mail" required />
+                <button id="register-btn" class="btn-primary">Criar Conta</button>
+                <p class="small-text">Já tem conta? <a href="#" id="login-link">Fazer login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Principal -->
+    <div id="menu-screen" class="screen">
+        <div class="header">
+            <div class="user-info">
+                <span id="user-name">Usuário</span>
+                <span id="user-level" class="badge">Nível 1</span>
+            </div>
+            <button id="logout-btn" class="btn-small">Sair</button>
+        </div>
+        <div class="container">
+            <h1>Menu Principal</h1>
+            <div class="menu-buttons">
+                <button id="play-btn" class="btn-large">🎮 Jogar</button>
+                <button id="profile-btn" class="btn-large">👤 Meu Perfil</button>
+                <button id="achievements-btn" class="btn-large">🏆 Conquistas</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seleção de Categoria -->
+    <div id="category-screen" class="screen">
+        <div class="header">
+            <button id="back-to-menu" class="btn-small">← Voltar</button>
+            <h2>Escolha uma Categoria</h2>
+        </div>
+        <div class="container">
+            <div id="categories-list" class="categories-grid">
+                <!-- Categorias serão carregadas aqui -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Tela de Jogo -->
+    <div id="game-screen" class="screen">
+        <div class="header">
+            <button id="back-to-categories" class="btn-small">← Voltar</button>
+            <h2 id="category-name">Categoria</h2>
+            <div id="category-progress">Maestria: <span id="maestria-points">0</span></div>
+        </div>
+        <div class="container game-container">
+            <div id="noticia-card" class="noticia-card">
+                <h3 id="noticia-titulo">Carregando notícia...</h3>
+                <p id="noticia-conteudo"></p>
+                <div class="buttons-row">
+                    <button id="fake-btn" class="btn-game btn-fake">❌ FAKE</button>
+                    <button id="fact-btn" class="btn-game btn-fact">✅ FATO</button>
+                </div>
+            </div>
+            <div id="feedback-card" class="feedback-card hidden">
+                <h3 id="feedback-title"></h3>
+                <p id="feedback-message"></p>
+                <p id="feedback-fonte"></p>
+                <div id="pontos-ganhos"></div>
+                <button id="next-btn" class="btn-primary">Próxima Notícia</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tela de Perfil -->
+    <div id="profile-screen" class="screen">
+        <div class="header">
+            <button id="back-to-menu-profile" class="btn-small">← Voltar</button>
+            <h2>Meu Perfil</h2>
+        </div>
+        <div class="container">
+            <div class="profile-info">
+                <h1 id="profile-name">Usuário</h1>
+                <p id="profile-level">Nível 1</p>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-value" id="total-respostas">0</span>
+                        <span class="stat-label">Respostas</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="total-acertos">0</span>
+                        <span class="stat-label">Acertos</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="taxa-acerto">0%</span>
+                        <span class="stat-label">Taxa de Acerto</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="pontuacao-total">0</span>
+                        <span class="stat-label">Pontuação Total</span>
+                    </div>
+                </div>
+            </div>
+            <h2 style="color: white; margin-top: 30px; text-align: center;">📊 Progresso por Categoria</h2>
+            <div id="categorias-progresso" class="progress-list">
+                <!-- Progresso será carregado aqui -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Tela de Conquistas -->
+    <div id="achievements-screen" class="screen">
+        <div class="header">
+            <button id="back-to-menu-achievements" class="btn-small">← Voltar</button>
+            <h2>🏆 Minhas Conquistas</h2>
+        </div>
+        <div class="container">
+            <div id="conquistas-list" class="achievements-grid">
+                <!-- Conquistas serão carregadas aqui -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
+

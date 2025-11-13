@@ -44,9 +44,14 @@ public class Main {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
-        // Criar aplicação Javalin com Jackson configurado
+        // Criar aplicação Javalin com Jackson configurado e servir arquivos estáticos
         var app = Javalin.create(config -> {
             config.jsonMapper(new JavalinJackson(objectMapper, true));
+            config.staticFiles.add(staticFiles -> {
+                staticFiles.hostedPath = "/";
+                staticFiles.directory = "frontend";
+                staticFiles.location = io.javalin.http.staticfiles.Location.EXTERNAL;
+            });
         });
 
         var dadosService = new DadosService(); // construtor sem parâmetros - usa repositórios
@@ -68,6 +73,12 @@ public class Main {
             if (usuario == null) {
                 ctx.status(404).result("Usuário não encontrado com este email");
                 return;
+            }
+
+            // garantir que o usuário tenha nível (caso antigo sem nível)
+            if (usuario.getNivel() == 0) {
+                usuario.setNivel(1);
+                usuarioRepository.update(usuario);
             }
 
             // criar sessão
@@ -353,7 +364,26 @@ public class Main {
             if (usuarioId == null) return; // erro 401
             
             List<ConquistaUsuario> conquistasDoUsuario = dadosService.obtemConquistasUsuario(usuarioId);
-            ctx.json(conquistasDoUsuario);
+
+            // Criar lista de mapas com os dados completos
+            List<Map<String, Object>> conquistasCompletas = new ArrayList<>();
+            for (ConquistaUsuario cu : conquistasDoUsuario) {
+                Conquista conquista = dadosService.obtemConquista(cu.getConquistaId());
+                if (conquista != null) {
+                    Map<String, Object> conquistaMap = new HashMap<>();
+                    conquistaMap.put("id", cu.getId());
+                    conquistaMap.put("usuarioId", cu.getUsuarioId());
+                    conquistaMap.put("conquistaId", cu.getConquistaId());
+                    // Converter LocalDateTime para String ISO
+                    conquistaMap.put("dataDesbloqueio", cu.getDataDesbloqueio() != null ? cu.getDataDesbloqueio().toString() : null);
+                    conquistaMap.put("nome", conquista.getNome());
+                    conquistaMap.put("descricao", conquista.getDescricao());
+                    conquistaMap.put("desbloqueada", true);
+                    conquistasCompletas.add(conquistaMap);
+                }
+            }
+
+            ctx.json(conquistasCompletas);
         });
         /////////////////////////////////////////
 
@@ -377,12 +407,6 @@ public class Main {
             ctx.json(progressoImagem);
         });
         /////////////////////////////////////////
-
-        ///////// rota para teste ////////
-        app.get("/", ctx -> { // rota só para fins de teste
-            ctx.result("backend está funcionando");
-        });
-        ////////////////////////////////////////
 
         app.start(port);
         System.out.println("servidor rodando na porta " + port);

@@ -53,27 +53,50 @@ public class JogoService {
         // 4. calcular pontos ganhos
         int pontosGanhos = pontuacaoService.calcularPontos(acertou);
 
-        // 5. salvar a resposta no banco de dados apenas se acertou
+        // 5. atualizar pontuação global e nível do usuário (se acertou)
+        Usuario usuario = usuarioRepository.findById(usuarioId);
+        int nivelAnterior = usuario.getNivel();
+        String tituloAnterior = usuario.getTituloAtual();
+
+        if (acertou && usuario != null) {
+            usuario.adicionarPontos(pontosGanhos);
+            usuarioRepository.update(usuario);
+        }
+
+        boolean subiuNivelGlobal = usuario.getNivel() > nivelAnterior;
+        boolean mudouTitulo = !tituloAnterior.equals(usuario.getTituloAtual());
+
+        // 6. salvar a resposta no banco de dados apenas se acertou
         if (acertou) {
             Resposta resposta = new Resposta(null, usuarioId, noticiaId, respostaUsuario, acertou, pontosGanhos);
             respostaRepository.save(resposta);
         }
 
-        // 6. atualizar progresso na categoria
+        // 7. atualizar progresso na categoria
         Map<String, Object> infoProgresso = atualizarProgressoCategoria(usuarioId, noticia.getCategoriaId(), pontosGanhos);
 
-        // 7. verificar e atribuir conquistas (se houver)
+        // 8. verificar e atribuir conquistas (se houver)
         verificarConquistas(usuarioId);
 
-        // 8. montar e retornar resultado
+        // 9. montar e retornar resultado
         Map<String, Object> resultado = new HashMap<>();
         resultado.put("acertou", acertou);
         resultado.put("pontosGanhos", pontosGanhos);
         resultado.put("explicacao", noticia.getExplicacao());
-        resultado.put("subiuNivel", infoProgresso.get("subiuNivel"));
-        resultado.put("nivelAtual", infoProgresso.get("nivelAtual"));
+
+        // Informações de progresso na categoria
+        resultado.put("subiuNivelCategoria", infoProgresso.get("subiuNivel"));
+        resultado.put("nivelCategoria", infoProgresso.get("nivelAtual"));
         resultado.put("pontosCategoria", infoProgresso.get("pontosMaestria"));
         resultado.put("pecasDesbloqueadas", infoProgresso.get("pecasDesbloqueadas"));
+
+        // Informações de progresso global do usuário
+        resultado.put("nivelGlobal", usuario.getNivel());
+        resultado.put("tituloAtual", usuario.getTituloAtual());
+        resultado.put("pontuacaoTotal", usuario.getPontuacaoTotal());
+        resultado.put("subiuNivelGlobal", subiuNivelGlobal);
+        resultado.put("mudouTitulo", mudouTitulo);
+        resultado.put("pontosParaProximoNivel", usuario.pontosParaProximoNivel());
 
         return resultado;
     }

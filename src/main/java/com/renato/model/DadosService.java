@@ -129,6 +129,10 @@ public class DadosService {
         return conquistaRepository.findAll();
     }
 
+    public Conquista obtemConquista(Long id) {
+        return conquistaRepository.findById(id);
+    }
+
     public Conquista salvarConquista(Conquista conquista) {
         return conquistaRepository.save(conquista);
     }
