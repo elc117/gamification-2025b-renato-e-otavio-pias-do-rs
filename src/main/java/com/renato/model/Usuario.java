@@ -24,6 +24,9 @@ public class Usuario {
     @Column(name = "titulo_atual")
     private String tituloAtual;
 
+    @Column(name = "total_tentativas", nullable = false)
+    private int totalTentativas = 0;
+
     public Usuario() {
     }
 
@@ -82,13 +85,25 @@ public class Usuario {
         this.tituloAtual = tituloAtual;
     }
 
+    public int getTotalTentativas() {
+        return totalTentativas;
+    }
+
+    public void setTotalTentativas(int totalTentativas) {
+        this.totalTentativas = totalTentativas;
+    }
+
+    public void incrementarTentativas() {
+        this.totalTentativas++;
+    }
+
     /**
-     * Adiciona pontos à pontuação total e atualiza o nível automaticamente.
+     * adiciona pontos à pontuação total e atualiza o nível automaticamente.
      * @param pontos pontos a adicionar (pode ser negativo para penalidades)
      */
     public void adicionarPontos(int pontos) {
         this.pontuacaoTotal += pontos;
-        // Garantir que a pontuação não fique negativa
+        // garantir que a pontuação não fique negativa
         if (this.pontuacaoTotal < 0) {
             this.pontuacaoTotal = 0;
         }
@@ -96,16 +111,16 @@ public class Usuario {
     }
 
     /**
-     * Atualiza o nível e título do usuário baseado na pontuação total.
-     * Sistema de progressão: a cada 50 pontos = 1 nível
-     * Nível máximo: 20
+     * atualiza o nível e título do usuário baseado na pontuação total.
+     * sistema de progressão: a cada 50 pontos = 1 nível
+     * nível máximo: 20
      */
     private void atualizarNivel() {
-        // Calcular nível baseado na pontuação total
-        // A cada 50 pontos = 1 nível (começando do nível 1)
-        int novoNivel = (this.pontuacaoTotal / 50) + 1;
+        // calcular nível baseado na pontuação total
+        // a cada 50 pontos = 1 nível (começando do nível 0)
+        int novoNivel = this.pontuacaoTotal / 50;
 
-        // Garantir que não passa do nível máximo
+        // garantir que não passa do nível máximo
         if (novoNivel > 20) {
             novoNivel = 20;
         }
@@ -115,7 +130,7 @@ public class Usuario {
     }
 
     /**
-     * Retorna o título baseado no nível do usuário.
+     * retorna o título baseado no nível do usuário.
      * @param nivel nível do usuário
      * @return título correspondente ao nível
      */
@@ -131,15 +146,15 @@ public class Usuario {
     }
 
     /**
-     * Calcula quantos pontos faltam para o próximo nível.
+     * calcula quantos pontos faltam para o próximo nível.
      * @return pontos necessários para o próximo nível (0 se já está no máximo)
      */
     public int pontosParaProximoNivel() {
         if (this.nivel >= 20) {
-            return 0; // Já está no nível máximo
+            return 0; // já está no nível máximo
         }
 
-        int pontosProximoNivel = this.nivel * 50;
+        int pontosProximoNivel = (this.nivel + 1) * 50;
         return pontosProximoNivel - this.pontuacaoTotal;
     }
 }

@@ -40,11 +40,11 @@ public class Main {
     public static void main(String[] args) {
         int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "3000"));
 
-        // Configurar ObjectMapper para suportar LocalDateTime
+        // configurar ObjectMapper para suportar LocalDateTime
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
-        // Criar aplicação Javalin com Jackson configurado e servir arquivos estáticos
+        // criar aplicação Javalin com Jackson configurado e servir arquivos estáticos
         var app = Javalin.create(config -> {
             config.jsonMapper(new JavalinJackson(objectMapper, true));
             config.staticFiles.add(staticFiles -> {
@@ -73,12 +73,6 @@ public class Main {
             if (usuario == null) {
                 ctx.status(404).result("Usuário não encontrado com este email");
                 return;
-            }
-
-            // garantir que o usuário tenha nível (caso antigo sem nível)
-            if (usuario.getNivel() == 0) {
-                usuario.setNivel(1);
-                usuarioRepository.update(usuario);
             }
 
             // criar sessão
@@ -128,7 +122,7 @@ public class Main {
         
         app.post("/usuarios", ctx -> { // cria novo usuário
             Usuario novoUsuario = ctx.bodyAsClass(Usuario.class); // converte JSON em objeto Java
-            novoUsuario.setNivel(1);
+            novoUsuario.setNivel(0);
             Usuario usuarioSalvo = dadosService.salvarUsuario(novoUsuario);
             ctx.status(201).json(usuarioSalvo);
         });
@@ -175,15 +169,15 @@ public class Main {
 
                 List<ProgressoCategoria> progressosUsuario = dadosService.obtemProgressosUsuario(usuarioId);
                 List<ConquistaUsuario> conquistasUsuarioLista = dadosService.obtemConquistasUsuario(usuarioId);
-                int totalRespostas = dadosService.obtemTotalRespostasUsuario(usuarioId);
+                int totalTentativas = usuario.getTotalTentativas();
                 int totalAcertos = dadosService.obtemTotalAcertosUsuario(usuarioId);
-                double taxaAcerto = totalRespostas > 0 ? (totalAcertos * 100.0 / totalRespostas) : 0;
+                double taxaAcerto = totalTentativas > 0 ? (totalAcertos * 100.0 / totalTentativas) : 0;
 
                 Map<String, Object> perfil = new HashMap<>(); // para montar a resposta, eu usei HashMap
                 perfil.put("usuario", usuario);
                 perfil.put("progressos", progressosUsuario != null ? progressosUsuario : new ArrayList<>());
                 perfil.put("conquistas", conquistasUsuarioLista != null ? conquistasUsuarioLista : new ArrayList<>());
-                perfil.put("totalRespostas", totalRespostas);
+                perfil.put("totalRespostas", totalTentativas);
                 perfil.put("totalAcertos", totalAcertos);
                 perfil.put("taxaAcerto", taxaAcerto);
 
@@ -365,17 +359,17 @@ public class Main {
             
             List<ConquistaUsuario> conquistasDoUsuario = dadosService.obtemConquistasUsuario(usuarioId);
 
-            // Criar lista de mapas com os dados completos
+            // criar lista de mapas com os dados completos
             List<Map<String, Object>> conquistasCompletas = new ArrayList<>();
-            for (ConquistaUsuario cu : conquistasDoUsuario) {
-                Conquista conquista = dadosService.obtemConquista(cu.getConquistaId());
+            for (ConquistaUsuario conqU : conquistasDoUsuario) {
+                Conquista conquista = dadosService.obtemConquista(conqU.getConquistaId());
                 if (conquista != null) {
                     Map<String, Object> conquistaMap = new HashMap<>();
-                    conquistaMap.put("id", cu.getId());
-                    conquistaMap.put("usuarioId", cu.getUsuarioId());
-                    conquistaMap.put("conquistaId", cu.getConquistaId());
-                    // Converter LocalDateTime para String ISO
-                    conquistaMap.put("dataDesbloqueio", cu.getDataDesbloqueio() != null ? cu.getDataDesbloqueio().toString() : null);
+                    conquistaMap.put("id", conqU.getId());
+                    conquistaMap.put("usuarioId", conqU.getUsuarioId());
+                    conquistaMap.put("conquistaId", conqU.getConquistaId());
+                    // converter LocalDateTime para String ISO
+                    conquistaMap.put("dataDesbloqueio", conqU.getDataDesbloqueio() != null ? conqU.getDataDesbloqueio().toString() : null);
                     conquistaMap.put("nome", conquista.getNome());
                     conquistaMap.put("descricao", conquista.getDescricao());
                     conquistaMap.put("desbloqueada", true);

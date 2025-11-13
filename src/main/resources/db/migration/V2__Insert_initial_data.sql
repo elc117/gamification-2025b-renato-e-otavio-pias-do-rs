@@ -38,3 +38,18 @@ false,
 'FALSO. Os senadores brasileiros são eleitos para mandatos de 8 anos, e a cada 4 anos é renovado um terço ou dois terços das cadeiras no Senado. Deputados federais, sim, têm mandatos de 4 anos.
 
 Fontes: <a href="https://www.senado.leg.br" target="_blank">Senado Federal</a>, <a href="https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm" target="_blank">Constituição Federal de 1988, artigo 46</a>');
+
+-- Script para adicionar conquista inicial
+-- Conquista beta: Primeiros Passos
+-- Cada questão correta = 5 pontos
+-- Para desbloquear a conquista = 20 pontos (equivalente a 4 acertos)
+
+INSERT INTO conquistas (nome, descricao, caminho_imagem_completa, criterio, tipo, valor_requerido)
+VALUES (
+    'Primeiros Passos',
+    'Acumule 20 pontos respondendo questões corretamente. Cada acerto vale 5 pontos!',
+    '🏆',
+    'Acumular pontos totais',
+    'PONTOS_TOTAIS',
+    20
+);

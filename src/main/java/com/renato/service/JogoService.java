@@ -53,18 +53,22 @@ public class JogoService {
         // 4. calcular pontos ganhos
         int pontosGanhos = pontuacaoService.calcularPontos(acertou);
 
-        // 5. atualizar pontuação global e nível do usuário (se acertou)
+        // 5. atualizar pontuação global e nível do usuário
         Usuario usuario = usuarioRepository.findById(usuarioId);
         int nivelAnterior = usuario.getNivel();
         String tituloAnterior = usuario.getTituloAtual();
 
+        // incrementar tentativas sempre (certo ou errado)
+        usuario.incrementarTentativas();
+
         if (acertou && usuario != null) {
             usuario.adicionarPontos(pontosGanhos);
-            usuarioRepository.update(usuario);
         }
+        
+        usuarioRepository.update(usuario);
 
         boolean subiuNivelGlobal = usuario.getNivel() > nivelAnterior;
-        boolean mudouTitulo = !tituloAnterior.equals(usuario.getTituloAtual());
+        boolean mudouTitulo = !Objects.equals(tituloAnterior, usuario.getTituloAtual());
 
         // 6. salvar a resposta no banco de dados apenas se acertou
         if (acertou) {

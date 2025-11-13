@@ -40,7 +40,14 @@ async function apiRequest(url, options = {}) {
             throw new Error(error || `Erro ${response.status}`);
         }
 
-        return await response.json();
+        // Verifica se a resposta tem conteúdo JSON
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            return await response.json();
+        } else {
+            // Se não for JSON, retorna o texto
+            return await response.text();
+        }
     } catch (error) {
         console.error('Erro na requisição:', error);
         throw error;
@@ -181,10 +188,30 @@ document.getElementById('back-to-menu').addEventListener('click', () => {
 // ========== JOGO ==========
 async function startGame(categoria) {
     currentCategory = categoria;
-    document.getElementById('category-name').textContent = categoria.nome;
-    showScreen('game-screen');
-    await loadNextNoticia();
-    await updateMaestriaDisplay();
+    
+    // Primeiro tenta carregar a notícia antes de mudar de tela
+    try {
+        currentNoticia = await apiRequest(`/noticias/random/categoria/${categoria.id}`);
+        
+        // Se conseguiu carregar, então muda para a tela do jogo
+        document.getElementById('category-name').textContent = categoria.nome;
+        showScreen('game-screen');
+        
+        // Atualiza a interface com a notícia carregada
+        document.getElementById('noticia-titulo').textContent = currentNoticia.titulo;
+        document.getElementById('noticia-conteudo').textContent = currentNoticia.conteudo;
+        document.getElementById('noticia-card').style.display = 'block';
+        document.getElementById('feedback-card').classList.add('hidden');
+        
+        // Habilitar botões
+        document.getElementById('fake-btn').disabled = false;
+        document.getElementById('fact-btn').disabled = false;
+        
+        await updateMaestriaDisplay();
+    } catch (error) {
+        // Se não conseguiu carregar, mostra erro e permanece na tela de categorias
+        showToast(error.message, 'error');
+    }
 }
 
 async function loadNextNoticia() {
@@ -201,7 +228,7 @@ async function loadNextNoticia() {
         document.getElementById('fake-btn').disabled = false;
         document.getElementById('fact-btn').disabled = false;
     } catch (error) {
-        alert('Erro: ' + error.message);
+        showToast(error.message, 'error');
         showScreen('category-screen');
     }
 }

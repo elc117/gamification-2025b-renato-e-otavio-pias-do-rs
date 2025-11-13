@@ -5,7 +5,8 @@ CREATE TABLE usuarios (
     email VARCHAR(100) NOT NULL UNIQUE,
     nivel INTEGER NOT NULL DEFAULT 1,
     pontuacao_total INTEGER NOT NULL DEFAULT 0,
-    titulo_atual VARCHAR(100)
+    titulo_atual VARCHAR(100),
+    total_tentativas INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE categorias (
