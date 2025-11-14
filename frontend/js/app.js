@@ -348,6 +348,11 @@ function mostrarFeedback(resultado) {
     // Adicionar informação de nível de categoria se subiu
     if (resultado.subiuNivelCategoria) {
         mensagemPontos += `\n⭐ Subiu para nível ${resultado.nivelCategoria} nesta categoria!`;
+        
+        // Se subiu de nível, significa que desbloqueou uma nova peça
+        if (resultado.nivelCategoria > 0 && resultado.nivelCategoria <= 4) {
+            mensagemPontos += `\n🎨 Nova peça da imagem desbloqueada! (${resultado.nivelCategoria}/4)`;
+        }
     }
 
     pontosDiv.innerHTML = mensagemPontos.replace(/\n/g, '<br>');
@@ -413,43 +418,46 @@ async function loadProfile() {
                 const acertosUnicos = estatisticas.acertosUnicos || 0;
                 const totalNoticias = estatisticas.totalNoticias || 0;
 
-                // USAR AS PEÇAS QUE VÊM DO BACKEND (já calculadas corretamente)
+                // Peças desbloqueadas do backend
                 const pecasDesbloqueadas = progresso.pecasDesbloqueadas || [];
+                const nivelCategoria = progresso.nivelAtual || 0;
 
                 const progressoItem = document.createElement('div');
                 progressoItem.className = 'progress-item';
 
-                // Criar visualização da imagem com reveal progressivo baseado na porcentagem
-                const imagemCategoria = categoria.caminhoImagemCompleta || 'assets/images/balance.jpg';
-
-                console.log(`[${categoria.nome}] Imagem: ${imagemCategoria}, Progresso: ${percentualProgresso}%`);
-
-                // Criar container da imagem com reveal progressivo de baixo para cima
-                const imagemHtml = `
-                    <div class="image-reveal-container">
-                        <div class="image-wrapper">
-                            <!-- Imagem completa de fundo -->
-                            <img src="${imagemCategoria}" 
-                                 alt="Recompensa ${categoria.nome}" 
-                                 class="reward-image-bg">
-                            <!-- Imagem que será revelada progressivamente -->
-                            <img src="${imagemCategoria}" 
-                                 alt="Recompensa ${categoria.nome}" 
-                                 class="reward-image-reveal"
-                                 style="clip-path: inset(${100 - percentualProgresso}% 0 0 0);">
-                            <!-- Indicador de progresso -->
-                            <div class="progress-indicator">${percentualProgresso.toFixed(1)}%</div>
+                // Criar puzzle de imagem por quadrantes - usar caminho do banco de dados
+                const imagemCategoria = categoria.caminhoImagemCompleta || 'assets/images/default.png';
+                
+                const puzzleHtml = `
+                    <div class="reward-image-container">
+                        <div class="image-puzzle">
+                            <div class="puzzle-piece ${pecasDesbloqueadas.includes(1) ? 'unlocked' : 'locked'}" 
+                                 data-piece="1" 
+                                 style="${pecasDesbloqueadas.includes(1) ? `background-image: url('${imagemCategoria}')` : ''}"></div>
+                            <div class="puzzle-piece ${pecasDesbloqueadas.includes(2) ? 'unlocked' : 'locked'}" 
+                                 data-piece="2"
+                                 style="${pecasDesbloqueadas.includes(2) ? `background-image: url('${imagemCategoria}')` : ''}"></div>
+                            <div class="puzzle-piece ${pecasDesbloqueadas.includes(3) ? 'unlocked' : 'locked'}" 
+                                 data-piece="3"
+                                 style="${pecasDesbloqueadas.includes(3) ? `background-image: url('${imagemCategoria}')` : ''}"></div>
+                            <div class="puzzle-piece ${pecasDesbloqueadas.includes(4) ? 'unlocked' : 'locked'}" 
+                                 data-piece="4"
+                                 style="${pecasDesbloqueadas.includes(4) ? `background-image: url('${imagemCategoria}')` : ''}"></div>
+                        </div>
+                        <div class="pieces-legend">
+                            <span class="legend-item"><span class="legend-box unlocked"></span> Desbloqueado (${pecasDesbloqueadas.length}/4)</span>
+                            <span class="legend-item"><span class="legend-box locked"></span> Bloqueado</span>
                         </div>
                     </div>
                 `;
 
                 progressoItem.innerHTML = `
                     <h4>${categoria.nome}</h4>
-                    <p>Progresso: ${percentualProgresso.toFixed(1)}% (${acertosUnicos}/${totalNoticias} questões)</p>
+                    <p>Nível ${nivelCategoria} • ${acertosUnicos}/${totalNoticias} questões acertadas</p>
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: ${percentualProgresso}%"></div>
                     </div>
-                    ${imagemHtml}
+                    ${puzzleHtml}
                 `;
                 progressoContainer.appendChild(progressoItem);
             } catch (error) {
