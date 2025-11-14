@@ -417,6 +417,8 @@ async function loadProfile() {
                 const percentualProgresso = estatisticas.percentualProgresso || 0;
                 const acertosUnicos = estatisticas.acertosUnicos || 0;
                 const totalNoticias = estatisticas.totalNoticias || 0;
+                const taxaAcertoCategoria = estatisticas.taxaAcertoCategoria || 0;
+                const tentativasNaCategoria = estatisticas.tentativasNaCategoria || 0;
 
                 // Peças desbloqueadas do backend
                 const pecasDesbloqueadas = progresso.pecasDesbloqueadas || [];
@@ -454,6 +456,10 @@ async function loadProfile() {
                 progressoItem.innerHTML = `
                     <h4>${categoria.nome}</h4>
                     <p>Nível ${nivelCategoria} • ${acertosUnicos}/${totalNoticias} questões acertadas</p>
+                    <p style="margin-top: 5px; font-size: 0.9rem; opacity: 0.8;">
+                        Taxa de acertos: <strong>${taxaAcertoCategoria.toFixed(1)}%</strong> 
+                        ${tentativasNaCategoria > 0 ? `(${tentativasNaCategoria} tentativa${tentativasNaCategoria > 1 ? 's' : ''})` : ''}
+                    </p>
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: ${percentualProgresso}%"></div>
                     </div>

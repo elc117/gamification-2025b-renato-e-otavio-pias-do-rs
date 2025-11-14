@@ -50,6 +50,7 @@ CREATE TABLE progresso_categoria (
     tentativas_categoria INTEGER NOT NULL DEFAULT 0,
     acertos_categoria INTEGER NOT NULL DEFAULT 0,
     taxa_acerto_categoria DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+    total_tentativas INTEGER NOT NULL DEFAULT 0,
     UNIQUE(usuario_id, categoria_id)
 );
 

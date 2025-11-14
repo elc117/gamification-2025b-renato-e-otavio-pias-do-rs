@@ -155,6 +155,9 @@ public class JogoService {
             progressoRepository.save(progresso);
         }
 
+        // incrementar tentativas na categoria (a cada resposta, certa ou errada)
+        progresso.incrementarTentativas();
+
         // calcular progresso baseado em cobertura de notícias
         long totalNoticias = noticiaRepository.countByCategoria(categoriaId);
         long acertosUnicos = respostaRepository.countAcertosByUsuarioAndCategoria(usuarioId, categoriaId);
@@ -274,7 +277,7 @@ public class JogoService {
         List<Noticia> noticiasDaCategoria = noticiaRepository.findByCategoria(categoriaId);
         List<Resposta> respostasUsuario = respostaRepository.findByUsuario(usuarioId);
 
-        // filtrar apenas notícias já ACERTADAS (erradas podem aparecer de novo)
+        // filtrar apenas notícias já acertadas (erradas podem aparecer de novo)
         Set<Long> noticiasAcertadas = new HashSet<>();
         for (Resposta resposta : respostasUsuario) {
             if (resposta.isEstaCorreta()) { // só bloqueia se acertou

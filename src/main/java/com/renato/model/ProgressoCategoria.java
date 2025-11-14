@@ -33,6 +33,9 @@ public class ProgressoCategoria {
     @Column(name = "pontos_maestria", nullable = false)
     private int pontosMaestria;
 
+    @Column(name = "total_tentativas", nullable = false)
+    private int totalTentativas = 0;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "pecas_desbloqueadas", joinColumns = @JoinColumn(name = "progresso_id"))
     @Column(name = "peca")
@@ -88,6 +91,18 @@ public class ProgressoCategoria {
 
     public void setPontosMaestria(int pontosMaestria) {
         this.pontosMaestria = pontosMaestria;
+    }
+
+    public int getTotalTentativas() {
+        return totalTentativas;
+    }
+
+    public void setTotalTentativas(int totalTentativas) {
+        this.totalTentativas = totalTentativas;
+    }
+
+    public void incrementarTentativas() {
+        this.totalTentativas++;
     }
 
     public List<Integer> getPecasDesbloqueadas() {

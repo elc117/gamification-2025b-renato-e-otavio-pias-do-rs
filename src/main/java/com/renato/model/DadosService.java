@@ -178,10 +178,11 @@ public class DadosService {
         // Acertos únicos do usuário nesta categoria
         long acertosUnicos = respostaRepository.countAcertosByUsuarioAndCategoria(usuarioId, categoriaId);
 
-        // Total de tentativas (acertos + erros) na categoria
-        long tentativasNaCategoria = respostaRepository.countAllByUsuarioAndCategoria(usuarioId, categoriaId);
+        // Buscar progresso para obter total de tentativas
+        ProgressoCategoria progresso = progressoCategoriaRepository.findByUsuarioAndCategoria(usuarioId, categoriaId);
+        long tentativasNaCategoria = progresso != null ? progresso.getTotalTentativas() : 0;
 
-        // Calcular taxa de acerto REAL
+        // Calcular taxa de acerto real (baseada nas tentativas reais, não apenas acertos salvos)
         double taxaAcerto = tentativasNaCategoria > 0
             ? (acertosUnicos * 100.0 / tentativasNaCategoria)
             : 0;
