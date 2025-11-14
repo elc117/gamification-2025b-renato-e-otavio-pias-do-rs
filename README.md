@@ -157,3 +157,204 @@ O arquivo **Main.java** implementa a API REST usando Javalin, com endpoints para
 
 **Observação:** O sistema foi migrado de arrays em memória para persistência completa em banco de dados PostgreSQL, garantindo que todos os dados sejam salvos permanentemente. Todos os endpoints CRUD (Create, Read, Update, Delete) estão implementados para as principais entidades.
 
+---
+
+## 🐳 DevContainer
+
+O projeto está configurado com um **DevContainer** para facilitar o desenvolvimento e avaliação sem necessidade de instalar dependências localmente.
+
+### O que está incluído?
+- ☕ Java 17 (OpenJDK)
+- 📦 Maven
+- 🐘 PostgreSQL
+- 🔧 Ferramentas de desenvolvimento
+
+### Como usar?
+
+#### Opção 1: GitHub Codespaces (Recomendado)
+1. Acesse o repositório no GitHub
+2. Clique em **Code** > **Codespaces** > **Create codespace on main**
+3. Aguarde o ambiente inicializar
+4. Execute: `mvn exec:java`
+5. Acesse: `http://localhost:3000`
+
+#### Opção 2: VS Code Local
+1. Instale a extensão **Dev Containers**
+2. Abra o projeto
+3. Pressione `F1` > **Dev Containers: Reopen in Container**
+4. Execute: `mvn exec:java`
+
+**Mais detalhes:** Veja `.devcontainer/README.md`
+
+---
+
+## 🚀 Como executar localmente (sem DevContainer)
+
+### Pré-requisitos
+- Java 17+
+- Maven
+- PostgreSQL
+
+### Configuração do Banco de Dados
+1. Crie o banco: `CREATE DATABASE fact_or_fake;`
+2. Configure as credenciais em `hibernate.cfg.xml`
+
+### Executar
+```bash
+mvn clean package
+mvn exec:java
+```
+
+A API estará disponível em: `http://localhost:3000`
+
+---
+
+## 🧪 Testando a API
+
+### PowerShell (Windows)
+```powershell
+# Criar sessão para testes
+$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
+
+# Login
+Invoke-RestMethod -Uri "http://localhost:3000/login" -Method POST -Body '{"email":"usuario@example.com"}' -ContentType "application/json" -WebSession $session
+
+# Obter notícia aleatória
+Invoke-RestMethod -Uri "http://localhost:3000/noticias/random/categoria/1" -Method GET -WebSession $session
+
+# Responder notícia
+Invoke-RestMethod -Uri "http://localhost:3000/noticias/1/responder" -Method POST -Body '{"resposta":true}' -ContentType "application/json" -WebSession $session
+
+# Ver perfil
+Invoke-RestMethod -Uri "http://localhost:3000/meu-perfil" -Method GET -WebSession $session
+```
+
+### Linux/Mac/Codespaces
+```bash
+# Listar usuários
+curl http://localhost:3000/usuarios
+
+# Criar usuário
+curl -X POST http://localhost:3000/usuarios \
+  -H "Content-Type: application/json" \
+  -d '{"nome":"João","email":"joao@example.com"}'
+
+# Listar categorias
+curl http://localhost:3000/categorias
+```
+
+---
+
+## 📊 Sistema de Pontuação e Níveis
+
+### Pontos
+- **Acerto:** +10 pontos
+- **Erro:** 0 pontos (não perde progresso)
+- Apenas respostas corretas são salvas
+
+### Níveis da Conta
+A progressão é **global** (soma de todas as categorias):
+
+```
+XP necessário = 100 × nível atual
+```
+
+| Nível | XP Necessário | XP Total Acumulado | Título |
+|-------|---------------|-------------------|---------|
+| 1 | 0 | 0 | Reporter |
+| 2-4 | 100-400 | 100-1000 | Reporter |
+| 5-9 | 500-900 | 1500-4500 | Analista |
+| 10-14 | 1000-1400 | 5500-10500 | Investigador |
+| 15-19 | 1500-1900 | 12000-19000 | Investigador Sênior |
+| 20-24 | 2000-2400 | 21000-30000 | Detetive |
+| 25-29 | 2500-2900 | 32500-43500 | Detetive Master |
+| 30+ | 3000+ | 46500+ | **Caçador Supremo** |
+
+### Progresso por Categoria
+Cada categoria possui progresso independente:
+
+```
+Progresso = (acertos_únicos / total_notícias_categoria) × 100
+```
+
+**Desbloqueio de Peças:**
+- 25% de progresso → Peça 1
+- 50% de progresso → Peça 2
+- 75% de progresso → Peça 3
+- 100% de progresso → Peça 4 (imagem completa!)
+
+### Taxa de Acerto
+Métrica de desempenho geral:
+
+```
+Taxa de Acerto = (total_acertos / total_tentativas) × 100
+```
+
+Não afeta pontos ou nível, apenas estatística.
+
+---
+
+## 📁 Estrutura do Projeto
+
+```
+src/
+├── main/
+│   ├── java/com/renato/
+│   │   ├── Main.java              # API REST (Javalin)
+│   │   ├── config/
+│   │   │   └── HibernateConfig.java
+│   │   ├── model/                 # Entidades
+│   │   ├── repository/            # Camada de dados
+│   │   └── service/               # Lógica de negócio
+│   └── resources/
+│       ├── hibernate.cfg.xml      # Config Hibernate
+│       └── db/migration/          # Scripts SQL
+frontend/
+├── index.html                     # Interface do usuário
+├── css/style.css
+└── js/app.js
+.devcontainer/                     # Configuração DevContainer
+├── devcontainer.json
+├── Dockerfile
+├── setup.sh
+├── test.sh
+└── README.md
+```
+
+---
+
+## 🎮 Frontend
+
+Interface web desenvolvida com HTML, CSS e JavaScript vanilla.
+
+**Funcionalidades:**
+- 🏠 Página inicial
+- 🎯 Jogo (responder notícias)
+- 👤 Perfil do usuário
+  - Barra de progresso de nível
+  - Progresso por categoria
+  - Conquistas desbloqueadas
+  - Recompensas visuais (peças)
+- 📊 Estatísticas
+- 🔐 Sistema de sessão (login simples por email)
+
+**Acesso:** `http://localhost:3000` (após iniciar o backend)
+
+---
+
+## 👥 Autores
+
+- Renato
+- Otávio
+
+**Disciplina:** Paradigmas de Programação  
+**Instituição:** UFSM  
+**Ano:** 2025
+
+---
+
+## 📝 Licença
+
+Este projeto é acadêmico e foi desenvolvido para fins educacionais.
+
+

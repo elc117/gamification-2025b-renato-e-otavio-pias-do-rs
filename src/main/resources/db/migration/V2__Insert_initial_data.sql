@@ -41,15 +41,15 @@ Fontes: <a href="https://www.senado.leg.br" target="_blank">Senado Federal</a>, 
 
 -- Script para adicionar conquista inicial
 -- Conquista beta: Primeiros Passos
--- Cada questão correta = 5 pontos
--- Para desbloquear a conquista = 20 pontos (equivalente a 4 acertos)
+-- Cada questão correta = 10 pontos
+-- Para desbloquear a conquista = 40 pontos (equivalente a 4 acertos)
 
 INSERT INTO conquistas (nome, descricao, caminho_imagem_completa, criterio, tipo, valor_requerido)
 VALUES (
     'Primeiros Passos',
-    'Acumule 20 pontos respondendo questões corretamente. Cada acerto vale 5 pontos!',
+    'Acumule 40 pontos respondendo questões corretamente. Cada acerto vale 10 pontos!',
     '🏆',
     'Acumular pontos totais',
     'PONTOS_TOTAIS',
-    20
+    40
 );

@@ -35,6 +35,9 @@ public class Resposta {
     @Column(name = "pontos_ganhos", nullable = false)
     private int pontosGanhos;
 
+    @Column(name = "tentativas", nullable = false)
+    private int tentativas = 1;
+
     // Construtor vazio necessário para o Hibernate
     public Resposta() {
     }
@@ -98,6 +101,18 @@ public class Resposta {
 
     public void setPontosGanhos(int pontosGanhos) {
         this.pontosGanhos = pontosGanhos;
+    }
+
+    public int getTentativas() {
+        return tentativas;
+    }
+
+    public void setTentativas(int tentativas) {
+        this.tentativas = tentativas;
+    }
+
+    public void incrementarTentativas() {
+        this.tentativas++;
     }
 
     public Usuario getUsuario() {

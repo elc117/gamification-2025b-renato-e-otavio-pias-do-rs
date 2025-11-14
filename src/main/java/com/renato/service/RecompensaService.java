@@ -19,7 +19,12 @@ public class RecompensaService {
 
     /**
      * calcula o progresso percentual da imagem desbloqueada em uma categoria.
-     * 
+     * Sistema de peças por quadrante:
+     * - 25% de progresso: desbloqueia peça 1 (quadrante superior esquerdo)
+     * - 50% de progresso: desbloqueia peça 2 (quadrante superior direito)
+     * - 75% de progresso: desbloqueia peça 3 (quadrante inferior esquerdo)
+     * - 100% de progresso: desbloqueia peça 4 (quadrante inferior direito) - imagem completa!
+     *
      * @param usuarioId ID do usuário
      * @param categoriaId ID da categoria
      * @return Map com informações do progresso visual (percentual, peças desbloqueadas, etc)
@@ -35,6 +40,7 @@ public class RecompensaService {
             resultado.put("pecasDesbloqueadas", new ArrayList<>());
             resultado.put("totalPecas", 4);
             resultado.put("imagemCompleta", false);
+            resultado.put("descricaoPecas", obterDescricaoPecas(new ArrayList<>()));
             return resultado;
         }
 
@@ -51,8 +57,32 @@ public class RecompensaService {
         resultado.put("totalPecas", totalPecas);
         resultado.put("imagemCompleta", imagemCompleta);
         resultado.put("caminhoImagemCompleta", categoria.getCaminhoImagemCompleta());
+        resultado.put("descricaoPecas", obterDescricaoPecas(pecasDesbloqueadas));
 
         return resultado;
+    }
+
+    /**
+     * Retorna descrição detalhada de cada peça por quadrante.
+     *
+     * @param pecasDesbloqueadas lista de peças já desbloqueadas
+     * @return Map com descrição de cada quadrante
+     */
+    private Map<Integer, String> obterDescricaoPecas(List<Integer> pecasDesbloqueadas) {
+        Map<Integer, String> descricoes = new HashMap<>();
+        descricoes.put(1, pecasDesbloqueadas != null && pecasDesbloqueadas.contains(1)
+            ? "Quadrante Superior Esquerdo - Desbloqueado (25%)"
+            : "Quadrante Superior Esquerdo - Bloqueado (Alcance 25%)");
+        descricoes.put(2, pecasDesbloqueadas != null && pecasDesbloqueadas.contains(2)
+            ? "Quadrante Superior Direito - Desbloqueado (50%)"
+            : "Quadrante Superior Direito - Bloqueado (Alcance 50%)");
+        descricoes.put(3, pecasDesbloqueadas != null && pecasDesbloqueadas.contains(3)
+            ? "Quadrante Inferior Esquerdo - Desbloqueado (75%)"
+            : "Quadrante Inferior Esquerdo - Bloqueado (Alcance 75%)");
+        descricoes.put(4, pecasDesbloqueadas != null && pecasDesbloqueadas.contains(4)
+            ? "Quadrante Inferior Direito - COMPLETO! (100%)"
+            : "Quadrante Inferior Direito - Bloqueado (Alcance 100%)");
+        return descricoes;
     }
 
     /**

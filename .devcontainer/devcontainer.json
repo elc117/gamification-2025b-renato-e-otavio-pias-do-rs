@@ -26,22 +26,7 @@
         "cweijan.vscode-postgresql-client2"
       ],
       "settings": {
-        "terminal.integrated.defaultProfile.linux": "bash",
-        "java.configuration.runtimes": [
-          {
-            "name": "JavaSE-17",
-            "path": "/usr/local/sdkman/candidates/java/current"
-          }
-        ]
-      }
-    },
-    "codespaces": {
-      "repositories": {
-        "elc117/gamification-2025b-renato-e-otavio-pias-do-rs": {
-          "permissions": {
-            "contents": "write"
-          }
-        }
+        "terminal.integrated.defaultProfile.linux": "bash"
       }
     }
   },

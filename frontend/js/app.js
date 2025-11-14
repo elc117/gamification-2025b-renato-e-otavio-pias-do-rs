@@ -207,7 +207,7 @@ async function startGame(categoria) {
         document.getElementById('fake-btn').disabled = false;
         document.getElementById('fact-btn').disabled = false;
         
-        await updateMaestriaDisplay();
+        await updateProgressoDisplay();
     } catch (error) {
         // Se não conseguiu carregar, mostra erro e permanece na tela de categorias
         showToast(error.message, 'error');
@@ -233,12 +233,14 @@ async function loadNextNoticia() {
     }
 }
 
-async function updateMaestriaDisplay() {
+async function updateProgressoDisplay() {
     try {
         const progresso = await apiRequest(`/categorias/${currentCategory.id}/meu-progresso`);
-        document.getElementById('maestria-points').textContent = progresso.pontos || 0;
+        const estatisticas = progresso.estatisticas || progresso;
+        const percentualProgresso = estatisticas.percentualProgresso || 0;
+        document.getElementById('progresso-percent').textContent = `${percentualProgresso.toFixed(1)}%`;
     } catch (error) {
-        console.error('Erro ao carregar maestria:', error);
+        console.error('Erro ao carregar progresso:', error);
     }
 }
 
@@ -269,7 +271,7 @@ async function responderNoticia(resposta) {
         }
 
         mostrarFeedback(resultado);
-        await updateMaestriaDisplay();
+        await updateProgressoDisplay();
     } catch (error) {
         alert('Erro ao responder: ' + error.message);
         document.getElementById('fake-btn').disabled = false;
@@ -379,10 +381,22 @@ async function loadProfile() {
             : `Nível ${usuario.nivel}`;
         document.getElementById('profile-level').textContent = nivelTexto;
 
+        // Atualizar barra de progresso de nível global
+        const pontosAtuais = perfil.pontosAtuais || 0;
+        const pontosFaltam = perfil.pontosFaltam || 100;
+        const pontosProximoNivel = perfil.pontosProximoNivel || 100;
+
+        // Calcular percentual de progresso para o próximo nível
+        const pontosNoNivelAtual = pontosProximoNivel - pontosFaltam;
+        const percentualNivel = (pontosNoNivelAtual / pontosProximoNivel) * 100;
+
+        document.getElementById('nivel-pontos-atual').textContent = pontosAtuais;
+        document.getElementById('nivel-pontos-faltam').textContent = pontosFaltam;
+        document.getElementById('nivel-progress-fill').style.width = `${percentualNivel}%`;
+
         document.getElementById('total-respostas').textContent = perfil.totalRespostas || 0;
         document.getElementById('total-acertos').textContent = perfil.totalAcertos || 0;
         document.getElementById('taxa-acerto').textContent = perfil.taxaAcerto ? `${perfil.taxaAcerto.toFixed(1)}%` : '0%';
-        document.getElementById('pontuacao-total').textContent = usuario.pontuacaoTotal || 0;
 
         // Carregar progresso por categoria
         const categorias = await apiRequest('/categorias');
@@ -393,20 +407,49 @@ async function loadProfile() {
             try {
                 const progresso = await apiRequest(`/categorias/${categoria.id}/meu-progresso`);
 
+                // Obter estatísticas (pode estar em progresso.estatisticas ou direto em progresso)
+                const estatisticas = progresso.estatisticas || progresso;
+                const percentualProgresso = estatisticas.percentualProgresso || 0;
+                const acertosUnicos = estatisticas.acertosUnicos || 0;
+                const totalNoticias = estatisticas.totalNoticias || 0;
+
+                // USAR AS PEÇAS QUE VÊM DO BACKEND (já calculadas corretamente)
+                const pecasDesbloqueadas = progresso.pecasDesbloqueadas || [];
+
                 const progressoItem = document.createElement('div');
                 progressoItem.className = 'progress-item';
 
-                const pontos = progresso.pontos || 0;
-                const nivelAtual = progresso.nivelAtual || 1;
-                const pontosProximoNivel = progresso.pontosProximoNivel || 100;
-                const percentual = Math.min((pontos / pontosProximoNivel) * 100, 100);
+                // Criar visualização da imagem com reveal progressivo baseado na porcentagem
+                const imagemCategoria = categoria.caminhoImagemCompleta || 'assets/images/balance.jpg';
+
+                console.log(`[${categoria.nome}] Imagem: ${imagemCategoria}, Progresso: ${percentualProgresso}%`);
+
+                // Criar container da imagem com reveal progressivo de baixo para cima
+                const imagemHtml = `
+                    <div class="image-reveal-container">
+                        <div class="image-wrapper">
+                            <!-- Imagem completa de fundo -->
+                            <img src="${imagemCategoria}" 
+                                 alt="Recompensa ${categoria.nome}" 
+                                 class="reward-image-bg">
+                            <!-- Imagem que será revelada progressivamente -->
+                            <img src="${imagemCategoria}" 
+                                 alt="Recompensa ${categoria.nome}" 
+                                 class="reward-image-reveal"
+                                 style="clip-path: inset(${100 - percentualProgresso}% 0 0 0);">
+                            <!-- Indicador de progresso -->
+                            <div class="progress-indicator">${percentualProgresso.toFixed(1)}%</div>
+                        </div>
+                    </div>
+                `;
 
                 progressoItem.innerHTML = `
                     <h4>${categoria.nome}</h4>
-                    <p>Nível ${nivelAtual} - ${pontos} pontos</p>
+                    <p>Progresso: ${percentualProgresso.toFixed(1)}% (${acertosUnicos}/${totalNoticias} questões)</p>
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${percentual}%"></div>
+                        <div class="progress-fill" style="width: ${percentualProgresso}%"></div>
                     </div>
+                    ${imagemHtml}
                 `;
                 progressoContainer.appendChild(progressoItem);
             } catch (error) {

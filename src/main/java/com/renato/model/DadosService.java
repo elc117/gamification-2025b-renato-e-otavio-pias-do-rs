@@ -162,14 +162,46 @@ public class DadosService {
         return progressoCategoriaRepository.update(progresso);
     }
 
-    // ========== Métodos Auxiliares ==========
-    public int calcularNivel(int pontos) {
-        if (pontos >= 1000) return 6;
-        if (pontos >= 700) return 5;
-        if (pontos >= 450) return 4;
-        if (pontos >= 250) return 3;
-        if (pontos >= 100) return 2;
-        if (pontos >= 50) return 1;
-        return 0;
+    /**
+     * Calcula estatísticas detalhadas do usuário em uma categoria específica.
+     * Agora com taxa de acerto REAL (salvamos acertos E erros).
+     * @param usuarioId ID do usuário
+     * @param categoriaId ID da categoria
+     * @return Map com estatísticas da categoria
+     */
+    public Map<String, Object> obtemEstatisticasCategoria(Long usuarioId, Long categoriaId) {
+        Map<String, Object> estatisticas = new HashMap<>();
+
+        // Total de notícias na categoria
+        long totalNoticias = noticiaRepository.countByCategoria(categoriaId);
+
+        // Acertos únicos do usuário nesta categoria
+        long acertosUnicos = respostaRepository.countAcertosByUsuarioAndCategoria(usuarioId, categoriaId);
+
+        // Total de tentativas (acertos + erros) na categoria
+        long tentativasNaCategoria = respostaRepository.countAllByUsuarioAndCategoria(usuarioId, categoriaId);
+
+        // Calcular taxa de acerto REAL
+        double taxaAcerto = tentativasNaCategoria > 0
+            ? (acertosUnicos * 100.0 / tentativasNaCategoria)
+            : 0;
+
+        // Calcular progresso
+        double percentualProgresso = totalNoticias > 0
+            ? (acertosUnicos * 100.0 / totalNoticias)
+            : 0;
+
+        // Calcular erros
+        long erros = tentativasNaCategoria - acertosUnicos;
+
+        estatisticas.put("totalNoticias", totalNoticias);
+        estatisticas.put("acertosUnicos", acertosUnicos);
+        estatisticas.put("tentativasNaCategoria", tentativasNaCategoria);
+        estatisticas.put("errosNaCategoria", erros);
+        estatisticas.put("taxaAcertoCategoria", Math.round(taxaAcerto * 100.0) / 100.0);
+        estatisticas.put("percentualProgresso", Math.round(percentualProgresso * 100.0) / 100.0);
+        estatisticas.put("noticiasFaltantes", totalNoticias - acertosUnicos);
+
+        return estatisticas;
     }
 }

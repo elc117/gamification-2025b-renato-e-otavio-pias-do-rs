@@ -22,7 +22,6 @@ public class Main {
 
     // serviços
     private static final JogoService jogoService = new JogoService();
-    private static final PontuacaoService pontuacaoService = new PontuacaoService();
 
     // chave para armazenar o ID do usuário na sessão
     private static final String SESSION_USER_ID = "usuarioId";
@@ -169,9 +168,16 @@ public class Main {
 
                 List<ProgressoCategoria> progressosUsuario = dadosService.obtemProgressosUsuario(usuarioId);
                 List<ConquistaUsuario> conquistasUsuarioLista = dadosService.obtemConquistasUsuario(usuarioId);
+
+                // Pegar estatísticas diretamente do usuário (já calculadas e salvas no banco)
                 int totalTentativas = usuario.getTotalTentativas();
-                int totalAcertos = dadosService.obtemTotalAcertosUsuario(usuarioId);
-                double taxaAcerto = totalTentativas > 0 ? (totalAcertos * 100.0 / totalTentativas) : 0;
+                int totalAcertos = usuario.getAcertosTotais();
+                double taxaAcerto = usuario.getTaxaAcerto();
+
+                // Calcular informações de progresso de nível
+                int pontosAtuais = usuario.getPontuacaoTotal();
+                int pontosFaltam = usuario.pontosParaProximoNivel();
+                int pontosProximoNivel = 100 * usuario.getNivel(); // total necessário para subir de nível
 
                 Map<String, Object> perfil = new HashMap<>(); // para montar a resposta, eu usei HashMap
                 perfil.put("usuario", usuario);
@@ -180,6 +186,9 @@ public class Main {
                 perfil.put("totalRespostas", totalTentativas);
                 perfil.put("totalAcertos", totalAcertos);
                 perfil.put("taxaAcerto", taxaAcerto);
+                perfil.put("pontosAtuais", pontosAtuais);
+                perfil.put("pontosFaltam", pontosFaltam);
+                perfil.put("pontosProximoNivel", pontosProximoNivel);
 
                 ctx.json(perfil);
             }
@@ -211,12 +220,29 @@ public class Main {
             
             Long categoriaId = Long.parseLong(ctx.pathParam("id"));
             ProgressoCategoria progresso = dadosService.obtemProgressoCategoria(usuarioId, categoriaId);
+            Map<String, Object> estatisticas = dadosService.obtemEstatisticasCategoria(usuarioId, categoriaId);
 
             if (progresso != null) {
-                ctx.json(progresso);
+                // Montar resposta completa com progresso + estatísticas
+                Map<String, Object> respostaCompleta = new HashMap<>();
+                respostaCompleta.put("id", progresso.getId());
+                respostaCompleta.put("usuarioId", progresso.getUsuarioId());
+                respostaCompleta.put("categoriaId", progresso.getCategoriaId());
+                respostaCompleta.put("nivelAtual", progresso.getNivelAtual());
+                respostaCompleta.put("pontosMaestria", progresso.getPontosMaestria());
+                respostaCompleta.put("pecasDesbloqueadas", progresso.getPecasDesbloqueadas());
+                respostaCompleta.put("estatisticas", estatisticas);
+
+                ctx.json(respostaCompleta);
             }
             else {
-                ctx.status(404).result("Progresso não encontrado");
+                // Se não tem progresso ainda, retornar estatísticas básicas + lista vazia de peças
+                Map<String, Object> respostaVazia = new HashMap<>();
+                respostaVazia.putAll(estatisticas);
+                respostaVazia.put("pecasDesbloqueadas", new ArrayList<>());
+                respostaVazia.put("nivelAtual", 0);
+                respostaVazia.put("pontosMaestria", 0);
+                ctx.json(respostaVazia);
             }
         });
 

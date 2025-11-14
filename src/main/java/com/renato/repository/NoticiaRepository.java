@@ -36,5 +36,22 @@ public class NoticiaRepository extends GenericRepository<Noticia> {
             throw e;
         }
     }
+
+    /**
+     * Conta o total de notícias em uma categoria específica.
+     * @param categoriaId ID da categoria
+     * @return quantidade total de notícias
+     */
+    public long countByCategoria(Long categoriaId) {
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
+            return session.createQuery(
+                "SELECT COUNT(n) FROM Noticia n WHERE n.categoriaId = :categoriaId", Long.class)
+                .setParameter("categoriaId", categoriaId)
+                .getSingleResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
 }
 

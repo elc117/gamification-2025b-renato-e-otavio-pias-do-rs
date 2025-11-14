@@ -6,7 +6,9 @@ CREATE TABLE usuarios (
     nivel INTEGER NOT NULL DEFAULT 1,
     pontuacao_total INTEGER NOT NULL DEFAULT 0,
     titulo_atual VARCHAR(100),
-    total_tentativas INTEGER NOT NULL DEFAULT 0
+    total_tentativas INTEGER NOT NULL DEFAULT 0,
+    acertos_totais INTEGER NOT NULL DEFAULT 0,
+    taxa_acerto DECIMAL(5,2) NOT NULL DEFAULT 0.00
 );
 
 CREATE TABLE categorias (
@@ -34,6 +36,7 @@ CREATE TABLE respostas (
     resposta_usuario BOOLEAN NOT NULL,
     esta_correta BOOLEAN NOT NULL,
     pontos_ganhos INTEGER NOT NULL,
+    tentativas INTEGER NOT NULL DEFAULT 1,
     UNIQUE(usuario_id, noticia_id)
 );
 
@@ -44,6 +47,9 @@ CREATE TABLE progresso_categoria (
     nivel_atual INTEGER NOT NULL DEFAULT 0,
     pontos_maestria INTEGER NOT NULL DEFAULT 0,
     pecas_desbloqueadas INTEGER[],
+    tentativas_categoria INTEGER NOT NULL DEFAULT 0,
+    acertos_categoria INTEGER NOT NULL DEFAULT 0,
+    taxa_acerto_categoria DECIMAL(5,2) NOT NULL DEFAULT 0.00,
     UNIQUE(usuario_id, categoria_id)
 );
 

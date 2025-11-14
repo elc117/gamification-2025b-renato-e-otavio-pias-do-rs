@@ -690,6 +690,53 @@ h1 {
     font-size: 0.9em;
 }
 
+/* Level Progress Section */
+.level-progress-section {
+    margin: 30px 0;
+    padding: 25px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+    border-radius: 15px;
+    border: 2px solid rgba(102, 126, 234, 0.3);
+}
+
+.level-info {
+    color: #333;
+    font-size: 1.2em;
+    font-weight: 600;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.level-info span {
+    font-weight: 900;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 1.3em;
+}
+
+.level-bar {
+    height: 30px;
+    background: rgba(224, 224, 224, 0.6);
+    border-radius: 20px;
+    border: 3px solid rgba(102, 126, 234, 0.3);
+    box-shadow: inset 0 3px 8px rgba(0,0,0,0.15);
+}
+
+.level-bar .progress-fill {
+    background: linear-gradient(90deg, #ffd700, #ffed4e, #ffd700);
+    background-size: 200% 100%;
+    animation: levelShine 2s linear infinite;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+    border-radius: 17px;
+}
+
+@keyframes levelShine {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 200% 0%; }
+}
+
 /* Progress List */
 .progress-list {
     margin-top: 20px;
@@ -740,6 +787,114 @@ h1 {
 .progress-item p {
     color: #666;
     margin-bottom: 10px;
+}
+
+/* Grid de Peças do Quebra-Cabeça */
+.puzzle-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 5px;
+    max-width: 280px;
+    margin: 20px auto 0;
+    padding: 10px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 10px;
+    border: 2px solid rgba(102, 126, 234, 0.3);
+}
+
+.puzzle-piece {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5em;
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    cursor: help;
+    overflow: hidden;
+    background-size: 200% 200%;
+    background-repeat: no-repeat;
+}
+
+/* Posicionamento da imagem em cada quadrante */
+.puzzle-piece.quadrant-1 {
+    background-position: 0% 0%;
+}
+
+.puzzle-piece.quadrant-2 {
+    background-position: 100% 0%;
+}
+
+.puzzle-piece.quadrant-3 {
+    background-position: 0% 100%;
+}
+
+.puzzle-piece.quadrant-4 {
+    background-position: 100% 100%;
+}
+
+.puzzle-piece.locked {
+    border: 2px dashed rgba(100, 100, 100, 0.3);
+    filter: grayscale(100%) brightness(0.3);
+}
+
+.puzzle-piece.unlocked {
+    border: 2px solid rgba(102, 126, 234, 0.8);
+    filter: none;
+    animation: pieceUnlock 0.5s ease-out;
+}
+
+.puzzle-piece.unlocked:hover {
+    transform: scale(1.1);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.6);
+    z-index: 10;
+}
+
+/* Overlay de bloqueio - apenas escurece a peça */
+.lock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(3px);
+    pointer-events: none;
+}
+
+@keyframes pieceUnlock {
+    0% {
+        opacity: 0;
+        transform: scale(0) rotate(180deg);
+        filter: blur(10px);
+    }
+    50% {
+        transform: scale(1.2) rotate(-10deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+        filter: none;
+    }
+}
+
+.puzzle-piece:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 0.35em;
+    white-space: nowrap;
+    z-index: 100;
+    pointer-events: none;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
 }
 
 .progress-bar {
@@ -898,7 +1053,7 @@ h1 {
     backdrop-filter: blur(5px);
 }
 
-#maestria-points {
+#progresso-percent {
     font-size: 1.3em;
     color: #ffd700;
     text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
@@ -1104,3 +1259,186 @@ h1 {
     }
 }
 
+/* ========================================
+   SISTEMA DE REVEAL PROGRESSIVO DA IMAGEM
+   ======================================== */
+
+/* Container da Imagem com Reveal Progressivo */
+.image-reveal-container {
+    max-width: 300px;
+    margin: 20px auto 0;
+    padding: 10px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 10px;
+    border: 2px solid rgba(102, 126, 234, 0.3);
+}
+
+.image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Imagem de fundo (sempre visível mas escura) */
+.reward-image-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(100%) brightness(0.3);
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Imagem que será revelada progressivamente (de cima para baixo) */
+.reward-image-reveal {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: clip-path 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    z-index: 2;
+}
+
+/* Indicador de progresso sobre a imagem */
+.progress-indicator {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.95), rgba(118, 75, 162, 0.95));
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 1.1em;
+    z-index: 3;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
+}
+
+/* ========================================
+   CÓDIGO ANTIGO DE QUADRANTES (DESABILITADO)
+   ======================================== */
+
+/* Grid de Peças do Quebra-Cabeça */
+.puzzle-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 5px;
+    max-width: 280px;
+    margin: 20px auto 0;
+    padding: 10px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 10px;
+    border: 2px solid rgba(102, 126, 234, 0.3);
+}
+
+.puzzle-piece {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5em;
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    cursor: help;
+    overflow: hidden;
+    background-size: 200% 200%;
+    background-repeat: no-repeat;
+}
+
+/* Posicionamento da imagem em cada quadrante */
+.puzzle-piece.quadrant-1 {
+    background-position: 0% 0%;
+}
+
+.puzzle-piece.quadrant-2 {
+    background-position: 100% 0%;
+}
+
+.puzzle-piece.quadrant-3 {
+    background-position: 0% 100%;
+}
+
+.puzzle-piece.quadrant-4 {
+    background-position: 100% 100%;
+}
+
+.puzzle-piece.locked {
+    border: 2px dashed rgba(100, 100, 100, 0.3);
+    filter: grayscale(100%) brightness(0.3);
+}
+
+.puzzle-piece.unlocked {
+    border: 2px solid rgba(102, 126, 234, 0.8);
+    filter: none;
+    animation: pieceUnlock 0.5s ease-out;
+}
+
+.puzzle-piece.unlocked:hover {
+    transform: scale(1.1);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.6);
+    z-index: 10;
+}
+
+/* Overlay de bloqueio - apenas escurece a peça */
+.lock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(3px);
+    pointer-events: none;
+}
+
+@keyframes pieceUnlock {
+    0% {
+        opacity: 0;
+        transform: scale(0) rotate(180deg);
+        filter: blur(10px);
+    }
+    50% {
+        transform: scale(1.2) rotate(-10deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+        filter: none;
+    }
+}
+
+.puzzle-piece:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 0.35em;
+    white-space: nowrap;
+    z-index: 100;
+    pointer-events: none;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
+
+.progress-bar {
+    background: rgba(224, 224, 224, 0.5);
+    height: 25px;
+    border-radius: 15px;
+    overflow: hidden;
+    margin-top: 10px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+    border: 2px solid rgba(102, 126, 234, 0.2);
+}

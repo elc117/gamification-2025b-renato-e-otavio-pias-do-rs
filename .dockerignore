@@ -1,0 +1,9 @@
+# Ignorar arquivos desnecessários no build do container
+target/
+.git/
+.idea/
+*.iml
+node_modules/
+*.log
+.DS_Store
+

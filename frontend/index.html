@@ -73,7 +73,7 @@
         <div class="header">
             <button id="back-to-categories" class="btn-small">← Voltar</button>
             <h2 id="category-name">Categoria</h2>
-            <div id="category-progress">Maestria: <span id="maestria-points">0</span></div>
+            <div id="category-progress">Progresso: <span id="progresso-percent">0%</span></div>
         </div>
         <div class="container game-container">
             <div id="noticia-card" class="noticia-card">
@@ -104,6 +104,19 @@
             <div class="profile-info">
                 <h1 id="profile-name">Usuário</h1>
                 <p id="profile-level">Nível 1</p>
+
+                <!-- Barra de Progresso de Nível Global -->
+                <div class="level-progress-section">
+                    <div class="level-info">
+                        <span id="nivel-pontos-atual">0</span> pontos
+                        <span style="opacity: 0.7;"> • </span>
+                        Faltam <span id="nivel-pontos-faltam">100</span> para o próximo nível
+                    </div>
+                    <div class="progress-bar level-bar">
+                        <div class="progress-fill" id="nivel-progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
                 <div class="stats">
                     <div class="stat-item">
                         <span class="stat-value" id="total-respostas">0</span>
@@ -116,10 +129,6 @@
                     <div class="stat-item">
                         <span class="stat-value" id="taxa-acerto">0%</span>
                         <span class="stat-label">Taxa de Acerto</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-value" id="pontuacao-total">0</span>
-                        <span class="stat-label">Pontuação Total</span>
                     </div>
                 </div>
             </div>
