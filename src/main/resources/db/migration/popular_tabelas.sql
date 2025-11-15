@@ -5,7 +5,7 @@
 -- sistema: níveis de 0 a 4, com 4 peças (nível 0 = 0%, nível 1 = 25%, nível 2 = 50%, nível 3 = 75%, nível 4 = 100%)
 -- nível 0 inicia sem peça desbloqueada.
 INSERT INTO categorias (id, nome, descricao, total_niveis, pontos_para_proximo_nivel, caminho_imagem_completa)
-VALUES (1, 'Política', 'Notícias sobre política nacional e internacional', 4, 10, '/assets/images/politica.png');
+VALUES (1, 'Política', 'Notícias sobre política nacional e internacional', 4, 10, 'assets/images/politica.png');
 
 -- notícias da categoria Política
 INSERT INTO noticias (categoria_id, titulo, conteudo, eh_verdadeira, explicacao)

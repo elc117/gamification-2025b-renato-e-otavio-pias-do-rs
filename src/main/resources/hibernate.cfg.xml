@@ -16,6 +16,8 @@
         <property name="hibernate.format_sql">true</property>
         <!-- alterado de validate para update para ambiente de desenvolvimento -->
         <property name="hibernate.hbm2ddl.auto">update</property>
+        <!-- Timezone de Brasília (UTC-3) -->
+        <property name="hibernate.jdbc.time_zone">America/Sao_Paulo</property>
 
         <!-- Mapeamento das classes para o banco de dados-->
         <mapping class="com.renato.model.Usuario"/>
