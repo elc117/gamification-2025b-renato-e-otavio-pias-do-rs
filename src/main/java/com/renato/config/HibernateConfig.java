@@ -15,8 +15,12 @@ public class HibernateConfig {
                 // configurações com as variáveis de ambiente (para o Render)
                 String dbUrl = System.getenv("DATABASE_URL");
                 if (dbUrl != null && !dbUrl.isEmpty()) {
+                    // Render fornece URL como postgresql://, mas JDBC precisa de jdbc:postgresql://
+                    if (!dbUrl.startsWith("jdbc:")) {
+                        dbUrl = "jdbc:" + dbUrl;
+                    }
                     configuration.setProperty("hibernate.connection.url", dbUrl);
-                    System.out.println("[HibernateConfig] Usando DATABASE_URL do ambiente");
+                    System.out.println("[HibernateConfig] Usando DATABASE_URL do ambiente: " + dbUrl.replaceAll(":[^:@]+@", ":****@"));
                 }
                 
                 String dbUser = System.getenv("DB_USER");
