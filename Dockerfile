@@ -17,6 +17,9 @@ WORKDIR /app
 # Copiar JAR da etapa de build
 COPY --from=build /app/target/gamification.jar app.jar
 
+# Copiar pasta frontend
+COPY frontend ./frontend
+
 # Expor porta
 EXPOSE 3000
 

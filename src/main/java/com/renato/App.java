@@ -38,11 +38,17 @@ public class App {
             config.jsonMapper(new JavalinJackson(objectMapper, true));
             
             // Servir arquivos estáticos (frontend)
-            config.staticFiles.add(staticFiles -> {
-                staticFiles.hostedPath = "/";
-                staticFiles.directory = "frontend";
-                staticFiles.location = io.javalin.http.staticfiles.Location.EXTERNAL;
-            });
+            java.io.File frontendDir = new java.io.File("frontend");
+            if (frontendDir.exists() && frontendDir.isDirectory()) {
+                config.staticFiles.add(staticFiles -> {
+                    staticFiles.hostedPath = "/";
+                    staticFiles.directory = "frontend";
+                    staticFiles.location = io.javalin.http.staticfiles.Location.EXTERNAL;
+                });
+                System.out.println("[App] Servindo arquivos estáticos da pasta: " + frontendDir.getAbsolutePath());
+            } else {
+                System.out.println("[App] Pasta frontend não encontrada. Rodando apenas API.");
+            }
         });
     }
 
