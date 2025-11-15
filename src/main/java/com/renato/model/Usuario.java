@@ -203,8 +203,8 @@ public class Usuario {
         if (nivel >= 15) return "Investigador Sênior";  // 12000+ pontos (1200+ acertos)
         if (nivel >= 10) return "Investigador";         // 4500+ pontos (450+ acertos)
         if (nivel >= 5) return "Analista";              // 1000+ pontos (100+ acertos)
-        if (nivel >= 1) return "Reporter";              // 0+ pontos
-        return "Reporter";                              // nível inicial
+        if (nivel >= 1) return "Repórter";              // 0+ pontos
+        return "Repórter";                              // nível inicial
     }
 
     /**

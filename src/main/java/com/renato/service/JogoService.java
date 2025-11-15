@@ -97,7 +97,7 @@ public class JogoService {
         Map<String, Object> infoProgresso = atualizarProgressoCategoria(usuarioId, noticia.getCategoriaId(), pontosGanhos);
 
         // 8. verificar e atribuir conquistas (se houver)
-        verificarConquistas(usuarioId);
+        List<Conquista> conquistasDesbloqueadas = verificarConquistas(usuarioId);
 
         // 9. montar e retornar resultado
         Map<String, Object> resultado = new HashMap<>();
@@ -125,15 +125,19 @@ public class JogoService {
         resultado.put("acertosTotais", usuario.getAcertosTotais());
         resultado.put("taxaAcerto", usuario.getTaxaAcerto());
 
-        return resultado;
-    }
+        // Informações de conquistas desbloqueadas
+        if (conquistasDesbloqueadas != null && !conquistasDesbloqueadas.isEmpty()) {
+            List<Map<String, Object>> conquistasInfo = new ArrayList<>();
+            for (Conquista c : conquistasDesbloqueadas) {
+                Map<String, Object> info = new HashMap<>();
+                info.put("nome", c.getNome());
+                info.put("descricao", c.getDescricao());
+                conquistasInfo.add(info);
+            }
+            resultado.put("conquistasDesbloqueadas", conquistasInfo);
+        }
 
-    /**
-     * verifica se o usuário já acertou uma notícia específica.
-     * agora salvamos todas as tentativas, mas só bloqueamos se acertou.
-     */
-    private boolean jaAcertouNoticia(Long usuarioId, Long noticiaId) {
-        return respostaRepository.existsAcertoByUsuarioAndNoticia(usuarioId, noticiaId);
+        return resultado;
     }
 
     /**
@@ -207,12 +211,16 @@ public class JogoService {
     /**
      * verifica e atribui conquistas ao usuário baseado em seu progresso.
      * analisa todas as conquistas disponíveis e verifica se o usuário atende aos critérios.
+     * @return lista de conquistas recém-desbloqueadas nesta chamada
      */
-    private void verificarConquistas(Long usuarioId) {
+    private List<Conquista> verificarConquistas(Long usuarioId) {
+        // Lista para armazenar conquistas recém-desbloqueadas
+        List<Conquista> conquistasRecemDesbloqueadas = new ArrayList<>();
+
         // 1. buscar todas as conquistas disponíveis no sistema
         List<Conquista> todasConquistas = conquistaRepository.findAll();
         if (todasConquistas == null || todasConquistas.isEmpty()) {
-            return; // não há conquistas cadastradas
+            return conquistasRecemDesbloqueadas; // não há conquistas cadastradas
         }
 
         // 2. buscar conquistas já desbloqueadas pelo usuário
@@ -247,9 +255,12 @@ public class JogoService {
                     java.time.LocalDateTime.now()
                 );
                 conquistaUsuarioRepository.save(novaConquista);
+                conquistasRecemDesbloqueadas.add(conquista);
                 System.out.println("Conquista desbloqueada: " + conquista.getNome() + " para usuário " + usuarioId);
             }
         }
+
+        return conquistasRecemDesbloqueadas;
     }
 
     /**

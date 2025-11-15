@@ -13,12 +13,9 @@ import com.renato.service.*;
 import java.util.*;
 
 public class Main {
-    // Repositórios para acesso ao banco de dados
+    // repositórios para acesso ao banco de dados
     private static final NoticiaRepository noticiaRepository = new NoticiaRepository();
-    private static final RespostaRepository respostaRepository = new RespostaRepository();
-    private static final ProgressoCategoriaRepository progressoRepository = new ProgressoCategoriaRepository();
     private static final ConquistaRepository conquistaRepository = new ConquistaRepository();
-    private static final ConquistaUsuarioRepository conquistaUsuarioRepository = new ConquistaUsuarioRepository();
 
     // serviços
     private static final JogoService jogoService = new JogoService();

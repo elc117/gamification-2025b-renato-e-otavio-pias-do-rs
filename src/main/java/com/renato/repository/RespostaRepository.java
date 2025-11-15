@@ -20,7 +20,8 @@ public class RespostaRepository extends GenericRepository<Resposta> {
                 .setParameter("noticiaId", noticiaId)
                 .uniqueResult();
             return count != null && count > 0;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
@@ -39,7 +40,8 @@ public class RespostaRepository extends GenericRepository<Resposta> {
                 .setParameter("noticiaId", noticiaId)
                 .uniqueResult();
             return count != null && count > 0;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
@@ -57,7 +59,8 @@ public class RespostaRepository extends GenericRepository<Resposta> {
                 .setParameter("usuarioId", usuarioId)
                 .setParameter("noticiaId", noticiaId)
                 .uniqueResult();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
@@ -69,7 +72,8 @@ public class RespostaRepository extends GenericRepository<Resposta> {
                 "FROM Resposta WHERE usuarioId = :usuarioId", Resposta.class)
                 .setParameter("usuarioId", usuarioId)
                 .list();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
@@ -82,7 +86,8 @@ public class RespostaRepository extends GenericRepository<Resposta> {
                 .setParameter("usuarioId", usuarioId)
                 .uniqueResult();
             return count != null ? count : 0;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
@@ -96,7 +101,8 @@ public class RespostaRepository extends GenericRepository<Resposta> {
                 .setParameter("usuarioId", usuarioId)
                 .uniqueResult();
             return count != null ? count : 0;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
@@ -119,7 +125,8 @@ public class RespostaRepository extends GenericRepository<Resposta> {
                 .setParameter("categoriaId", categoriaId)
                 .uniqueResult();
             return count != null ? count : 0;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
@@ -141,7 +148,8 @@ public class RespostaRepository extends GenericRepository<Resposta> {
                 .setParameter("usuarioId", usuarioId)
                 .setParameter("categoriaId", categoriaId)
                 .list();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
@@ -163,7 +171,8 @@ public class RespostaRepository extends GenericRepository<Resposta> {
                 .setParameter("categoriaId", categoriaId)
                 .uniqueResult();
             return count != null ? count : 0;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw e;
         }

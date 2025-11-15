@@ -17,7 +17,8 @@ public class PecaUsuarioRepository extends GenericRepository<PecaUsuario> {
                 "FROM PecaUsuario WHERE usuarioId = :usuarioId", PecaUsuario.class)
                 .setParameter("usuarioId", usuarioId)
                 .list();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw e;
         }

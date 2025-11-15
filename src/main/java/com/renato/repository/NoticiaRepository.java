@@ -17,7 +17,8 @@ public class NoticiaRepository extends GenericRepository<Noticia> {
                 "FROM Noticia WHERE categoriaId = :categoriaId", Noticia.class)
                 .setParameter("categoriaId", categoriaId)
                 .list();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
@@ -31,7 +32,8 @@ public class NoticiaRepository extends GenericRepository<Noticia> {
                 Noticia.class)
                 .setParameter("usuarioId", usuarioId)
                 .list();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
@@ -48,7 +50,8 @@ public class NoticiaRepository extends GenericRepository<Noticia> {
                 "SELECT COUNT(n) FROM Noticia n WHERE n.categoriaId = :categoriaId", Long.class)
                 .setParameter("categoriaId", categoriaId)
                 .getSingleResult();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             return 0;
         }

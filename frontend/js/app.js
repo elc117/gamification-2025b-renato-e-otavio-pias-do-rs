@@ -335,29 +335,36 @@ function mostrarFeedback(resultado) {
     // Montar mensagem de pontos com informações extras
     let mensagemPontos = `${resultado.pontosGanhos > 0 ? '+' : ''}${resultado.pontosGanhos} pontos`;
 
-    // Adicionar informação de nível global se subiu
+    // adicionar informação de nível global se subiu
     if (resultado.subiuNivelGlobal) {
         mensagemPontos += `\n🎉 Subiu para Nível ${resultado.nivelGlobal}!`;
     }
 
-    // Adicionar informação de título se mudou
+    // adicionar informação de título, se mudou
     if (resultado.mudouTitulo && resultado.tituloAtual) {
         mensagemPontos += `\n👑 Novo título: ${resultado.tituloAtual}`;
     }
 
-    // Adicionar informação de nível de categoria se subiu
-    if (resultado.subiuNivelCategoria) {
+    // adicionar informação de nível da categoria se subiu
+    if (resultado.desbloqueouNovaPeca) {
         mensagemPontos += `\n⭐ Subiu para nível ${resultado.nivelCategoria} nesta categoria!`;
         
-        // Se subiu de nível, significa que desbloqueou uma nova peça
+        // se subiu de nível, significa que desbloqueou uma nova peça
         if (resultado.nivelCategoria > 0 && resultado.nivelCategoria <= 4) {
             mensagemPontos += `\n🎨 Nova peça da imagem desbloqueada! (${resultado.nivelCategoria}/4)`;
         }
     }
 
+    // Mostrar popup para conquistas desbloqueadas
+    if (resultado.conquistasDesbloqueadas && resultado.conquistasDesbloqueadas.length > 0) {
+        resultado.conquistasDesbloqueadas.forEach(conquista => {
+            showToast(`🏆 Conquista desbloqueada: ${conquista.nome}!`, 'success');
+        });
+    }
+
     pontosDiv.innerHTML = mensagemPontos.replace(/\n/g, '<br>');
 
-    // Atualizar badge de nível no header
+    // atualizar badge de nível no header
     if (resultado.nivelGlobal && resultado.tituloAtual) {
         document.getElementById('user-level').textContent = `Nível ${resultado.nivelGlobal} - ${resultado.tituloAtual}`;
     }

@@ -17,7 +17,8 @@ public class ConquistaUsuarioRepository extends GenericRepository<ConquistaUsuar
                 "FROM ConquistaUsuario WHERE usuarioId = :usuarioId", ConquistaUsuario.class)
                 .setParameter("usuarioId", usuarioId)
                 .list();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw e;
         }

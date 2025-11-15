@@ -17,7 +17,8 @@ public class PecaRecompensaRepository extends GenericRepository<PecaRecompensa> 
                 "FROM PecaRecompensa WHERE categoriaId = :categoriaId", PecaRecompensa.class)
                 .setParameter("categoriaId", categoriaId)
                 .list();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw e;
         }

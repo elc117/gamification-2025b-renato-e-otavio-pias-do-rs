@@ -1,13 +1,13 @@
--- Script para popular o banco de dados com dados iniciais
--- Insere 1 categoria e 4 notícias
+-- script para popular o banco de dados com dados iniciais
+-- insere 2 categorias, 8 notícias e 1 conquista
 
--- Categoria: Política
--- Sistema: Níveis de 0 a 4, com 4 peças (nível 0 = 0%, nível 1 = 25%, nível 2 = 50%, nível 3 = 75%, nível 4 = 100%)
--- 1 acerto = 10 pontos = 1 nível. Nível 0 inicia sem peça desbloqueada.
+-- categoria: Política
+-- sistema: níveis de 0 a 4, com 4 peças (nível 0 = 0%, nível 1 = 25%, nível 2 = 50%, nível 3 = 75%, nível 4 = 100%)
+-- nível 0 inicia sem peça desbloqueada.
 INSERT INTO categorias (nome, descricao, total_niveis, pontos_para_proximo_nivel, caminho_imagem_completa)
-VALUES ('Política', 'Notícias sobre política nacional e internacional', 4, 10, '/assets/images/balanca2.png');
+VALUES ('Política', 'Notícias sobre política nacional e internacional', 4, 10, '/assets/images/politica.png');
 
--- Notícias da categoria Política
+-- notícias da categoria Política
 INSERT INTO noticias (categoria_id, titulo, conteudo, eh_verdadeira, explicacao)
 VALUES
 (1, 'Brasil é o país com mais árvores do mundo',
@@ -31,7 +31,6 @@ true,
 
 Fontes: <a href="https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm" target="_blank">Constituição Federal de 1988, artigo 66</a>'),
 
--- Nova notícia
 (1, 'Senadores brasileiros têm mandato de 4 anos',
 'Os senadores do Brasil são eleitos para mandatos de 4 anos, com possibilidade de reeleição.',
 false,
@@ -40,15 +39,15 @@ false,
 Fontes: <a href="https://www.senado.leg.br" target="_blank">Senado Federal</a>, <a href="https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm" target="_blank">Constituição Federal de 1988, artigo 46</a>');
 
 -- V4__Add_futebol_category.sql
--- Adiciona categoria Futebol com 4 notícias sobre o tema
+-- adiciona categoria Futebol com 4 notícias sobre o tema
 
--- Categoria: Futebol
--- Sistema: Níveis de 0 a 4, com 4 peças (nível 0 = 0%, nível 1 = 25%, nível 2 = 50%, nível 3 = 75%, nível 4 = 100%)
--- 1 acerto = 10 pontos = 1 nível. Nível 0 inicia sem peça desbloqueada.
+-- categoria: Futebol
+-- sistema: níveis de 0 a 4, com 4 peças (nível 0 = 0%, nível 1 = 25%, nível 2 = 50%, nível 3 = 75%, nível 4 = 100%)
+-- nível 0 inicia sem peça desbloqueada.
 INSERT INTO categorias (nome, descricao, total_niveis, pontos_para_proximo_nivel, caminho_imagem_completa)
 VALUES ('Futebol', 'Notícias e curiosidades sobre o mundo do futebol', 4, 10, 'assets/images/futebol.png');
 
--- Notícias da categoria Futebol
+-- notícias da categoria Futebol
 INSERT INTO noticias (categoria_id, titulo, conteudo, eh_verdadeira, explicacao)
 VALUES
 ((SELECT id FROM categorias WHERE nome = 'Futebol'), 
@@ -83,15 +82,14 @@ true,
 
 Fontes: <a href="https://www.cbf.com.br" target="_blank">CBF</a>, <a href="https://ge.globo.com" target="_blank">GloboEsporte</a>');
 
--- Script para adicionar conquista inicial
--- Conquista beta: Primeiros Passos
--- Cada questão correta = 10 pontos
--- Para desbloquear a conquista = 40 pontos (equivalente a 4 acertos)
+-- script para adicionar conquista inicial
+-- conquista beta: Primeiros Passos
+-- para desbloquear a conquista = 40 pontos
 
 INSERT INTO conquistas (nome, descricao, caminho_imagem_completa, criterio, tipo, valor_requerido)
 VALUES (
     'Primeiros Passos',
-    'Acumule 40 pontos respondendo questões corretamente. Cada acerto vale 10 pontos!',
+    'Acumulou 40 pontos respondendo questões corretamente!',
     '🏆',
     'Acumular pontos totais',
     'PONTOS_TOTAIS',

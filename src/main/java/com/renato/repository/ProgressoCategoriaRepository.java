@@ -19,7 +19,8 @@ public class ProgressoCategoriaRepository extends GenericRepository<ProgressoCat
                 .setParameter("usuarioId", usuarioId)
                 .setParameter("categoriaId", categoriaId)
                 .uniqueResult();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
@@ -31,7 +32,8 @@ public class ProgressoCategoriaRepository extends GenericRepository<ProgressoCat
                 "FROM ProgressoCategoria WHERE usuarioId = :usuarioId", ProgressoCategoria.class)
                 .setParameter("usuarioId", usuarioId)
                 .list();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
