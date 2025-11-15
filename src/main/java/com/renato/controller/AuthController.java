@@ -37,12 +37,13 @@ public class AuthController {
             return;
         }
 
-        // Criar sessão
+        // Criar sessão (para funcionar no Render)
         ctx.sessionAttribute(SESSION_USER_ID, usuario.getId());
         
         Map<String, Object> resposta = new HashMap<>();
         resposta.put("mensagem", "Login realizado com sucesso");
         resposta.put("usuario", usuario);
+        resposta.put("token", usuario.getId().toString()); // Token simples para itch.io
         ctx.json(resposta);
     }
 
@@ -75,9 +76,24 @@ public class AuthController {
     /**
      * Método auxiliar para obter ID do usuário autenticado.
      * Retorna null se não autenticado (e já define status 401).
+     * Suporta tanto sessão (Render) quanto token no header (itch.io).
      */
     public static Long getUsuarioAutenticado(Context ctx) {
+        // Primeiro tenta sessão (para Render)
         Long usuarioId = ctx.sessionAttribute(SESSION_USER_ID);
+        
+        // Se não tem sessão, tenta header X-User-Token (para itch.io)
+        if (usuarioId == null) {
+            String token = ctx.header("X-User-Token");
+            if (token != null && !token.isEmpty()) {
+                try {
+                    usuarioId = Long.parseLong(token);
+                } catch (NumberFormatException e) {
+                    // Token inválido, ignora
+                }
+            }
+        }
+        
         if (usuarioId == null) {
             ctx.status(401).result("Usuário não autenticado. Faça login primeiro.");
             return null;

@@ -69,14 +69,22 @@ function showToast(message, type = 'success') {
 
 // Função auxiliar para fazer requisições
 async function apiRequest(url, options = {}) {
+    const headers = {
+        'Content-Type': 'application/json',
+        ...options.headers
+    };
+    
+    // Adicionar token no header se estiver no localStorage (para itch.io)
+    const token = localStorage.getItem('userToken');
+    if (token) {
+        headers['X-User-Token'] = token;
+    }
+    
     try {
         const response = await fetch(`${API_BASE}${url}`, {
             ...options,
             credentials: 'include', // Importante para manter a sessão
-            headers: {
-                'Content-Type': 'application/json',
-                ...options.headers
-            }
+            headers
         });
 
         if (!response.ok) {
@@ -122,6 +130,12 @@ document.getElementById('login-btn').addEventListener('click', async () => {
         });
 
         currentUser = data.usuario;
+        
+        // Salvar token no localStorage (para itch.io)
+        if (data.token) {
+            localStorage.setItem('userToken', data.token);
+        }
+        
         document.getElementById('user-name').textContent = currentUser.nome;
 
         // Exibir nível e título
@@ -176,6 +190,10 @@ document.getElementById('logout-btn').addEventListener('click', async () => {
     try {
         await apiRequest('/logout', { method: 'POST' });
         currentUser = null;
+        
+        // Limpar token do localStorage
+        localStorage.removeItem('userToken');
+        
         showToast('Você saiu com sucesso! 👋', 'success');
         showScreen('login-screen');
         document.getElementById('email-input').value = '';
