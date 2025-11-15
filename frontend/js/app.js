@@ -6,6 +6,43 @@ let currentUser = null;
 let currentCategory = null;
 let currentNoticia = null;
 
+// Função para formatar texto de notícias (converte quebras de linha e markdown)
+function formatarTexto(texto) {
+    if (!texto) return '';
+
+    // Escapar HTML para segurança
+    const textoSeguro = texto
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+
+    // Aplicar negrito para textos entre **asteriscos** (ANTES de processar parágrafos)
+    let formatado = textoSeguro.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+    // Aplicar itálico para textos entre *asterisco simples*
+    formatado = formatado.replace(/\*([^\*]+?)\*/g, '<em>$1</em>');
+
+    // Converter quebras de linha duplas em parágrafos
+    const paragrafos = formatado.split(/\n\s*\n/);
+    formatado = paragrafos
+        .filter(p => p.trim())
+        .map(paragrafo => {
+            // Dentro de cada parágrafo, quebras simples viram <br>
+            let comBr = paragrafo.replace(/\n/g, '<br>');
+
+            // Substituir hífens no início de linhas por bullets estilizados
+            comBr = comBr.replace(/^-\s+/gm, '<span class="bullet">●</span> ');
+            comBr = comBr.replace(/<br>\s*-\s+/g, '<br><span class="bullet">●</span> ');
+
+            return `<p>${comBr}</p>`;
+        })
+        .join('');
+
+    return formatado;
+}
+
 // Função para mostrar notificação toast
 function showToast(message, type = 'success') {
     const toast = document.createElement('div');
@@ -199,7 +236,7 @@ async function startGame(categoria) {
         
         // Atualiza a interface com a notícia carregada
         document.getElementById('noticia-titulo').textContent = currentNoticia.titulo;
-        document.getElementById('noticia-conteudo').textContent = currentNoticia.conteudo;
+        document.getElementById('noticia-conteudo').innerHTML = formatarTexto(currentNoticia.conteudo);
         document.getElementById('noticia-card').style.display = 'block';
         document.getElementById('feedback-card').classList.add('hidden');
         
@@ -219,7 +256,7 @@ async function loadNextNoticia() {
         currentNoticia = await apiRequest(`/noticias/random/categoria/${currentCategory.id}`);
 
         document.getElementById('noticia-titulo').textContent = currentNoticia.titulo;
-        document.getElementById('noticia-conteudo').textContent = currentNoticia.conteudo;
+        document.getElementById('noticia-conteudo').innerHTML = formatarTexto(currentNoticia.conteudo);
 
         document.getElementById('noticia-card').style.display = 'block';
         document.getElementById('feedback-card').classList.add('hidden');
@@ -326,7 +363,7 @@ function mostrarFeedback(resultado) {
         document.getElementById('feedback-title').textContent = '❌ Incorreto!';
     }
 
-    document.getElementById('feedback-message').textContent = resultado.explicacao || '';
+    document.getElementById('feedback-message').innerHTML = formatarTexto(resultado.explicacao || '');
     document.getElementById('feedback-fonte').textContent = resultado.fonte ? `Fonte: ${resultado.fonte}` : '';
 
     const pontosDiv = document.getElementById('pontos-ganhos');
