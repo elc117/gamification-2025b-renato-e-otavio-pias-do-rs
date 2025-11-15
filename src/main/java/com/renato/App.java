@@ -41,6 +41,7 @@ public class App {
             config.bundledPlugins.enableCors(cors -> {
                 cors.addRule(it -> {
                     it.allowHost(
+                        "gamification-2025b-renato-e-otavio-pias.onrender.com",
                         "html-classic.itch.zone",
                         "v6p9d9t4.ssl.hwcdn.net",
                         "localhost:5500",
