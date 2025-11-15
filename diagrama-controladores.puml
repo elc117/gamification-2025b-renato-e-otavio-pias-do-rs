@@ -1,0 +1,222 @@
+@startuml Diagrama de Controladores - Fact or Fake
+
+title Camada de Controladores (API REST)
+
+' ==========================
+' CONFIGURAÇÕES DE ESTILO
+' ==========================
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FEFEFE
+skinparam linetype ortho
+
+skinparam class {
+    BackgroundColor<<Controller>> #E8F5E9
+    BorderColor<<Controller>> #2E7D32
+    BackgroundColor<<Service>> #FFF9C4
+    BorderColor<<Service>> #F57F17
+    BackgroundColor<<Repository>> #F3E5F5
+    BorderColor<<Repository>> #6A1B9A
+}
+
+' ==========================
+' CONTROLADORES
+' ==========================
+
+class AuthController <<Controller>> {
+    - usuarioRepository: UsuarioRepository
+    --
+    <b>Rotas de Autenticação:</b>
+    + POST /login
+    + POST /logout
+    + GET /session/usuario
+    --
+    + login(Context ctx): void
+    + logout(Context ctx): void
+    + getUsuarioLogado(Context ctx): void
+}
+
+class UsuarioController <<Controller>> {
+    - usuarioRepository: UsuarioRepository
+    - respostaRepository: RespostaRepository
+    --
+    <b>Rotas de Usuário:</b>
+    + POST /usuarios
+    + GET /usuarios
+    + GET /usuarios/:id
+    + PUT /usuarios/:id
+    + DELETE /usuarios/:id
+    + GET /meu-perfil
+    + GET /minhas-respostas
+    --
+    + criarUsuario(Context ctx): void
+    + listarUsuarios(Context ctx): void
+    + obterUsuario(Context ctx): void
+    + atualizarUsuario(Context ctx): void
+    + deletarUsuario(Context ctx): void
+    + obterMeuPerfil(Context ctx): void
+    + obterMinhasRespostas(Context ctx): void
+}
+
+class CategoriaController <<Controller>> {
+    - categoriaRepository: CategoriaRepository
+    - progressoCategoriaRepository: ProgressoCategoriaRepository
+    - respostaRepository: RespostaRepository
+    --
+    <b>Rotas de Categoria:</b>
+    + POST /categorias
+    + GET /categorias
+    + GET /categorias/:id
+    + PUT /categorias/:id
+    + DELETE /categorias/:id
+    + GET /categorias/:id/meu-progresso
+    + GET /categorias/:id/progresso-imagem
+    --
+    + criarCategoria(Context ctx): void
+    + listarCategorias(Context ctx): void
+    + obterCategoria(Context ctx): void
+    + atualizarCategoria(Context ctx): void
+    + deletarCategoria(Context ctx): void
+    + obterMeuProgresso(Context ctx): void
+    + obterProgressoImagem(Context ctx): void
+}
+
+class NoticiaController <<Controller>> {
+    - noticiaRepository: NoticiaRepository
+    - jogoService: JogoService
+    --
+    <b>Rotas de Notícia:</b>
+    + POST /noticias
+    + GET /noticias
+    + GET /noticias/:id
+    + PUT /noticias/:id
+    + DELETE /noticias/:id
+    + GET /noticias/random/categoria/:id
+    + POST /noticias/:id/responder
+    --
+    + criarNoticia(Context ctx): void
+    + listarNoticias(Context ctx): void
+    + obterNoticia(Context ctx): void
+    + atualizarNoticia(Context ctx): void
+    + deletarNoticia(Context ctx): void
+    + obterNoticiaAleatoria(Context ctx): void
+    + responderNoticia(Context ctx): void
+}
+
+class ConquistaController <<Controller>> {
+    - conquistaRepository: ConquistaRepository
+    - conquistaUsuarioRepository: ConquistaUsuarioRepository
+    --
+    <b>Rotas de Conquista:</b>
+    + POST /conquistas
+    + GET /conquistas
+    + GET /conquistas/:id
+    + GET /minhas-conquistas
+    --
+    + criarConquista(Context ctx): void
+    + listarConquistas(Context ctx): void
+    + obterConquista(Context ctx): void
+    + obterMinhasConquistas(Context ctx): void
+}
+
+class RecompensaController <<Controller>> {
+    - recompensaService: RecompensaService
+    --
+    <b>Rotas de Recompensa:</b>
+    + GET /minhas-recompensas
+    --
+    + obterMinhasRecompensas(Context ctx): void
+}
+
+' ==========================
+' SERVIÇOS E REPOSITÓRIOS USADOS
+' ==========================
+
+class JogoService <<Service>>
+class RecompensaService <<Service>>
+class UsuarioRepository <<Repository>>
+class CategoriaRepository <<Repository>>
+class NoticiaRepository <<Repository>>
+class ConquistaRepository <<Repository>>
+class ConquistaUsuarioRepository <<Repository>>
+class RespostaRepository <<Repository>>
+class ProgressoCategoriaRepository <<Repository>>
+
+' ==========================
+' DEPENDÊNCIAS
+' ==========================
+
+AuthController ..> UsuarioRepository
+
+UsuarioController ..> UsuarioRepository
+UsuarioController ..> RespostaRepository
+
+CategoriaController ..> CategoriaRepository
+CategoriaController ..> ProgressoCategoriaRepository
+CategoriaController ..> RespostaRepository
+
+NoticiaController ..> NoticiaRepository
+NoticiaController ..> JogoService
+
+ConquistaController ..> ConquistaRepository
+ConquistaController ..> ConquistaUsuarioRepository
+
+RecompensaController ..> RecompensaService
+
+' ==========================
+' NOTAS EXPLICATIVAS
+' ==========================
+
+note top of AuthController
+    <b>Autenticação Simples</b>
+
+    Sistema de sessão com Javalin:
+    - Login só com email (sem senha)
+    - Cookie de sessão automático
+    - Middleware valida usuário logado
+
+    Todas as rotas protegidas requerem login!
+end note
+
+note right of NoticiaController
+    <b>Controlador Principal do Jogo</b>
+
+    <b>Fluxo de Jogo:</b>
+    1. GET /noticias/random/categoria/:id
+       → Retorna notícia não respondida
+
+    2. POST /noticias/:id/responder
+       Body: { "resposta": true/false }
+       → Processa resposta via JogoService
+       → Retorna feedback + explicação
+       → Atualiza pontuação e nível
+
+    Usa sessão para identificar usuário!
+end note
+
+note bottom of CategoriaController
+    <b>Progresso Visual por Categoria</b>
+
+    GET /categorias/:id/meu-progresso
+    → Retorna: acertos, total, percentual
+
+    GET /categorias/:id/progresso-imagem
+    → Retorna: peças desbloqueadas [1,2,3,4]
+    → Frontend monta quebra-cabeça visual
+end note
+
+note left of UsuarioController
+    <b>Perfil do Jogador</b>
+
+    GET /meu-perfil
+    → Retorna:
+      - Nível e título atual
+      - Pontos totais
+      - Taxa de acerto
+      - Progresso para próximo nível
+
+    GET /minhas-respostas
+    → Histórico completo de respostas
+end note
+
+@enduml
+

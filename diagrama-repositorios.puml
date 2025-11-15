@@ -1,0 +1,154 @@
+@startuml Diagrama de Repositórios - Fact or Fake
+
+title Camada de Repositórios (Acesso a Dados)
+
+' ==========================
+' CONFIGURAÇÕES DE ESTILO
+' ==========================
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FEFEFE
+skinparam linetype ortho
+
+skinparam class {
+    BackgroundColor #F3E5F5
+    BorderColor #6A1B9A
+}
+
+' ==========================
+' REPOSITÓRIOS
+' ==========================
+
+abstract class GenericRepository<T> {
+    # entityClass: Class<T>
+    --
+    + save(T entity): T
+    + update(T entity): T
+    + delete(Long id): void
+    + findById(Long id): T
+    + findAll(): List<T>
+    --
+    <i>Operações CRUD genéricas</i>
+    <i>usando Hibernate Session</i>
+}
+
+class UsuarioRepository {
+    --
+    + findByEmail(String email): Usuario
+    --
+    <i>Busca usuário por email</i>
+    <i>para autenticação</i>
+}
+
+class CategoriaRepository {
+    --
+    <i>Herda operações básicas</i>
+    <i>do GenericRepository</i>
+}
+
+class NoticiaRepository {
+    --
+    + findByCategoriaId(Long categoriaId): List<Noticia>
+    --
+    <i>Lista notícias de uma categoria</i>
+    <i>específica para o jogo</i>
+}
+
+class RespostaRepository {
+    --
+    + findByUsuarioId(Long usuarioId): List<Resposta>
+    + findByUsuarioIdAndNoticiaId(Long usuarioId, Long noticiaId): Resposta
+    + countAcertosUnicosPorCategoria(Long usuarioId, Long categoriaId): long
+    + findNoticiasRespondidasCorretamente(Long usuarioId, Long categoriaId): List<Long>
+    --
+    <i>Rastreia respostas e calcula estatísticas</i>
+}
+
+class ProgressoCategoriaRepository {
+    --
+    + findByUsuarioIdAndCategoriaId(Long usuarioId, Long categoriaId): ProgressoCategoria
+    + findByUsuarioId(Long usuarioId): List<ProgressoCategoria>
+    --
+    <i>Gerencia progresso de maestria</i>
+    <i>por categoria</i>
+}
+
+class ConquistaRepository {
+    --
+    <i>Gerencia conquistas disponíveis</i>
+    <i>no sistema</i>
+}
+
+class ConquistaUsuarioRepository {
+    --
+    + findByUsuarioId(Long usuarioId): List<ConquistaUsuario>
+    + findByUsuarioIdAndConquistaId(Long usuarioId, Long conquistaId): ConquistaUsuario
+    --
+    <i>Rastreia conquistas desbloqueadas</i>
+}
+
+class PecaRecompensaRepository {
+    --
+    + findByCategoriaId(Long categoriaId): List<PecaRecompensa>
+    --
+    <i>Define peças disponíveis</i>
+    <i>por categoria</i>
+}
+
+class PecaUsuarioRepository {
+    --
+    + findByUsuarioId(Long usuarioId): List<PecaUsuario>
+    --
+    <i>Rastreia peças desbloqueadas</i>
+    <i>pelo usuário</i>
+}
+
+' ==========================
+' HERANÇA
+' ==========================
+
+GenericRepository <|-- UsuarioRepository
+GenericRepository <|-- CategoriaRepository
+GenericRepository <|-- NoticiaRepository
+GenericRepository <|-- RespostaRepository
+GenericRepository <|-- ProgressoCategoriaRepository
+GenericRepository <|-- ConquistaRepository
+GenericRepository <|-- ConquistaUsuarioRepository
+GenericRepository <|-- PecaRecompensaRepository
+GenericRepository <|-- PecaUsuarioRepository
+
+' ==========================
+' NOTAS EXPLICATIVAS
+' ==========================
+
+note top of GenericRepository
+    <b>Repositório Base</b>
+
+    Todos os repositórios herdam
+    operações CRUD básicas:
+    - save(), update(), delete()
+    - findById(), findAll()
+
+    Usa Hibernate SessionFactory
+end note
+
+note bottom of RespostaRepository
+    <b>Repositório Mais Complexo</b>
+
+    Responsável por:
+    - Histórico de respostas
+    - Contagem de acertos únicos
+    - Cálculo de taxa de acerto
+    - Progresso em categorias
+end note
+
+note right of ProgressoCategoriaRepository
+    <b>Maestria por Categoria</b>
+
+    Controla:
+    - Nível atual na categoria
+    - Pontos de maestria
+    - Peças desbloqueadas
+end note
+
+@enduml
+

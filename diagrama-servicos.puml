@@ -1,0 +1,156 @@
+@startuml Diagrama de Serviços - Fact or Fake
+
+title Camada de Serviços (Lógica de Negócio)
+
+' ==========================
+' CONFIGURAÇÕES DE ESTILO
+' ==========================
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FEFEFE
+skinparam linetype ortho
+
+skinparam class {
+    BackgroundColor<<Service>> #FFF9C4
+    BorderColor<<Service>> #F57F17
+    BackgroundColor<<Repository>> #F3E5F5
+    BorderColor<<Repository>> #6A1B9A
+}
+
+' ==========================
+' SERVIÇOS
+' ==========================
+
+class JogoService <<Service>> {
+    - noticiaRepository: NoticiaRepository
+    - respostaRepository: RespostaRepository
+    - progressoCategoriaRepository: ProgressoCategoriaRepository
+    - usuarioRepository: UsuarioRepository
+    - categoriaRepository: CategoriaRepository
+    --
+    + obterNoticiaAleatoriaPorCategoria(Long usuarioId, Long categoriaId): Noticia
+    + processarResposta(Long usuarioId, Long noticiaId, boolean resposta): Map<String, Object>
+    --
+    - verificarConquistas(Long usuarioId): void
+    - calcularNivelUsuario(int pontos): int
+    - calcularTituloUsuario(int nivel): String
+    - calcularPontosParaProximoNivel(int nivelAtual): int
+}
+
+class RecompensaService <<Service>> {
+    - progressoCategoriaRepository: ProgressoCategoriaRepository
+    - pecaRecompensaRepository: PecaRecompensaRepository
+    - pecaUsuarioRepository: PecaUsuarioRepository
+    - categoriaRepository: CategoriaRepository
+    - respostaRepository: RespostaRepository
+    --
+    + verificarDesbloqueio(Long usuarioId, Long categoriaId): void
+    + obterPecasDesbloqueadas(Long usuarioId, Long categoriaId): List<Integer>
+    + obterProgressoVisual(Long usuarioId, Long categoriaId): Map<String, Object>
+}
+
+' ==========================
+' REPOSITÓRIOS USADOS
+' ==========================
+
+class NoticiaRepository <<Repository>> {
+    + findByCategoriaId(): List
+}
+
+class RespostaRepository <<Repository>> {
+    + findByUsuarioId(): List
+    + countAcertosUnicosPorCategoria(): long
+}
+
+class UsuarioRepository <<Repository>> {
+    + findById(): Usuario
+    + save(): Usuario
+}
+
+class CategoriaRepository <<Repository>> {
+    + findById(): Categoria
+}
+
+class ProgressoCategoriaRepository <<Repository>> {
+    + findByUsuarioIdAndCategoriaId(): ProgressoCategoria
+}
+
+class PecaRecompensaRepository <<Repository>> {
+    + findByCategoriaId(): List
+}
+
+class PecaUsuarioRepository <<Repository>> {
+    + findByUsuarioId(): List
+}
+
+' ==========================
+' DEPENDÊNCIAS
+' ==========================
+
+JogoService ..> NoticiaRepository : usa
+JogoService ..> RespostaRepository : usa
+JogoService ..> UsuarioRepository : usa
+JogoService ..> CategoriaRepository : usa
+JogoService ..> ProgressoCategoriaRepository : usa
+
+RecompensaService ..> ProgressoCategoriaRepository : usa
+RecompensaService ..> PecaRecompensaRepository : usa
+RecompensaService ..> PecaUsuarioRepository : usa
+RecompensaService ..> CategoriaRepository : usa
+RecompensaService ..> RespostaRepository : usa
+
+' ==========================
+' NOTAS EXPLICATIVAS
+' ==========================
+
+note right of JogoService
+    <b>Lógica Central do Jogo</b>
+
+    <b>Responsabilidades:</b>
+    ✓ Selecionar notícias aleatórias não respondidas
+    ✓ Processar resposta do usuário (FATO/FAKE)
+    ✓ Calcular pontuação (+10 por acerto)
+    ✓ Atualizar nível global do usuário
+    ✓ Definir títulos (Reporter, Analista, etc.)
+    ✓ Verificar conquistas desbloqueadas
+
+    <b>Sistema de Níveis:</b>
+    - XP necessário = 100 × nível atual
+    - Nível 1→2: 100 pontos
+    - Nível 2→3: 200 pontos
+    - Nível máximo: 30+
+
+    <b>Títulos por Nível:</b>
+    1-4: Reporter
+    5-9: Analista
+    10-14: Investigador
+    15-19: Investigador Sênior
+    20-24: Detetive
+    25-29: Detetive Master
+    30+: Caçador Supremo
+end note
+
+note left of RecompensaService
+    <b>Sistema de Recompensas Visuais</b>
+
+    <b>Responsabilidades:</b>
+    ✓ Desbloquear peças de imagem progressivamente
+    ✓ Calcular progresso em cada categoria
+    ✓ Retornar dados visuais para o frontend
+
+    <b>Desbloqueio de Peças:</b>
+    - 25% de progresso → Peça 1 (quadrante 1)
+    - 50% de progresso → Peça 2 (quadrante 2)
+    - 75% de progresso → Peça 3 (quadrante 3)
+    - 100% de progresso → Peça 4 (quadrante 4)
+
+    <b>Cálculo de Progresso:</b>
+    progresso = (acertos_únicos / total_notícias) × 100
+
+    Exemplo: Categoria "Futebol" com imagem de estádio
+    - Começa vazia/bloqueada
+    - A cada 25% ganha um pedaço
+    - Ao completar 100% vê a imagem completa
+end note
+
+@enduml
+

@@ -323,6 +323,18 @@ frontend/
 
 ---
 
+# Diagramas
+
+![](\DiagramaPng\DiagramaControladores.png)
+
+![](\DiagramaPng\DiagramaEntidades.png)
+
+![](\DiagramaPng\DiagramaGeral.png)
+
+![](\DiagramaPng\DiagramaRepositorios.png)
+
+![](\DiagramaPng\DiagramaServiço.png)
+
 ## 🎮 Frontend
 
 Interface web desenvolvida com HTML, CSS e JavaScript vanilla.

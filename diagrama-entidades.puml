@@ -1,0 +1,208 @@
+@startuml Diagrama de Entidades - Fact or Fake
+
+title Camada de Modelo (Entidades)
+
+' ==========================
+' CONFIGURAÇÕES DE ESTILO
+' ==========================
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FEFEFE
+skinparam linetype ortho
+
+skinparam class {
+    BackgroundColor #E1F5FE
+    BorderColor #0277BD
+}
+
+' ==========================
+' ENTIDADES DO DOMÍNIO
+' ==========================
+
+class Usuario {
+    - id: Long
+    - nome: String
+    - email: String
+    - nivel: int
+    - pontuacaoTotal: int
+    - tituloAtual: String
+    - totalTentativas: int
+    - acertosTotais: int
+    - taxaAcerto: double
+    --
+    + getId(): Long
+    + getNome(): String
+    + getEmail(): String
+    + getNivel(): int
+    + getPontuacaoTotal(): int
+    + getTituloAtual(): String
+}
+
+class Categoria {
+    - id: Long
+    - nome: String
+    - descricao: String
+    - totalNiveis: int
+    - caminhoImagemCompleta: String
+    --
+    + getId(): Long
+    + getNome(): String
+    + getDescricao(): String
+    + getCaminhoImagemCompleta(): String
+}
+
+class Noticia {
+    - id: Long
+    - categoriaId: Long
+    - titulo: String
+    - conteudo: String
+    - ehVerdadeira: boolean
+    - explicacao: String
+    --
+    + getId(): Long
+    + getTitulo(): String
+    + getConteudo(): String
+    + isEhVerdadeira(): boolean
+    + getExplicacao(): String
+}
+
+class Resposta {
+    - id: Long
+    - usuarioId: Long
+    - noticiaId: Long
+    - respostaUsuario: boolean
+    - estaCorreta: boolean
+    - pontosGanhos: int
+    - tentativas: int
+    --
+    + getId(): Long
+    + isRespostaUsuario(): boolean
+    + isEstaCorreta(): boolean
+    + getPontosGanhos(): int
+    + getTentativas(): int
+}
+
+class ProgressoCategoria {
+    - id: Long
+    - usuarioId: Long
+    - categoriaId: Long
+    - nivelAtual: int
+    - pontosMaestria: int
+    - totalTentativas: int
+    - pecasDesbloqueadas: List<Integer>
+    --
+    + getId(): Long
+    + getNivelAtual(): int
+    + getPontosMaestria(): int
+    + getPecasDesbloqueadas(): List<Integer>
+}
+
+class Conquista {
+    - id: Long
+    - nome: String
+    - descricao: String
+    - criterio: String
+    - tipo: String
+    - valorRequerido: int
+    --
+    + getId(): Long
+    + getNome(): String
+    + getDescricao(): String
+    + getCriterio(): String
+    + getValorRequerido(): int
+}
+
+class ConquistaUsuario {
+    - id: Long
+    - usuarioId: Long
+    - conquistaId: Long
+    - dataDesbloqueio: LocalDateTime
+    --
+    + getId(): Long
+    + getUsuarioId(): Long
+    + getConquistaId(): Long
+    + getDataDesbloqueio(): LocalDateTime
+}
+
+class PecaRecompensa {
+    - id: Long
+    - categoriaId: Long
+    - nivelRequerido: int
+    --
+    + getId(): Long
+    + getCategoriaId(): Long
+    + getNivelRequerido(): int
+}
+
+class PecaUsuario {
+    - id: Long
+    - usuarioId: Long
+    - pecaId: Long
+    - dataDesbloqueio: LocalDateTime
+    --
+    + getId(): Long
+    + getUsuarioId(): Long
+    + getPecaId(): Long
+    + getDataDesbloqueio(): LocalDateTime
+}
+
+' ==========================
+' RELACIONAMENTOS
+' ==========================
+
+Usuario "1" -- "0..*" Resposta : responde >
+Usuario "1" -- "0..*" ProgressoCategoria : possui >
+Usuario "1" -- "0..*" ConquistaUsuario : desbloqueou >
+Usuario "1" -- "0..*" PecaUsuario : possui >
+
+Categoria "1" -- "0..*" Noticia : contém >
+Categoria "1" -- "0..*" ProgressoCategoria : rastreia >
+Categoria "1" -- "0..*" PecaRecompensa : oferece >
+
+Noticia "1" -- "0..*" Resposta : recebe >
+
+Conquista "1" -- "0..*" ConquistaUsuario : concedida em >
+
+PecaRecompensa "1" -- "0..*" PecaUsuario : desbloqueada em >
+
+' ==========================
+' NOTAS EXPLICATIVAS
+' ==========================
+
+note right of Usuario
+    <b>Entidade Principal</b>
+
+    Representa o jogador:
+    - Nível global (1-30+)
+    - Pontuação total
+    - Título (Reporter, Analista, etc.)
+    - Taxa de acerto
+end note
+
+note right of ProgressoCategoria
+    <b>Maestria por Categoria</b>
+
+    Acompanha progresso específico
+    em cada tema e controla peças
+    desbloqueadas (25%, 50%, 75%, 100%)
+end note
+
+note bottom of Noticia
+    <b>Conteúdo do Jogo</b>
+
+    Notícias verificadas com:
+    - Fato ou Fake (ehVerdadeira)
+    - Explicação educativa
+    - Fonte confiável
+end note
+
+note left of Conquista
+    <b>Sistema de Conquistas</b>
+
+    Tipos:
+    - Acertos totais
+    - Sequências
+    - Maestria em categorias
+end note
+
+@enduml
+
