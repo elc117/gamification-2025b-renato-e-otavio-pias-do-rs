@@ -1,9 +1,12 @@
 // Configuração da API
-// Se estiver no Render (em produção), usa URL vazia (mesmo domínio)
-// Se estiver local, usa localhost:3000
+// Local: localhost:3000
+// Render: mesmo domínio (URL vazia)
+// itch.io: URL completa do backend no Render
 const API_BASE = window.location.hostname === 'localhost' 
     ? 'http://localhost:3000' 
-    : '';
+    : window.location.hostname.includes('itch.zone') || window.location.hostname.includes('itch.io')
+        ? 'https://gamification-2025b-renato-e-otavio-pias.onrender.com'
+        : '';
 
 // Estado da aplicação
 let currentUser = null;

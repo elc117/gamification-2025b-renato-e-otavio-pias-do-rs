@@ -37,6 +37,13 @@ public class App {
             // Configurar JSON mapper
             config.jsonMapper(new JavalinJackson(objectMapper, true));
             
+            // Configurar CORS para aceitar requisições do itch.io
+            config.bundledPlugins.enableCors(cors -> {
+                cors.addRule(it -> {
+                    it.anyHost(); // Permite qualquer origem (itch.io, localhost, etc)
+                });
+            });
+            
             // Servir arquivos estáticos (frontend)
             java.io.File frontendDir = new java.io.File("frontend");
             if (frontendDir.exists() && frontendDir.isDirectory()) {
