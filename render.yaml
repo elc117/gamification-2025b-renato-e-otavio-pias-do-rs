@@ -1,0 +1,28 @@
+services:
+  # Backend Web Service
+  - type: web
+    name: gamification-backend
+    runtime: java
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -jar target/gamification-1.0-SNAPSHOT.jar
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: gamification-db
+          property: connectionString
+      - key: DB_USER
+        fromDatabase:
+          name: gamification-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: gamification-db
+          property: password
+
+databases:
+  # PostgreSQL Database
+  - name: gamification-db
+    databaseName: fact_or_fake
+    user: postgres

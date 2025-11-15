@@ -17,11 +17,11 @@ false,
 
 **Sinais identificadores:**
 
-- "URGENTE" e "COMPARTILHE" em caixa alta: linguagem sensacionalista típica de fake news
-- Valores absurdos: R$ 50 mil por pessoa custaria trilhões aos cofres públicos (impossível economicamente)
-- "Fontes do Palácio" sem identificação: fontes vagas e não nomeadas
-- Promessa simples demais: "basta apresentar CPF e RG" - programas governamentais têm processos mais complexos
-- Senso de urgência: "ainda este mês", "nesta madrugada" - cria pressão para compartilhar sem verificar
+- **"URGENTE" e "COMPARTILHE" em caixa alta:** linguagem sensacionalista típica de fake news
+- **Valores absurdos:** R$ 50 mil por pessoa custaria trilhões aos cofres públicos (impossível economicamente)
+- **"Fontes do Palácio" sem identificação:** fontes vagas e não nomeadas
+- **Promessa simples demais:** "basta apresentar CPF e RG" - programas governamentais têm processos mais complexos
+- **Senso de urgência:** "ainda este mês", "nesta madrugada" - cria pressão para compartilhar sem verificar
 
 Programas sociais reais são anunciados oficialmente em canais do governo, passam pelo Congresso e têm ampla cobertura da imprensa tradicional.
 
@@ -35,12 +35,12 @@ true,
 
 **Sinais de credibilidade:**
 
-- Linguagem objetiva e técnica: sem sensacionalismo ou apelos emocionais
-- Informações específicas: placar da votação (7 a 4), data exata, nome do relator
-- Fatos verificáveis: decisões do STF são públicas e podem ser consultadas
-- Ausência de pedidos de compartilhamento: notícias verdadeiras não pedem para "viralizar"
-- Tema plausível: dentro das atribuições normais do STF
-- Tom neutro: não usa adjetivos exagerados nem palavras em caixa alta
+- **Linguagem objetiva e técnica:** sem sensacionalismo ou apelos emocionais
+- **Informações específicas:** placar da votação (7 a 4), data exata, nome do relator
+- **Fatos verificáveis:** decisões do STF são públicas e podem ser consultadas
+- **Ausência de pedidos de compartilhamento:** notícias verdadeiras não pedem para "viralizar"
+- **Tema plausível:** dentro das atribuições normais do STF
+- **Tom neutro:** não usa adjetivos exagerados nem palavras em caixa alta
 
 Decisões judiciais podem ser verificadas nos sites oficiais dos tribunais e são amplamente noticiadas por diversos veículos de imprensa.
 
@@ -54,11 +54,11 @@ false,
 
 **Sinais identificadores:**
 
-- Teoria da conspiração: "votaram às escondidas", "mídia foi comprada"
-- Pontos de exclamação excessivos: "!!!" - apelo emocional exagerado
-- Fonte não verificável: "um amigo que trabalha em Brasília" - não é fonte oficial
-- Linguagem alarmista: "Acorde Brasil!", "controle total"
-- Informação facilmente desmentível: votações no Congresso são públicas e transmitidas ao vivo
+- **Teoria da conspiração:** "votaram às escondidas", "mídia foi comprada"
+- **Pontos de exclamação excessivos:** "!!!" - apelo emocional exagerado
+- **Fonte não verificável:** "um amigo que trabalha em Brasília" - não é fonte oficial
+- **Linguagem alarmista:** "Acorde Brasil!", "controle total"
+- **Informação facilmente desmentível:** votações no Congresso são públicas e transmitidas ao vivo
 
 **Fatos:**
 
@@ -75,13 +75,13 @@ true,
 
 **Sinais de credibilidade:**
 
-- Fonte oficial identificada: TSE e seu presidente nomeado
-- Dados específicos: 156,4 milhões de eleitores, crescimento de 5,4%
-- Informações verificáveis: dados do TSE são públicos e acessíveis
-- Contexto adequado: explica o motivo do aumento
-- Linguagem jornalística: objetiva, sem adjetivos exagerados
-- Data específica: "nesta terça-feira (12)"
-- Ausência de apelos emocionais: não tenta manipular o leitor
+- **Fonte oficial identificada:** TSE e seu presidente nomeado
+- **Dados específicos:** 156,4 milhões de eleitores, crescimento de 5,4%
+- **Informações verificáveis:** dados do TSE são públicos e acessíveis
+- **Contexto adequado:** explica o motivo do aumento
+- **Linguagem jornalística:** objetiva, sem adjetivos exagerados
+- **Data específica:** "nesta terça-feira (12)"
+- **Ausência de apelos emocionais:** não tenta manipular o leitor
 
 Dados eleitorais oficiais podem ser consultados diretamente no portal do TSE e são rotineiramente divulgados por veículos de imprensa profissionais.
 
@@ -106,12 +106,12 @@ false,
 
 **Sinais identificadores:**
 
-- "BOMBA", "URGENTE" em caixa alta: linguagem sensacionalista típica de fake news
-- Valores completamente absurdos: R$ 500 milhões por mês é economicamente impossível para qualquer clube brasileiro
-- "Compartilhe antes que apaguem": típico apelo conspiratório de fake news
-- Fonte não verificável: "meu primo que trabalha no aeroporto" - não é fonte oficial
-- Informação vaga sobre anúncio: "amanhã no Maracanã" sem detalhes concretos
-- Urgência artificial: pressiona o leitor a compartilhar sem verificar
+- **"BOMBA", "URGENTE" em caixa alta:** linguagem sensacionalista típica de fake news
+- **Valores completamente absurdos:** R$ 500 milhões por mês é economicamente impossível para qualquer clube brasileiro
+- **"Compartilhe antes que apaguem":** típico apelo conspiratório de fake news
+- **Fonte não verificável:** "meu primo que trabalha no aeroporto" - não é fonte oficial
+- **Informação vaga sobre anúncio:** "amanhã no Maracanã" sem detalhes concretos
+- **Urgência artificial:** pressiona o leitor a compartilhar sem verificar
 
 Contratações reais de jogadores são anunciadas oficialmente pelos clubes, com coletivas de imprensa e ampla cobertura da mídia esportiva profissional.
 
@@ -124,12 +124,12 @@ true,
 
 **Sinais de credibilidade:**
 
-- Informações específicas e verificáveis: placar exato, autores dos gols, minutos em que foram marcados
-- Data e local precisos: "noite deste domingo (14)", "Allianz Parque"
-- Dados concretos da competição: 33ª rodada, 67 pontos na classificação
-- Linguagem objetiva: sem adjetivos exagerados ou apelos emocionais
-- Tom jornalístico neutro: relata os fatos sem sensacionalismo
-- Ausência de pedidos de compartilhamento: notícias verdadeiras não pedem para "viralizar"
+- **Informações específicas e verificáveis:** placar exato, autores dos gols, minutos em que foram marcados
+- **Data e local precisos:** "noite deste domingo (14)", "Allianz Parque"
+- **Dados concretos da competição:** 33ª rodada, 67 pontos na classificação
+- **Linguagem objetiva:** sem adjetivos exagerados ou apelos emocionais
+- **Tom jornalístico neutro:** relata os fatos sem sensacionalismo
+- **Ausência de pedidos de compartilhamento:** notícias verdadeiras não pedem para "viralizar"
 
 Resultados de partidas oficiais podem ser verificados nos sites dos clubes, da CBF e em diversos veículos especializados em esporte.
 
@@ -142,12 +142,12 @@ false,
 
 **Sinais identificadores:**
 
-- Alegação completamente absurda: impossível falsificar décadas de jogos ao vivo com milhares de testemunhas
-- Teoria da conspiração: "a Globo não vai mostrar", "FIFA tentando abafar"
-- Fonte inventada: "hacker russo vazou arquivos" - clássico de fake news conspiratórias
-- Linguagem alarmista: "CHOCANTE", "ACORDA MUNDO" em caixa alta
-- Apelo emocional exagerado: "nos enganaram por anos!!!"
-- Impossibilidade prática: milhões de pessoas assistiram jogos presencialmente
+- **Alegação completamente absurda:** impossível falsificar décadas de jogos ao vivo com milhares de testemunhas
+- **Teoria da conspiração:** "a Globo não vai mostrar", "FIFA tentando abafar"
+- **Fonte inventada:** "hacker russo vazou arquivos" - clássico de fake news conspiratórias
+- **Linguagem alarmista:** "CHOCANTE", "ACORDA MUNDO" em caixa alta
+- **Apelo emocional exagerado:** "nos enganaram por anos!!!"
+- **Impossibilidade prática:** milhões de pessoas assistiram jogos presencialmente
 
 **Fatos:**
 
@@ -164,13 +164,13 @@ true,
 
 **Sinais de credibilidade:**
 
-- Fonte oficial identificada: CBF e seu presidente nomeado
-- Informações específicas: datas exatas (15 e 19 de novembro), locais (Salvador e Barranquilla)
-- Contexto adequado: Eliminatórias da Copa do Mundo de 2026
-- Nome do técnico mencionado: Dorival Júnior
-- Linguagem jornalística objetiva: sem sensacionalismo
-- Data do anúncio: "nesta quinta-feira (13)"
-- Informação verificável: calendário oficial pode ser consultado na CBF
+- **Fonte oficial identificada:** CBF e seu presidente nomeado
+- **Informações específicas:** datas exatas (15 e 19 de novembro), locais (Salvador e Barranquilla)
+- **Contexto adequado:** Eliminatórias da Copa do Mundo de 2026
+- **Nome do técnico mencionado:** Dorival Júnior
+- **Linguagem jornalística objetiva:** sem sensacionalismo
+- **Data do anúncio:** "nesta quinta-feira (13)"
+- **Informação verificável:** calendário oficial pode ser consultado na CBF
 
 Calendários de jogos oficiais das seleções são divulgados pelas confederações e amplamente noticiados por veículos especializados em esporte.
 
