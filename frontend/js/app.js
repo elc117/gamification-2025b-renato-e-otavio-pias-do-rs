@@ -1,5 +1,9 @@
 // Configuração da API
-const API_BASE = 'http://localhost:3000';
+// Se estiver no Render (em produção), usa URL vazia (mesmo domínio)
+// Se estiver local, usa localhost:3000
+const API_BASE = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000' 
+    : '';
 
 // Estado da aplicação
 let currentUser = null;
