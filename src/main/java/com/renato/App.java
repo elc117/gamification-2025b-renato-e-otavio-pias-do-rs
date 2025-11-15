@@ -40,7 +40,14 @@ public class App {
             // Configurar CORS para aceitar requisições do itch.io
             config.bundledPlugins.enableCors(cors -> {
                 cors.addRule(it -> {
-                    it.anyHost(); // Permite qualquer origem (itch.io, localhost, etc)
+                    it.allowHost(
+                        "html-classic.itch.zone",
+                        "v6p9d9t4.ssl.hwcdn.net",
+                        "localhost:5500",
+                        "localhost:3000",
+                        "127.0.0.1:5500"
+                    );
+                    it.allowCredentials = true;
                 });
             });
             
