@@ -1,0 +1,38 @@
+/*
+ * Fontes Personalizadas
+ * Fonte Cranberra - Título principal do jogo
+ */
+
+@font-face {
+    font-family: 'Cranberra';
+    src: url('../assets/fonts/Cranberra-Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
+
+/* Fallback para diferentes pesos usando a mesma fonte */
+@font-face {
+    font-family: 'Cranberra';
+    src: url('../assets/fonts/Cranberra-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: block;
+}
+
+@font-face {
+    font-family: 'Cranberra';
+    src: url('../assets/fonts/Cranberra-Regular.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: block;
+}
+
+@font-face {
+    font-family: 'Cranberra';
+    src: url('../assets/fonts/Cranberra-Regular.otf') format('opentype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: block;
+}
+

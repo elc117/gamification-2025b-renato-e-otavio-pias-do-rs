@@ -6,33 +6,141 @@
     <meta name="description" content="Combata a desinformação! Jogo educativo para desenvolver pensamento crítico">
     <meta name="theme-color" content="#667eea">
     <title>🎯 Fact or Fake - Combate à Desinformação</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Righteous&family=Exo+2:wght@700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <!-- Fontes Personalizadas -->
+    <link rel="stylesheet" href="css/fonts.css">
+    <!-- Estilos Principais -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Tela de Login -->
+    <!-- Tela de Login - Crachá de Investigador -->
     <div id="login-screen" class="screen active">
         <div class="container">
-            <h1>🎯 Fact or Fake</h1>
-            <p class="subtitle">Combate à Desinformação</p>
-            <div class="login-box">
-                <h2>Entrar no Jogo</h2>
-                <input type="email" id="email-input" placeholder="📧 Digite seu e-mail" required />
-                <button id="login-btn" class="btn-primary">Entrar</button>
-                <p class="small-text">Novo por aqui? <a href="#" id="register-link">Criar conta</a></p>
+            <!-- Título Principal -->
+            <div class="title-container">
+                <div class="icon-wrapper">
+                    <img src="assets/images/lupa-transparente.png" alt="Lupa" class="title-icon">
+                </div>
+                <h1 class="fact-or-fake-title">Fact or Fake</h1>
             </div>
+
+            <!-- Subtítulo estilo carimbo -->
+            <div class="subtitle-stamp">COMBATE À DESINFORMAÇÃO</div>
+
+            <!-- Crachá de Investigador -->
+            <div class="badge-container">
+                <!-- ...existing code... -->
+                <div class="badge-clip"></div>
+                <div class="badge-card">
+                    <div class="badge-border"></div>
+                    <div class="badge-content">
+                        <div class="badge-emblem">
+                            <div class="emblem-circle">
+                                <svg viewBox="0 0 100 100" class="emblem-icon">
+                                    <circle cx="35" cy="35" r="25" fill="none" stroke="currentColor" stroke-width="4"/>
+                                    <line x1="55" y1="55" x2="75" y2="75" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <h3 class="badge-title">INVESTIGADOR</h3>
+                        <p class="badge-subtitle">FACT CHECKER</p>
+                        <div class="badge-photo">
+                            <img src="assets/images/Silhueta.jpg" alt="Investigador" class="photo-image">
+                        </div>
+                        <div class="badge-fields">
+                            <div class="field-group">
+                                <label class="field-label">ID:</label>
+                                <input type="email" id="email-input" class="badge-input" placeholder="seu-email@exemplo.com" required />
+                            </div>
+                        </div>
+                        <button id="login-btn" class="badge-stamp">
+                            <span class="stamp-text">ACESSO<br>AUTORIZADO</span>
+                        </button>
+                        <div class="badge-barcode">
+                            <div class="barcode-line"></div>
+                            <div class="barcode-line"></div>
+                            <div class="barcode-line"></div>
+                            <div class="barcode-line"></div>
+                            <div class="barcode-line"></div>
+                            <div class="barcode-line"></div>
+                            <div class="barcode-line"></div>
+                            <div class="barcode-line"></div>
+                        </div>
+                        <p class="badge-serial">Nº 2025-FACT-CHECK</p>
+                    </div>
+                    <div class="badge-hologram"></div>
+                </div>
+            </div>
+
+            <!-- Botão de Nova Credencial -->
+            <button id="register-link" class="credential-button">
+                <svg class="credential-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="12" y1="9" x2="12" y2="17"/>
+                    <line x1="8" y1="13" x2="16" y2="13"/>
+                </svg>
+                <span>NOVA CREDENCIAL</span>
+            </button>
         </div>
     </div>
 
-    <!-- Tela de Registro -->
+    <!-- Tela de Registro - Formulário de Credencial -->
     <div id="register-screen" class="screen">
         <div class="container">
-            <h1>📝 Criar Conta</h1>
-            <div class="login-box">
-                <input type="text" id="nome-input" placeholder="👤 Digite seu nome" required />
-                <input type="email" id="email-reg-input" placeholder="📧 Digite seu e-mail" required />
-                <button id="register-btn" class="btn-primary">Criar Conta</button>
-                <p class="small-text">Já tem conta? <a href="#" id="login-link">Fazer login</a></p>
+            <!-- Título -->
+            <div class="title-container">
+                <div class="icon-wrapper">
+                    <img src="assets/images/lupa-transparente.png" alt="Lupa" class="title-icon">
+                </div>
+                <h1 class="fact-or-fake-title">Fact or Fake</h1>
             </div>
+
+            <div class="subtitle-stamp">SOLICITAÇÃO DE CREDENCIAL</div>
+
+            <!-- Formulário de Registro estilo Credencial -->
+            <div class="credential-form-container">
+                <div class="credential-form-card">
+                    <div class="form-header">
+                        <div class="form-emblem">
+                            <svg viewBox="0 0 100 100" class="form-icon">
+                                <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="4"/>
+                                <path d="M 50 30 L 50 50 L 65 50" stroke="currentColor" stroke-width="4" stroke-linecap="round" fill="none"/>
+                            </svg>
+                        </div>
+                        <h2 class="form-title">NOVO INVESTIGADOR</h2>
+                        <p class="form-subtitle">Preencha os dados para sua credencial</p>
+                    </div>
+
+                    <div class="form-fields">
+                        <div class="credential-field">
+                            <label class="credential-label">NOME COMPLETO:</label>
+                            <input type="text" id="nome-input" class="credential-input" placeholder="Digite seu nome completo" required />
+                        </div>
+
+                        <div class="credential-field">
+                            <label class="credential-label">E-MAIL (ID):</label>
+                            <input type="email" id="email-reg-input" class="credential-input" placeholder="seu-email@exemplo.com" required />
+                        </div>
+                    </div>
+
+                    <button id="register-btn" class="credential-submit-btn">
+                        <span class="submit-text">EMITIR CREDENCIAL</span>
+                    </button>
+
+                    <div class="form-serial">FORM-2025-REGISTRO</div>
+                </div>
+            </div>
+
+            <button id="login-link" class="back-to-login-btn">
+                <svg class="back-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"/>
+                    <polyline points="12 19 5 12 12 5"/>
+                </svg>
+                <span>Voltar ao Login</span>
+            </button>
         </div>
     </div>
 
