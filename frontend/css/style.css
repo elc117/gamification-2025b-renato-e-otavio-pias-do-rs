@@ -82,7 +82,7 @@ body::before {
     z-index: -1;
 }
 
-/* Tela de Registro com o mesmo Fundo */
+/* Tela de Registro com Fundo Personalizado */
 #register-screen {
     position: relative;
 }
@@ -94,11 +94,23 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('../assets/images/telainicilfundo.jpg');
+    background-image: url('../assets/images/telacriarconta.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
+    z-index: -1;
+}
+
+/* Overlay sutil para melhor legibilidade na tela de registro */
+#register-screen::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(26, 26, 26, 0.15);
     z-index: -1;
 }
 
@@ -2363,46 +2375,55 @@ h2 {
     border-top: 1px dashed rgba(139, 115, 85, 0.3);
 }
 
-/* Botão Voltar ao Login */
+/* Botão Voltar ao Login - Design Elegante e Convidativo */
 .back-to-login-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    margin-top: 20px;
-    padding: 12px 24px;
+    gap: 10px;
+    margin-top: 25px;
+    padding: 14px 28px;
     font-family: Arial, sans-serif;
-    font-size: 0.95em;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.9);
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    font-size: 1em;
+    font-weight: bold;
+    color: #8B0000;
+    background: rgba(245, 230, 211, 0.25);
+    border: 2.5px solid #D4AF37;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .back-icon {
-    width: 18px;
-    height: 18px;
-    stroke: rgba(255, 255, 255, 0.9);
+    width: 20px;
+    height: 20px;
+    stroke: #8B0000;
+    stroke-width: 2.5;
     transition: all 0.3s ease;
 }
 
 .back-to-login-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(212, 175, 55, 0.35);
+    border-color: #FFD700;
+    border-width: 3px;
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    box-shadow:
+        0 5px 20px rgba(212, 175, 55, 0.4),
+        0 0 15px rgba(255, 215, 0, 0.3);
 }
 
 .back-to-login-btn:hover .back-icon {
-    transform: translateX(-3px);
+    transform: translateX(-5px);
+    stroke: #8B0000;
 }
 
 .back-to-login-btn:active {
     transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* Responsividade do Formulário de Registro */
