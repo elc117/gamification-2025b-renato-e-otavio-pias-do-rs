@@ -1,6 +1,48 @@
+## Identificação
+
+- **Nomes:** Otávio Krügel Zimmer e Renato Marquioro da Silva
+- **Curso:** Sistemas de Informação
+
 # Fact or Fake
 
-## Classes Implementadas
+## Ideia
+Projeto educativo de gamificação para combate à desinformação, onde os usuários identificam se notícias, manchetes e citações são falsas ou verdadeiras. A ideia do projeto é ir além do entretenimento puro, desenvolvendo pensamento crítico e habilidades de checagem de fatos essenciais para a cidadania digital. O sistema funcionará com a exibição de notícias, onde o usuário decide se cada conteúdo é FATO ou FAKE, recebendo feedback educativo com explicações e fontes após cada resposta. O usuário ganhará pontos por acerto. Após certa quantidade de pontos, desbloqueia uma peça para formar uma imagem que representa a categoria de notícias. Com todas as peças, a imagem é completa.
+
+O projeto foi implementado em Javalin, com um frontend em HTML, CSS e JavaScript.
+
+## Processo de desenvolvimento
+### Início
+Primeiramente, foi necessário entender como funciona o framework Javalin. Já sabíamos que era um framework web, mas não sabíamos ao certo como implementar ele. Depois de estudar sobre ele, inicialmente criamos as classes de modelo principais. Depois, fizemos uma implementação mínima do projeto em arrays, onde testamos as rotas e requisições básicas que nós criamos. Depois, adicionamos mais rotas para compreender as categorias, progressos e conquistas.
+
+### Banco de dados
+Após implementar inicialmente em arrays, levamos o projeto para o banco de dados. Nossa ideia inicial era trabalhar com o SQLite, até por já termos um pouco de experiência com ele. Porém, vimos que não seria o ideal para lidar com várias requisições vindas de diversas fontes, então optamos por utilizar o PostgreSQL. Foi um pouco difícil a implementação inicial, pois tudo era meio "novo" pra nós. Tivemos que usar algumas anotações específicas nos modelos pra se adequar ao banco de dados, parte em que tivemos que pesquisar bastante para entender. Contamos com ajuda de IA para compreender o funcionamento e para a aplicação em exemplo mínimo, para depois, finalmente, implementarmos o banco de dados. Tivemos que criar um repositorie genérico e repositories para cada uma das classes de modelo, para lidar com o CRUD no banco de dados. Além disso, o projeto com banco de dados também exige um arquivo Hibernate, necessário para controlar o acesso ao banco de dados.
+
+### Services
+Pesquisamos como são arquitetados projetos em Java e vimos que utiliza-se services para lidar com a lógica de negócio. Então fizemos uma refatoração e separamos as definições da lógica, com a criação destes services para fazer as operações básicas.
+
+### Criação de conta, login e logout
+Implementamos também um sistema de contas os usuários, sendo necessário, por ora, informar apenas o nome e oemail para criar uma conta. Depois disso, pode-se fazer o login na conta e o logout.
+
+### Figura (imagens)
+Para a parte da figura da categoria (que é parte do processo de gamificação do projeto), implementamos uma lógica de divisão em 4 partes: 25%, 50%, 75% e 100%. Fizemos isso de forma dinâmica, ou seja, é identificada a quantidade de notícias de uma determinada categoria e é feita uma divisão destas notícias. A cada 25% de acertos que o usuário consegue sobre o total de notícias da categoria, desbloqueia-se uma peça para completar a figura. A implementação visual disto foi feita posteriormente no frontend, como explicado a seguir.
+
+### Frontend
+Para o frontend, criamos inicialmente um html bem básico, somente para testar as requisições com cliques. Depois, contamos com a ajuda de IA para "embelezar" as telas, com a adição do JS e do CSS. No frontend é implementado um menu, contendo a parte para "jogar", o perfil do usuário e as conquistas do usuário. Na parte de "Jogar", pode-se escolher uma categoria de notícias e ir respondendo as notícias que aparecem, completando as figuras e desbloqueando conquistas. No "Meu Perfil", o usuário pode ver o seu nível de conta, quantas notícias já respondeu, quantas acertou, a sua taxa de acertos e o progresso em cada categoria. Aí que entra a implementação da figura que representa a categoria: o backend envia a quantidade de peças desbloqueadas pelo usuário (que são obtidas conforme a porcentagem de conclusão da categoria) para o frontend, e este monta a figura com um sistema semelhante a "quadrantes". 25% (1 peça) desbloqueia o canto superior esquerdo, 50% (2 peças) o canto superior direito, 75% (3 peças) o canto inferior esquerdo e 100% (4 peças) o canto inferior direito, completando a imagem. Além disso, também pode-se consultar as conquistas do usuário na opção "Conquistas".
+
+### Refatoração
+Chegamos à conclusão que, em determinado momento, poderíamos fazer uma refatoração no projeto, pois alguns services estavam muito grandes, os repositories talvez não estivessem na forma ideal e o Main estava com muitas responsabilidades. Para isso, então, criamos novos services, arrumamos os repositories, criamos DTOs (o jeito antigo, com <Map, String> era muito confuso), criamos controllers para lidar com as rotas e um ``App.java``, responsável por configurar e inicializar a aplicação Javalin. Dessa forma, tudo ficou mais organizado e o Main com bem poucas atribuições.
+
+### render.com
+Adicionamos o projeto para o render.com, sendo necessário, para isso, mudar algumas coisas, como mudar o arquivo hibernate para permitir a execução no render.com (com variáveis de ambiente), em vez de salvar as variáveis no banco de dados (além de mudar o formato de algumas variáveis), adicionamos um dockerfile (necessário para rodar o web service), ajustamos os fetchs no frontend para permitir o render.com e não apenas o localhost (como vínhamos fazendo) e ajustamos o JDBC para se adaptar ao jeito que o render.com espera. Também contamos com ajuda de IA nesta parte, pois não entendíamos muito bem o que teríamos que alterar no projeto para sair do localhost e permitir a execução no render.com, com a IA nos guiando bastante nesse processo.
+
+### itch.io
+Para fazer o upload do projeto no itch.io, também tivemos que mudar algumas coisas, como corrigir o CORS para aceitar as requisições de diferentes domínios e não só o do render.com (esta parte foi bastante difícil, sendo necessário pesquisar como funciona o CORS e pedindo ajuda para a IA conforme o que iríamos implementar). Também implementamos um sistema de tokens para manter a sessão de um usuário, pois percebemos que depois de fazer o upload do projeto para o itch.io, no frontend, quando o usuário mudava de tela, "perdia-se" a sessão dele, de modo que não era possível fazer as requisições direito. Então vimos que os projetos assim lidam com os tokens, que foram implementados para permitir isso, tendo sido necessário mudar o controller de autenticação e o frontend, lidando com o ``localStorage``.
+
+### Conclusão
+Com isso, foi possível entregar uma boa versão inicial de nosso projeto, já com bastante funcionalidades para serem utilizadas. Esta versão foi publicada no itch.io, e pode ser acessada no seguinte link:
+https://otaviozimmer.itch.io/fact-or-fake
+
+---
 
 ### Modelo de Domínio
 
@@ -22,32 +64,10 @@
 
 - **PecaUsuario.java** — Relaciona as peças de recompensa desbloqueadas por cada usuário, registrando qual peça foi desbloqueada e a data de desbloqueio.
 
-### Camada de Serviço
-
-- **DadosService.java** — Camada de serviço que contém a lógica de negócio da aplicação. Gerencia operações CRUD e regras de negócio utilizando os repositórios para acessar o banco de dados. Inclui métodos para usuários, categorias, notícias, respostas, conquistas e progressos.
-
-- **JogoService.java** — Serviço responsável pela lógica principal do jogo:
-  - Processa respostas dos usuários
-  - Calcula pontuação
-  - Atualiza progresso em categorias
-  - Verifica e desbloqueia conquistas automaticamente
-  - Gerencia desbloqueio de peças do quebra-cabeça
-
-- **PontuacaoService.java** — Serviço de cálculo de pontuação e níveis:
-  - Calcula pontos por resposta (5 pontos por acerto, 0 por erro)
-  - Determina nível baseado em pontos acumulados
-  - Sistema de 5 níveis (0 a 4):
-    - Nível 0: 0 pontos (Iniciante - sem peças)
-    - Nível 1: 10 pontos (Aprendiz - 25% - 2 acertos)
-    - Nível 2: 20 pontos (Conhecedor - 50% - 4 acertos)
-    - Nível 3: 30 pontos (Especialista - 75% - 6 acertos)
-    - Nível 4: 40 pontos (Mestre - 100% - 8 acertos)
-  - Calcula porcentagem de progresso e pontos para próximo nível
-
 ### Sistema de Gamificação
 
 #### Pontuação
-- **Acerto:** +5 pontos
+- **Acerto:** os pontos são calculados conforme o número de notícias da categoria.
 - **Erro:** 0 pontos (pode tentar novamente)
 - Apenas respostas corretas são salvas no banco
 - Notícias erradas podem ser respondidas novamente
@@ -55,55 +75,24 @@
 #### Conquistas
 O sistema de conquistas é desbloqueado automaticamente quando o usuário atinge determinados marcos:
 
-**Conquista Alfa - "Primeiros Passos":**
-- **Critério:** Acumular 20 pontos totais
-- **Equivalente:** 4 acertos (4 × 5 pontos)
+**Conquista Alpha - "Primeiros Passos":**
+- **Critério:** Acumular 40 pontos totais
 - **Tipo:** PONTOS_TOTAIS
 
-O sistema é extensível para futuros tipos de conquistas
+O sistema é extensível para futuros tipos de conquistas também.
 
 #### Progressão por Categoria
-Cada categoria possui sistema independente de maestria:
+Cada categoria possui sistema independente de níveis:
 - 5 níveis de progresso (0 a 4)
 - Desbloqueio de peças do quebra-cabeça por nível
 - Cada nível desbloqueia 25% da imagem completa
-- Imagem final revelada ao atingir nível 4 (Mestre)
+- Imagem final revelada ao atingir nível 4
 
-### Camada de Persistência (Repositórios)
-
-- **GenericRepository.java** — Repositório genérico base que implementa operações CRUD comuns (save, update, delete, findById, findAll) usando Hibernate/JPA. Outros repositórios herdam desta classe.
-
-- **UsuarioRepository.java** — Repositório específico para usuários, estende GenericRepository e adiciona método `findByEmail()` para buscar usuário por email.
-
-- **CategoriaRepository.java** — Repositório para categorias, adiciona método `findByNome()` para buscar categoria por nome.
-
-- **NoticiaRepository.java** — Repositório para notícias, inclui métodos especializados:
-  - `findByCategoria()` - busca notícias de uma categoria específica
-  - `findNaoRespondidasPorUsuario()` - retorna notícias não respondidas por um usuário
-
-- **RespostaRepository.java** — Repositório para respostas, com métodos:
-  - `findByUsuario()` - busca todas as respostas de um usuário
-  - `existsByUsuarioAndNoticia()` - verifica se usuário já respondeu uma notícia
-  - `countByUsuario()` - conta total de respostas do usuário
-  - `countAcertosByUsuario()` - conta acertos do usuário
-
-- **ConquistaRepository.java** — Repositório para conquistas, gerencia as conquistas disponíveis no sistema.
-
-- **ConquistaUsuarioRepository.java** — Repositório para relacionamento de conquistas desbloqueadas por usuários, inclui `findByUsuario()` para listar conquistas de um usuário.
-
-- **ProgressoCategoriaRepository.java** — Repositório para progresso por categoria, com métodos:
-  - `findByUsuario()` - busca todos os progressos de um usuário
-  - `findByUsuarioAndCategoria()` - busca progresso específico de usuário em uma categoria
-
-- **PecaRecompensaRepository.java** — Repositório para peças de recompensa, adiciona `findByCategoria()` para buscar peças de uma categoria específica.
-
-- **PecaUsuarioRepository.java** — Repositório para peças desbloqueadas por usuários, inclui `findByUsuario()` para listar peças de um usuário.
-
-### Configuração
+## Configuração
 
 - **HibernateConfig.java** — Classe de configuração do Hibernate que gerencia a SessionFactory, responsável por inicializar a conexão com o banco de dados PostgreSQL e fornecer sessões para operações de persistência.
 
-### Banco de Dados
+## Banco de Dados
 
 O projeto utiliza **PostgreSQL** como sistema de gerenciamento de banco de dados. A estrutura inclui:
 
@@ -118,44 +107,7 @@ O projeto utiliza **PostgreSQL** como sistema de gerenciamento de banco de dados
 - `pecas_recompensa` — peças do quebra-cabeça de cada categoria
 - `pecas_usuario` — peças desbloqueadas pelos usuários
 
-### API REST (Main.java)
-
-O arquivo **Main.java** implementa a API REST usando Javalin, com endpoints para:
-
-**Usuários:**
-- `GET /usuarios` — lista todos os usuários
-- `GET /usuarios/{id}` — busca usuário por ID
-- `POST /usuarios` — cria novo usuário
-- `PUT /usuarios/{id}` — atualiza usuário existente
-- `DELETE /usuarios/{id}` — deleta usuário
-- `GET /usuarios/{id}/perfil` — retorna perfil completo do usuário com progressos e conquistas
-- `GET /usuarios/{id}/respostas` — lista respostas de um usuário
-
-**Categorias:**
-- `GET /categorias` — lista todas as categorias
-- `GET /categorias/{id}` — busca categoria por ID
-- `POST /categorias` — cria nova categoria
-- `PUT /categorias/{id}` — atualiza categoria
-- `DELETE /categorias/{id}` — deleta categoria
-- `GET /categorias/{id}/progresso/{usuarioId}` — busca progresso do usuário em uma categoria
-
-**Notícias:**
-- `GET /noticias` — lista todas as notícias
-- `GET /noticias/{id}` — busca notícia por ID
-- `GET /noticias/random/{usuarioId}/categoria/{categoriaId}` — retorna notícia aleatória não respondida de uma categoria específica
-- `GET /noticias/categoria/{categoriaId}` — lista todas as notícias de uma categoria
-- `POST /noticias` — cria nova notícia
-- `PUT /noticias/{id}` — atualiza notícia existente
-- `DELETE /noticias/{id}` — deleta notícia
-
-**Respostas:**
-- `POST /noticias/{id}/responder` — registra resposta do usuário, atualiza pontuação e progresso
-
-**Conquistas:**
-- `GET /conquistas` — lista todas as conquistas
-- `GET /usuarios/{id}/conquistas` — lista conquistas de um usuário
-
-**Observação:** O sistema foi migrado de arrays em memória para persistência completa em banco de dados PostgreSQL, garantindo que todos os dados sejam salvos permanentemente. Todos os endpoints CRUD (Create, Read, Update, Delete) estão implementados para as principais entidades.
+**Observação:** o sistema foi migrado de arrays em memória para persistência completa em banco de dados PostgreSQL, garantindo que todos os dados sejam salvos permanentemente. Todos os endpoints CRUD (Create, Read, Update, Delete) estão implementados para as principais entidades.
 
 ---
 
@@ -198,6 +150,8 @@ O projeto está configurado com um **DevContainer** para facilitar o desenvolvim
 ### Configuração do Banco de Dados
 1. Crie o banco: `CREATE DATABASE fact_or_fake;`
 2. Configure as credenciais em `hibernate.cfg.xml`
+3. Insira as tabelas no banco de dados
+4. Popule as tabelas no banco de dados
 
 ### Executar
 ```bash
@@ -209,46 +163,10 @@ A API estará disponível em: `http://localhost:3000`
 
 ---
 
-## 🧪 Testando a API
-
-### PowerShell (Windows)
-```powershell
-# Criar sessão para testes
-$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
-
-# Login
-Invoke-RestMethod -Uri "http://localhost:3000/login" -Method POST -Body '{"email":"usuario@example.com"}' -ContentType "application/json" -WebSession $session
-
-# Obter notícia aleatória
-Invoke-RestMethod -Uri "http://localhost:3000/noticias/random/categoria/1" -Method GET -WebSession $session
-
-# Responder notícia
-Invoke-RestMethod -Uri "http://localhost:3000/noticias/1/responder" -Method POST -Body '{"resposta":true}' -ContentType "application/json" -WebSession $session
-
-# Ver perfil
-Invoke-RestMethod -Uri "http://localhost:3000/meu-perfil" -Method GET -WebSession $session
-```
-
-### Linux/Mac/Codespaces
-```bash
-# Listar usuários
-curl http://localhost:3000/usuarios
-
-# Criar usuário
-curl -X POST http://localhost:3000/usuarios \
-  -H "Content-Type: application/json" \
-  -d '{"nome":"João","email":"joao@example.com"}'
-
-# Listar categorias
-curl http://localhost:3000/categorias
-```
-
----
-
 ## 📊 Sistema de Pontuação e Níveis
 
 ### Pontos
-- **Acerto:** +10 pontos
+- **Acerto:** pontos calculados conforme quantidade de notícias
 - **Erro:** 0 pontos (não perde progresso)
 - Apenas respostas corretas são salvas
 
@@ -294,46 +212,22 @@ Não afeta pontos ou nível, apenas estatística.
 
 ---
 
-## 📁 Estrutura do Projeto
+## Diagramas
 
-```
-src/
-├── main/
-│   ├── java/com/renato/
-│   │   ├── Main.java              # API REST (Javalin)
-│   │   ├── config/
-│   │   │   └── HibernateConfig.java
-│   │   ├── model/                 # Entidades
-│   │   ├── repository/            # Camada de dados
-│   │   └── service/               # Lógica de negócio
-│   └── resources/
-│       ├── hibernate.cfg.xml      # Config Hibernate
-│       └── db/migration/          # Scripts SQL
-frontend/
-├── index.html                     # Interface do usuário
-├── css/style.css
-└── js/app.js
-.devcontainer/                     # Configuração DevContainer
-├── devcontainer.json
-├── Dockerfile
-├── setup.sh
-├── test.sh
-└── README.md
-```
+### Diagrama de Controladores
+![Diagrama de Controladores](DiagramaPng/DiagramaControladores.png)
 
----
+### Diagrama de Entidades
+![Diagrama de Entidades](DiagramaPng/DiagramaEntidades.png)
 
-# Diagramas
+### Diagrama de Repositórios
+![Diagrama de Repositórios](DiagramaPng/DiagramaRepositorios.png)
 
-![](\DiagramaPng\DiagramaControladores.png)
+### Diagrama de Serviços
+![Diagrama de Serviços](DiagramaPng/DiagramaServiço.png)
 
-![](\DiagramaPng\DiagramaEntidades.png)
-
-![](\DiagramaPng\DiagramaGeral.png)
-
-![](\DiagramaPng\DiagramaRepositorios.png)
-
-![](\DiagramaPng\DiagramaServiço.png)
+### Diagrama Geral
+![Diagrama Geral](DiagramaPng/DiagramaGeral.png)
 
 ## 🎮 Frontend
 
@@ -350,23 +244,39 @@ Interface web desenvolvida com HTML, CSS e JavaScript vanilla.
 - 📊 Estatísticas
 - 🔐 Sistema de sessão (login simples por email)
 
-**Acesso:** `http://localhost:3000` (após iniciar o backend)
+**Acesso:** `http://localhost:3000` (depois de iniciar o backend)
 
 ---
 
-## 👥 Autores
+## Fontes
+- Javalin: https://javalin.io/documentation#getting-started
 
-- Renato
-- Otávio
+- POM: https://maven.apache.org/pom.html
 
-**Disciplina:** Paradigmas de Programação  
-**Instituição:** UFSM  
-**Ano:** 2025
+- Maven: https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html 
 
----
+- PostgreSQL: https://jdbc.postgresql.org/documentation/setup/
 
-## 📝 Licença
+- Anotações: https://www.oracle.com/technical-resources/articles/java/javadoc-tool.html;
+https://jakarta.ee/specifications/persistence/3.1/jakarta-persistence-spec-3.1.html;
+https://docs.oracle.com/javaee/7/api/javax/persistence/package-summary.html;
+https://docs.hibernate.org/orm/6.4/javadocs/org/hibernate/annotations/Type.html
 
-Este projeto é acadêmico e foi desenvolvido para fins educacionais.
+- Hibernate: https://hibernate.org/orm/documentation/7.1/;
+https://docs.hibernate.org/orm/6.4/userguide/html_single/#annotations
 
+- Repositories: https://www.dio.me/articles/o-que-e-o-repository-866d13a8e1e5
 
+- Services: https://pt.stackoverflow.com/questions/381324/o-que-%C3%A9-um-service-e-qual-sua-diferen%C3%A7a-para-um-controller
+
+- Controllers: https://pt.stackoverflow.com/questions/329167/como-utilizar-o-controller-em-uma-aplica%C3%A7%C3%A3o-java
+
+- DTOs: https://medium.com/@jigorsilva/entendendo-dtos-em-java-um-guia-completo-para-iniciantes-55e82264918f;
+https://docs.oracle.com/en/java/javase/17/language/records.html;
+https://docs.oracle.com/en/java/javase/17/language/records.html
+
+- Docker: https://javalin.io/tutorials/docker
+
+- CORS: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+
+- Tokens: https://jwt.io/introduction
