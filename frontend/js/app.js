@@ -87,21 +87,31 @@ async function apiRequest(url, options = {}) {
             headers
         });
 
+        console.log(`[API] ${options.method || 'GET'} ${url} - Status: ${response.status}`);
+
+        // Ler o corpo da resposta UMA VEZ
+        const responseText = await response.text();
+        console.log(`[API] Response body:`, responseText);
+
         if (!response.ok) {
-            const error = await response.text();
-            throw new Error(error || `Erro ${response.status}`);
+            // Se não for OK (200-299), lança erro
+            throw new Error(responseText || `Erro HTTP ${response.status}`);
         }
 
-        // Verifica se a resposta tem conteúdo JSON
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-            return await response.json();
-        } else {
-            // Se não for JSON, retorna o texto
-            return await response.text();
+        // Se a resposta estiver vazia, retornar objeto vazio
+        if (!responseText || responseText.trim() === '') {
+            return {};
+        }
+
+        // Tentar fazer parse do JSON
+        try {
+            return JSON.parse(responseText);
+        } catch (parseError) {
+            console.warn('[API] Resposta não é JSON válido, retornando como texto');
+            return responseText;
         }
     } catch (error) {
-        console.error('Erro na requisição:', error);
+        console.error('[API] Erro na requisição:', error);
         throw error;
     }
 }
@@ -118,35 +128,91 @@ function showScreen(screenId) {
 document.getElementById('login-btn').addEventListener('click', async () => {
     const email = document.getElementById('email-input').value.trim();
 
+    // Limpar possíveis toasts antigos
+    document.querySelectorAll('.toast').forEach(toast => toast.remove());
+
     if (!email) {
         showToast('Por favor, digite seu e-mail', 'error');
         return;
     }
 
+    console.log('🔵 Iniciando login com email:', email);
+
     try {
-        const data = await apiRequest('/login', {
+        // Fazer requisição diretamente com fetch para ter mais controle
+        const response = await fetch(`${API_BASE}/login`, {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
             body: JSON.stringify({ email })
         });
 
+        console.log('🔵 Status da resposta:', response.status);
+        console.log('🔵 Headers:', [...response.headers.entries()]);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || `Erro HTTP ${response.status}`);
+        }
+
+        const responseText = await response.text();
+        console.log('🔵 Resposta bruta:', responseText);
+
+        const data = JSON.parse(responseText);
+        console.log('🔵 Resposta parseada:', data);
+
+        // Validar resposta
+        if (!data || !data.usuario) {
+            console.error('❌ Resposta inválida - falta usuario');
+            throw new Error('Resposta do servidor inválida');
+        }
+
         currentUser = data.usuario;
-        
+        console.log('✅ CurrentUser definido:', currentUser);
+
         // Salvar token no localStorage (para itch.io)
         if (data.token) {
             localStorage.setItem('userToken', data.token);
+            console.log('✅ Token salvo');
         }
-        
-        document.getElementById('user-name').textContent = currentUser.nome;
 
-        // Exibir nível e título
-        const nivelTexto = currentUser.tituloAtual
-            ? `Nível ${currentUser.nivel} - ${currentUser.tituloAtual}`
-            : `Nível ${currentUser.nivel}`;
-        document.getElementById('user-level').textContent = nivelTexto;
 
+        // Atualizar elementos da navbar
+        const navbarUserNameEl = document.getElementById('navbar-user-name');
+        const navbarUserLevelEl = document.getElementById('navbar-user-level');
+
+        console.log('🔵 Procurando elementos do DOM...');
+        console.log('  - navbar-user-name:', navbarUserNameEl);
+        console.log('  - navbar-user-level:', navbarUserLevelEl);
+
+        if (navbarUserNameEl) {
+            navbarUserNameEl.textContent = currentUser.nome;
+            console.log('✅ Nome atualizado para:', currentUser.nome);
+        } else {
+            console.warn('⚠️ Elemento navbar-user-name não encontrado');
+        }
+
+        if (navbarUserLevelEl) {
+            navbarUserLevelEl.textContent = `Nv.${currentUser.nivel}`;
+            console.log('✅ Nível atualizado para: Nv.' + currentUser.nivel);
+        } else {
+            console.warn('⚠️ Elemento navbar-user-level não encontrado');
+        }
+
+        console.log('🔵 Mostrando toast de sucesso...');
         showToast(`Bem-vindo(a), ${currentUser.nome}! 🎮`, 'success');
+
+        console.log('🔵 Mudando para tela menu-screen...');
         showScreen('menu-screen');
+
+        console.log('✅ Login completo!');
     } catch (error) {
+        console.error('❌ ERRO CAPTURADO:', error);
+        console.error('❌ Tipo do erro:', typeof error);
+        console.error('❌ error.message:', error.message);
+        console.error('❌ error.stack:', error.stack);
         showToast('Erro ao fazer login: ' + error.message, 'error');
     }
 });
@@ -188,17 +254,24 @@ document.getElementById('register-btn').addEventListener('click', async () => {
 // ========== MENU PRINCIPAL ==========
 document.getElementById('logout-btn').addEventListener('click', async () => {
     try {
+        // Tentar fazer logout no backend (não crítico se falhar)
         await apiRequest('/logout', { method: 'POST' });
-        currentUser = null;
-        
-        // Limpar token do localStorage
-        localStorage.removeItem('userToken');
-        
-        showToast('Você saiu com sucesso! 👋', 'success');
-        showScreen('login-screen');
-        document.getElementById('email-input').value = '';
     } catch (error) {
-        console.error('Erro ao fazer logout:', error);
+        console.warn('Logout no backend falhou (não crítico):', error);
+    }
+
+    // Sempre limpar estado local e voltar ao login
+    currentUser = null;
+    localStorage.removeItem('userToken');
+    sessionStorage.clear();
+
+    showToast('Você saiu com sucesso! 👋', 'success');
+    showScreen('login-screen');
+
+    // Limpar campo de email
+    const emailInput = document.getElementById('email-input');
+    if (emailInput) {
+        emailInput.value = '';
     }
 });
 
@@ -611,8 +684,9 @@ window.addEventListener('load', async () => {
         const usuario = await apiRequest('/session/usuario');
         if (usuario && usuario.id) {
             currentUser = usuario;
-            document.getElementById('user-name').textContent = currentUser.nome;
-            document.getElementById('user-level').textContent = `Nível ${currentUser.nivel}`;
+            // Atualizar elementos da navbar
+            document.getElementById('navbar-user-name').textContent = currentUser.nome;
+            document.getElementById('navbar-user-level').textContent = `Nv.${currentUser.nivel}`;
             showScreen('menu-screen');
         }
     } catch (error) {

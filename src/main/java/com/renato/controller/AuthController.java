@@ -44,7 +44,8 @@ public class AuthController {
         resposta.put("mensagem", "Login realizado com sucesso");
         resposta.put("usuario", usuario);
         resposta.put("token", usuario.getId().toString()); // Token simples para itch.io
-        ctx.json(resposta);
+
+        ctx.status(200).json(resposta);
     }
 
     /**

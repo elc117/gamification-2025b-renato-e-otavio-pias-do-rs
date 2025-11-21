@@ -146,19 +146,48 @@
 
     <!-- Menu Principal -->
     <div id="menu-screen" class="screen">
-        <div class="header">
-            <div class="user-info">
-                <span id="user-name">Usuário</span>
-                <span id="user-level" class="badge">Nível 1</span>
+        <!-- Barra Superior Fixa -->
+        <nav class="top-navbar">
+            <div class="navbar-content">
+                <!-- Card de Jogador (Esquerda) -->
+                <div class="player-card">
+                    <span class="player-icon">🎖️</span>
+                    <div class="player-info">
+                        <span class="player-level" id="navbar-user-level">Nv.1</span>
+                        <span class="player-divider">|</span>
+                        <span class="player-name" id="navbar-user-name">Usuário</span>
+                    </div>
+                </div>
+
+                <!-- Botão Sair (Direita) -->
+                <button id="logout-btn" class="navbar-logout-btn">
+                    <span class="logout-icon">←</span>
+                    <span class="logout-text">SAIR</span>
+                </button>
             </div>
-            <button id="logout-btn" class="btn-small">Sair</button>
-        </div>
-        <div class="container">
-            <h1>Menu Principal</h1>
-            <div class="menu-buttons">
-                <button id="play-btn" class="btn-large">🎮 Jogar</button>
-                <button id="profile-btn" class="btn-large">👤 Meu Perfil</button>
-                <button id="achievements-btn" class="btn-large">🏆 Conquistas</button>
+        </nav>
+
+        <!-- Cards Horizontais -->
+        <div class="menu-cards-container">
+            <div class="menu-card investigar-card" id="play-btn">
+                <div class="card-icon">
+                    <img src="assets/images/lupa-transparente.png" alt="Investigar" class="card-icon-image investigar-icon">
+                </div>
+                <h3 class="card-title">INVESTIGAR</h3>
+            </div>
+
+            <div class="menu-card perfil-card" id="profile-btn">
+                <div class="card-icon">
+                    <img src="assets/images/SilhuetaDeLado.png" alt="Perfil" class="card-icon-image">
+                </div>
+                <h3 class="card-title">MEU PERFIL</h3>
+            </div>
+
+            <div class="menu-card conquistas-card" id="achievements-btn">
+                <div class="card-icon">
+                    <img src="assets/images/IconeConquista.png" alt="Conquistas" class="card-icon-image conquista-icon">
+                </div>
+                <h3 class="card-title">CONQUISTAS</h3>
             </div>
         </div>
     </div>
@@ -251,7 +280,10 @@
     <div id="achievements-screen" class="screen">
         <div class="header">
             <button id="back-to-menu-achievements" class="btn-small">← Voltar</button>
-            <h2>🏆 Minhas Conquistas</h2>
+            <h2 class="achievements-title">
+                <img src="/assets/images/IconeConquista.png" alt="Conquistas" class="achievements-icon">
+                Minhas Conquistas
+            </h2>
         </div>
         <div class="container">
             <div id="conquistas-list" class="achievements-grid">
