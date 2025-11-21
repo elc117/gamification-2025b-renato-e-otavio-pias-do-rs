@@ -666,7 +666,12 @@ async function loadAchievements() {
         });
 
         if (conquistas.length === 0) {
-            container.innerHTML = '<p style="color: white; font-size: 1.2em; margin-top: 50px;">🎯 Nenhuma conquista desbloqueada ainda. Continue jogando!</p>';
+            container.innerHTML = `
+        <div class="no-achievements-card">
+            <h3 class="no-achievements-title">Nenhuma Conquista Desbloqueada</h3>
+            <p class="no-achievements-text">Continue investigando casos para desbloquear suas primeiras conquistas!</p>
+        </div>
+    `;
         }
     } catch (error) {
         showToast('Erro ao carregar conquistas: ' + error.message, 'error');
