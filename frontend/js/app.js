@@ -36,7 +36,7 @@ function formatarTexto(texto) {
     formatado = paragrafos
         .filter(p => p.trim())
         .map(paragrafo => {
-            // Dentro de cada parágrafo, quebras simples viram <br>
+            // Dentro de cada parágrafo, quebras de linhas simples viram <br>
             let comBr = paragrafo.replace(/\n/g, '<br>');
 
             // Substituir hífens no início de linhas por bullets estilizados
@@ -50,7 +50,7 @@ function formatarTexto(texto) {
     return formatado;
 }
 
-// Função para mostrar notificação toast
+// Função para mostrar notificações "toast"
 function showToast(message, type = 'success') {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
@@ -74,7 +74,7 @@ async function apiRequest(url, options = {}) {
         ...options.headers
     };
     
-    // Adicionar token no header se estiver no localStorage (para itch.io)
+    // Adicionar token no header se estiver no localStorage (para o itch.io)
     const token = localStorage.getItem('userToken');
     if (token) {
         headers['X-User-Token'] = token;
@@ -89,7 +89,7 @@ async function apiRequest(url, options = {}) {
 
         console.log(`[API] ${options.method || 'GET'} ${url} - Status: ${response.status}`);
 
-        // Ler o corpo da resposta UMA VEZ
+        // Ler o corpo da resposta uma vez
         const responseText = await response.text();
         console.log(`[API] Response body:`, responseText);
 
@@ -128,7 +128,7 @@ function showScreen(screenId) {
 document.getElementById('login-btn').addEventListener('click', async () => {
     const email = document.getElementById('email-input').value.trim();
 
-    // Limpar possíveis toasts antigos
+    // Limpar possíveis "toasts" antigos
     document.querySelectorAll('.toast').forEach(toast => toast.remove());
 
     if (!email) {
@@ -172,7 +172,7 @@ document.getElementById('login-btn').addEventListener('click', async () => {
         currentUser = data.usuario;
         console.log('✅ CurrentUser definido:', currentUser);
 
-        // Salvar token no localStorage (para itch.io)
+        // Salvar token no localStorage (para o itch.io)
         if (data.token) {
             localStorage.setItem('userToken', data.token);
             console.log('✅ Token salvo');
@@ -254,7 +254,7 @@ document.getElementById('register-btn').addEventListener('click', async () => {
 // ========== MENU PRINCIPAL ==========
 document.getElementById('logout-btn').addEventListener('click', async () => {
     try {
-        // Tentar fazer logout no backend (não crítico se falhar)
+        // Tentar fazer logout no backend (não crítico caso falhar)
         await apiRequest('/logout', { method: 'POST' });
     } catch (error) {
         console.warn('Logout no backend falhou (não crítico):', error);
@@ -371,8 +371,13 @@ async function loadNextNoticia() {
 async function updateProgressoDisplay() {
     try {
         const progresso = await apiRequest(`/categorias/${currentCategory.id}/meu-progresso`);
-        const estatisticas = progresso.estatisticas || progresso;
-        const percentualProgresso = estatisticas.percentualProgresso || 0;
+        // percentualProgresso pode estar em estatisticas ou diretamente no objeto
+        let percentualProgresso = 0;
+        if (progresso.estatisticas && progresso.estatisticas.percentualProgresso !== undefined) {
+            percentualProgresso = progresso.estatisticas.percentualProgresso;
+        } else if (progresso.percentualProgresso !== undefined) {
+            percentualProgresso = progresso.percentualProgresso;
+        }
         document.getElementById('progresso-percent').textContent = `${percentualProgresso.toFixed(1)}%`;
     } catch (error) {
         console.error('Erro ao carregar progresso:', error);
@@ -400,7 +405,7 @@ async function responderNoticia(resposta) {
             body: JSON.stringify({ resposta })
         });
 
-        // Efeito de confete visual para acertos
+        // Efeito de confete visual quando o usuário acerta
         if (resultado.acertou) {
             createConfetti();
         }
@@ -500,8 +505,8 @@ function mostrarFeedback(resultado) {
     pontosDiv.innerHTML = mensagemPontos.replace(/\n/g, '<br>');
 
     // atualizar badge de nível no header
-    if (resultado.nivelGlobal && resultado.tituloAtual) {
-        document.getElementById('user-level').textContent = `Nível ${resultado.nivelGlobal} - ${resultado.tituloAtual}`;
+    if (resultado.nivelGlobal !== undefined) {
+        document.getElementById('navbar-user-level').textContent = `Nv.${resultado.nivelGlobal}`;
     }
 }
 
@@ -569,7 +574,7 @@ async function loadProfile() {
                 const progressoItem = document.createElement('div');
                 progressoItem.className = 'progress-item';
 
-                // Criar puzzle de imagem por quadrantes - usar caminho do banco de dados
+                // Criar puzzle de imagem por quadrantes - usando o caminho do banco de dados
                 const imagemCategoria = categoria.caminhoImagemCompleta || 'assets/images/default.png';
                 
                 const puzzleHtml = `
@@ -633,7 +638,7 @@ async function loadAchievements() {
             card.className = 'achievement-card';
             card.style.animationDelay = `${index * 0.1}s`;
 
-            // Agora os dados vêm diretamente no objeto conquista
+            // os dados vêm diretamente no objeto conquista
             if (!conquista.desbloqueada) {
                 card.classList.add('locked');
             }
