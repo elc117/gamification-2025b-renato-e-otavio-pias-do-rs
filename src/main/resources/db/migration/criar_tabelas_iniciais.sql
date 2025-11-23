@@ -3,6 +3,7 @@ CREATE TABLE usuarios (
     id BIGSERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
+    senha VARCHAR(100) NOT NULL,
     nivel INTEGER NOT NULL DEFAULT 1,
     pontuacao_total INTEGER NOT NULL DEFAULT 0,
     titulo_atual VARCHAR(100),

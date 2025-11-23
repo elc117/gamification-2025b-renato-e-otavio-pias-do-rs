@@ -16,6 +16,9 @@ public class Usuario {
     private String email;
 
     @Column(nullable = false)
+    private String senha;
+
+    @Column(nullable = false)
     private int nivel;
 
     @Column(name = "pontuacao_total")
@@ -36,10 +39,11 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(Long id, String nome, String email, int nivel) {
+    public Usuario(Long id, String nome, String email, String senha, int nivel) {
         this.id = id;
         this.nome = nome;
         this.email = email;
+        this.senha = senha;
         this.nivel = nivel;
     }
 
@@ -65,6 +69,14 @@ public class Usuario {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 
     public int getNivel() {

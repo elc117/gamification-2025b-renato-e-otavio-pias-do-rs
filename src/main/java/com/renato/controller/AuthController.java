@@ -19,14 +19,20 @@ public class AuthController {
     }
 
     /**
-     * Realiza login do usuário (sem senha, apenas email).
+     * Realiza login do usuário com email e senha.
      */
     public void login(Context ctx) {
         LoginRequest loginRequest = ctx.bodyAsClass(LoginRequest.class);
         String email = loginRequest.getEmail();
+        String senha = loginRequest.getSenha();
         
         if (email == null || email.trim().isEmpty()) {
             ctx.status(400).result("Email é obrigatório");
+            return;
+        }
+
+        if (senha == null || senha.trim().isEmpty()) {
+            ctx.status(400).result("Senha é obrigatória");
             return;
         }
 
@@ -34,6 +40,12 @@ public class AuthController {
         
         if (usuario == null) {
             ctx.status(404).result("Usuário não encontrado com este email");
+            return;
+        }
+
+        // Verificar senha
+        if (!senha.equals(usuario.getSenha())) {
+            ctx.status(401).result("Senha incorreta");
             return;
         }
 

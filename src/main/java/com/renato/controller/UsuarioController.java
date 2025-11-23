@@ -54,6 +54,30 @@ public class UsuarioController {
      */
     public void criar(Context ctx) {
         Usuario novoUsuario = ctx.bodyAsClass(Usuario.class);
+        
+        // Validações
+        if (novoUsuario.getNome() == null || novoUsuario.getNome().trim().isEmpty()) {
+            ctx.status(400).result("Nome é obrigatório");
+            return;
+        }
+        
+        if (novoUsuario.getEmail() == null || novoUsuario.getEmail().trim().isEmpty()) {
+            ctx.status(400).result("Email é obrigatório");
+            return;
+        }
+        
+        if (novoUsuario.getSenha() == null || novoUsuario.getSenha().trim().isEmpty()) {
+            ctx.status(400).result("Senha é obrigatória");
+            return;
+        }
+        
+        // Verificar se email já existe
+        Usuario usuarioExistente = usuarioService.encontrarUsuarioPorEmail(novoUsuario.getEmail());
+        if (usuarioExistente != null) {
+            ctx.status(409).result("Email já cadastrado");
+            return;
+        }
+        
         novoUsuario.setNivel(0);
         Usuario usuarioSalvo = usuarioService.salvarUsuario(novoUsuario);
         ctx.status(201).json(usuarioSalvo);

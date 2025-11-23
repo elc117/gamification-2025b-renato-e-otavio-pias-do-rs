@@ -127,12 +127,13 @@ function showScreen(screenId) {
 // ========== TELA DE LOGIN ==========
 document.getElementById('login-btn').addEventListener('click', async () => {
     const email = document.getElementById('email-input').value.trim();
+    const senha = document.getElementById('senha-input').value.trim();
 
     // Limpar possíveis "toasts" antigos
     document.querySelectorAll('.toast').forEach(toast => toast.remove());
 
-    if (!email) {
-        showToast('Por favor, digite seu e-mail', 'error');
+    if (!email || !senha) {
+        showToast('Por favor, preencha email e senha', 'error');
         return;
     }
 
@@ -146,7 +147,7 @@ document.getElementById('login-btn').addEventListener('click', async () => {
                 'Content-Type': 'application/json'
             },
             credentials: 'include',
-            body: JSON.stringify({ email })
+            body: JSON.stringify({ email, senha })
         });
 
         console.log('🔵 Status da resposta:', response.status);
@@ -231,8 +232,9 @@ document.getElementById('login-link').addEventListener('click', (e) => {
 document.getElementById('register-btn').addEventListener('click', async () => {
     const nome = document.getElementById('nome-input').value.trim();
     const email = document.getElementById('email-reg-input').value.trim();
+    const senha = document.getElementById('senha-reg-input').value.trim();
 
-    if (!nome || !email) {
+    if (!nome || !email || !senha) {
         showToast('Por favor, preencha todos os campos', 'error');
         return;
     }
@@ -240,7 +242,7 @@ document.getElementById('register-btn').addEventListener('click', async () => {
     try {
         await apiRequest('/usuarios', {
             method: 'POST',
-            body: JSON.stringify({ nome, email })
+            body: JSON.stringify({ nome, email, senha })
         });
 
         showToast('Conta criada com sucesso! 🎉 Faça login agora.', 'success');
@@ -268,11 +270,11 @@ document.getElementById('logout-btn').addEventListener('click', async () => {
     showToast('Você saiu com sucesso! 👋', 'success');
     showScreen('login-screen');
 
-    // Limpar campo de email
+    // Limpar campos de email e senha
     const emailInput = document.getElementById('email-input');
-    if (emailInput) {
-        emailInput.value = '';
-    }
+    const senhaInput = document.getElementById('senha-input');
+    if (emailInput) emailInput.value = '';
+    if (senhaInput) senhaInput.value = '';
 });
 
 document.getElementById('play-btn').addEventListener('click', async () => {
@@ -502,6 +504,12 @@ function mostrarFeedback(resultado) {
         }
     }
 
+    // Verificar se categoria foi concluída (100%)
+    const categoriaCompleta = resultado.percentualProgresso >= 100;
+    if (categoriaCompleta) {
+        mensagemPontos += `\n🎊 Categoria concluída!`;
+    }
+
     // Mostrar popup para conquistas desbloqueadas
     if (resultado.conquistasDesbloqueadas && resultado.conquistasDesbloqueadas.length > 0) {
         resultado.conquistasDesbloqueadas.forEach(conquista => {
@@ -515,11 +523,17 @@ function mostrarFeedback(resultado) {
     if (resultado.nivelGlobal !== undefined) {
         document.getElementById('navbar-user-level').textContent = `Nv.${resultado.nivelGlobal}`;
     }
-}
 
-document.getElementById('next-btn').addEventListener('click', () => {
-    loadNextNoticia();
-});
+    // Atualizar botão "Próxima Notícia" baseado no progresso
+    const nextBtn = document.getElementById('next-btn');
+    if (categoriaCompleta) {
+        nextBtn.textContent = '← Voltar para o menu';
+        nextBtn.onclick = () => showScreen('category-screen');
+    } else {
+        nextBtn.textContent = 'Próxima Notícia →';
+        nextBtn.onclick = () => loadNextNoticia();
+    }
+}
 
 document.getElementById('back-to-categories').addEventListener('click', () => {
     showScreen('category-screen');
