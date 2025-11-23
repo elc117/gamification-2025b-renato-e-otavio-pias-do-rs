@@ -286,7 +286,10 @@ document.getElementById('logout-btn').addEventListener('click', async () => {
     const senhaInput = document.getElementById('senha-input');
     const showPasswordLogin = document.getElementById('show-password-login');
     if (emailInput) emailInput.value = '';
-    if (senhaInput) senhaInput.value = '';
+    if (senhaInput) {
+        senhaInput.value = '';
+        senhaInput.type = 'password'; // Garantir que volta para as bolinhas
+    }
     if (showPasswordLogin) showPasswordLogin.checked = false;
 
     // Limpar TODOS os campos de registro
@@ -296,7 +299,10 @@ document.getElementById('logout-btn').addEventListener('click', async () => {
     const showPasswordRegister = document.getElementById('show-password-register');
     if (nomeRegInput) nomeRegInput.value = '';
     if (emailRegInput) emailRegInput.value = '';
-    if (senhaRegInput) senhaRegInput.value = '';
+    if (senhaRegInput) {
+        senhaRegInput.value = '';
+        senhaRegInput.type = 'password'; // Garantir que volta para as bolinhas
+    }
     if (showPasswordRegister) showPasswordRegister.checked = false;
 });
 
