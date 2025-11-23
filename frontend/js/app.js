@@ -253,6 +253,17 @@ document.getElementById('register-btn').addEventListener('click', async () => {
     }
 });
 
+// ========== MOSTRAR/OCULTAR SENHA ==========
+document.getElementById('show-password-login').addEventListener('change', function() {
+    const senhaInput = document.getElementById('senha-input');
+    senhaInput.type = this.checked ? 'text' : 'password';
+});
+
+document.getElementById('show-password-register').addEventListener('change', function() {
+    const senhaInput = document.getElementById('senha-reg-input');
+    senhaInput.type = this.checked ? 'text' : 'password';
+});
+
 // ========== MENU PRINCIPAL ==========
 document.getElementById('logout-btn').addEventListener('click', async () => {
     try {
@@ -270,11 +281,23 @@ document.getElementById('logout-btn').addEventListener('click', async () => {
     showToast('Você saiu com sucesso! 👋', 'success');
     showScreen('login-screen');
 
-    // Limpar campos de email e senha
+    // Limpar TODOS os campos de login
     const emailInput = document.getElementById('email-input');
     const senhaInput = document.getElementById('senha-input');
+    const showPasswordLogin = document.getElementById('show-password-login');
     if (emailInput) emailInput.value = '';
     if (senhaInput) senhaInput.value = '';
+    if (showPasswordLogin) showPasswordLogin.checked = false;
+
+    // Limpar TODOS os campos de registro
+    const nomeRegInput = document.getElementById('nome-input');
+    const emailRegInput = document.getElementById('email-reg-input');
+    const senhaRegInput = document.getElementById('senha-reg-input');
+    const showPasswordRegister = document.getElementById('show-password-register');
+    if (nomeRegInput) nomeRegInput.value = '';
+    if (emailRegInput) emailRegInput.value = '';
+    if (senhaRegInput) senhaRegInput.value = '';
+    if (showPasswordRegister) showPasswordRegister.checked = false;
 });
 
 document.getElementById('play-btn').addEventListener('click', async () => {
