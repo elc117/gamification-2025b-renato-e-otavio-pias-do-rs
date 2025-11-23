@@ -300,15 +300,22 @@ async function loadCategories() {
         categorias.forEach((categoria, index) => {
             const card = document.createElement('div');
             card.className = 'category-card';
-            card.style.animationDelay = `${index * 0.1}s`;
+            // usar style attribute para permitir seletor [style] animação
+            card.setAttribute('style', `animation-delay: ${index * 0.1}s`);
+
             card.innerHTML = `
-                <h3>${categoria.nome}</h3>
-                <p>${categoria.descricao || 'Clique para jogar'}</p>
+                <div class="category-image-placeholder" aria-hidden="true"></div>
+                <div class="category-content">
+                    <div class="category-name">${categoria.nome}</div>
+                    <div class="category-desc">${categoria.descricao || 'Clique para jogar'}</div>
+                </div>
             `;
+
             card.addEventListener('click', () => {
-                card.style.transform = 'scale(0.95)';
-                setTimeout(() => startGame(categoria), 150);
+                card.style.transform = 'scale(0.98)';
+                setTimeout(() => startGame(categoria), 120);
             });
+
             container.appendChild(card);
         });
     } catch (error) {

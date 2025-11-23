@@ -117,6 +117,7 @@ body::before {
 /* Tela do Menu Principal com Fundo Personalizado */
 #menu-screen {
     position: relative;
+    padding-top: 90px; /* espaço para navbar fixa - ajustado para posicionar título */
 }
 
 #menu-screen::before {
@@ -132,6 +133,123 @@ body::before {
     background-repeat: no-repeat;
     background-attachment: fixed;
     z-index: -1;
+}
+
+/* Fundo da Tela de Categorias (MANCHETES) */
+#category-screen {
+    position: relative;
+    min-height: 100vh;
+    padding-top: 95px; /* espaço para navbar fixa */
+}
+
+#category-screen::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../assets/images/TelaFundoInvestigar.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    z-index: -1;
+}
+
+/* Overlay sutil para melhorar legibilidade do conteúdo sobre a imagem */
+#category-screen::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(26,26,26,0.18);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Tela de Jogo (Responder se é Fato ou Fake) com Fundo Personalizado */
+#game-screen {
+    position: relative;
+}
+
+#game-screen::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../assets/images/FundoJoogo.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    z-index: -1;
+}
+
+/* Overlay sutil para legibilidade do conteúdo na tela de jogo */
+#game-screen::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(26, 26, 26, 0.12);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* ===== TÍTULO MANCHETES (Tela de Categorias) =====
+   Aplica gradiente vermelho no texto com contorno dourado.
+   Alvo: <h1> dentro de #category-screen. Se o título usar outra tag,
+   adicione a classe `manchetes-title` ao elemento e as regras também
+   se aplicarão. */
+#category-screen h1,
+#category-screen .manchetes-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    text-align: center;
+    margin: 30px 0 20px 0;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    /* gradiente vermelho no texto */
+    color: #8B0000; /* fallback */
+    /* gradiente reforçado: tons mais escuros e saturados de vermelho */
+    background: linear-gradient(90deg, #660000 0%, #b30000 50%, #ff0000 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    /* contorno dourado (principal) - melhor suporte em webkit */
+    -webkit-text-stroke: 1.6px #D4AF37;
+    /* text-stroke for other engines (if supported) */
+    text-stroke: 1.6px #D4AF37;
+    /* sombra leve para profundidade */
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.25);
+    position: relative;
+    z-index: 2;
+}
+
+/* reduzir tamanho em telas menores */
+@media (max-width: 768px) {
+    #category-screen h1,
+    #category-screen .manchetes-title {
+        font-size: 2.2rem;
+        margin-top: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    #category-screen h1,
+    #category-screen .manchetes-title {
+        font-size: 1.6rem;
+        margin-top: 30px;
+        letter-spacing: 0.8px;
+    }
 }
 
 .screen.active {
@@ -155,6 +273,44 @@ body::before {
     }
 }
 
+/* Título Menu */
+.menu-title {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5em;
+    font-weight: 700;
+    color: #8B0000;
+    margin: 20px 0 10px 0;
+    padding-top: 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    /* Apenas contorno dourado adicionado - sem outras mudanças */
+    -webkit-text-stroke: 1.6px #D4AF37; /* contorno dourado para navegadores que suportam */
+    /* manter sombra leve original */
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    position: relative;
+    z-index: 1;
+    animation: fadeInUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s backwards;
+}
+
+/* Responsividade do Título Menu */
+@media (max-width: 768px) {
+    .menu-title {
+        font-size: 2.2em;
+        margin: 25px 0 25px 0;
+        padding-top: 90px;
+    }
+}
+
+@media (max-width: 480px) {
+    .menu-title {
+        font-size: 1.8em;
+        margin: 20px 0 20px 0;
+        padding-top: 80px;
+        letter-spacing: 1.5px;
+    }
+}
+
 /* Container */
 .container {
     max-width: 800px;
@@ -164,18 +320,39 @@ body::before {
 
 /* Header */
 .header {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    /* Header padrão (sólido). Telas específicas podem sobrescrever para transparência. */
+    background: rgba(245, 230, 211, 1);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     padding: 15px 20px;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(212, 175, 55, 0.35); /* leve dourado para harmonizar */
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
     border-radius: 15px;
     animation: slideDown 0.5s ease-out;
+}
+
+/* Proporções do header da tela de jogar iguais ao header do menu */
+#game-screen .header {
+    height: 75px;                 /* mesma altura da .top-navbar */
+    padding: 0 30px;              /* mesmo preenchimento lateral da .navbar-content */
+    border-radius: 0;             /* barra reta como a navbar */
+    border-bottom: 2px solid #D4AF37;
+}
+
+/* Deixar o header transparente (com blur) nas telas de jogar e conquistas */
+#game-screen .header,
+#achievements-screen .header {
+    /* totalmente transparente, apenas com efeito de blur */
+    background: rgba(245, 230, 211, 0);
+    background-color: transparent;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: none; /* remove a borda geral */
+    border-bottom: 2px solid #D4AF37; /* mantém apenas a borda inferior como a navbar */
 }
 
 @keyframes slideDown {
@@ -193,6 +370,12 @@ body::before {
     color: white;
     font-weight: 700;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Ajuste solicitado: nome da categoria (tela de jogar) em preto */
+#game-screen .header #category-name {
+    color: #000000;
+    text-shadow: none;
 }
 
 .user-info {
@@ -643,43 +826,298 @@ h2 {
 }
 
 /* ========================================
-   FORMATAÇÃO AVANÇADA DO CONTEÚDO
+   TELA DE INVESTIGAÇÃO
    ======================================== */
 
-/* Formatação do conteúdo da notícia */
-#noticia-conteudo {
-    color: #333;
-    line-height: 1.9;
-    text-align: left;
-    font-size: 1.1em;
+/* Container principal da notícia (card com fundo bege mais escuro para melhor leitura) */
+#game-screen .noticia-card {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 30px;
+    background: rgba(230, 213, 195, 0.85); /* bege médio mais escuro e mais opaco */
+    border: 1px solid rgba(212, 175, 55, 0.30); /* dourado um pouco mais visível */
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
 }
 
-#noticia-conteudo p {
-    margin-bottom: 15px;
+/* Título da Notícia - menor, centralizado, elegante */
+#game-screen #noticia-titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.3em; /* entre 2 - 2.5em */
+    font-weight: 700;
+    color: #8B0000;
+    text-transform: uppercase;
+    text-align: center;
+    margin: 40px auto 15px;
+    max-width: 850px;
+    line-height: 1.25;
+    text-shadow: 2px 2px 4px rgba(139, 0, 0, 0.12);
+    letter-spacing: 0.5px;
+}
+
+/* Linha decorativa sólida abaixo do título (barra dourada) */
+#game-screen #noticia-titulo::after {
+    content: '';
+    display: block;
+    margin: 18px auto 35px;
+    width: 180px; /* 150-200px */
+    height: 4px; /* 3px suggested, 4px for visibility */
+    background: #D4AF37; /* linha decorativa dourada sólida */
+    border-radius: 2px;
+    box-shadow: 0 2px 6px rgba(212,175,55,0.25);
+}
+
+/* Container do texto da notícia (escopo) */
+#game-screen #noticia-conteudo {
+    max-width: 750px;
+    margin: 0 auto;
+    padding: 30px;
+    background: rgba(230, 213, 195, 0.85); /* bege médio mais escuro e mais opaco */
+    border: 1px solid rgba(212, 175, 55, 0.30); /* dourado um pouco mais visível */
+    border-radius: 10px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
     text-align: justify;
 }
 
+#game-screen #noticia-conteudo p {
+    font-family: Arial, sans-serif;
+    font-size: 1.1em;
+    line-height: 1.85;
+    color: #2c2c2c; /* texto em cinza escuro para leitura */
+    margin-bottom: 18px;
+}
+
+#game-screen #noticia-conteudo p:last-child {
+    margin-bottom: 0;
+}
+
+#game-screen #noticia-conteudo strong {
+    font-weight: 700;
+    color: #D4AF37; /* destaque em dourado */
+    background: rgba(212, 175, 55, 0.12); /* fundo dourado suave */
+    padding: 2px 7px;
+    border-radius: 4px;
+}
+
+#game-screen #noticia-conteudo em {
+    font-style: italic;
+    color: #636e72;
+}
+
+#game-screen #noticia-conteudo br {
+    display: block;
+    content: "";
+    margin-top: 10px;
+}
+
+/* Area de decisão (botões) */
+#game-screen .buttons-row {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    margin-top: 50px;
+    margin-bottom: 40px;
+}
+
+/* Botões grandes e consistentes (escopo) */
+#game-screen .btn-game {
+    width: 200px; /* 180-200px */
+    height: 76px; /* 70-80px */
+    padding: 0 18px;
+    font-size: 1.28em;
+    border-radius: 12px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.32s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    border: 3px solid transparent;
+    background: transparent; /* keep background subtle */
+}
+
+/* Ripple/light effect - keep but subtle */
+#game-screen .btn-game::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+#game-screen .btn-game:hover::before {
+    width: 340px;
+    height: 340px;
+}
+
+/* FATO: aplicar o mesmo efeito do botão FAKE, mantendo a cor verde */
+#game-screen .btn-fact {
+    color: #0B7D4B; /* verde escuro para o texto/borda */
+    border-color: #0B7D4B;
+    box-shadow: 0 8px 28px rgba(11, 125, 75, 0.16);
+    background: rgba(11, 125, 75, 0.06);
+}
+
+#game-screen .btn-fact:hover:not(:disabled) {
+    background: rgba(11, 125, 75, 0.15);
+    transform: translateY(-6px);
+    box-shadow: 0 18px 40px rgba(11, 125, 75, 0.24);
+    border-color: #0B7D4B;
+}
+
+/* FAKE button styling */
+#game-screen .btn-fake {
+    color: #8B0000; /* vermelho escuro */
+    border-color: #8B0000;
+    box-shadow: 0 8px 28px rgba(139, 0, 0, 0.16);
+    background: rgba(139, 0, 0, 0.06);
+}
+
+#game-screen .btn-fake:hover:not(:disabled) {
+    background: rgba(139, 0, 0, 0.15); /* hover conforme especificação */
+    transform: translateY(-6px);
+    box-shadow: 0 18px 40px rgba(139,0,0,0.24);
+    border-color: #8B0000;
+}
+
+/* Disabled state (keeps original look) */
+#game-screen .btn-game:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Feedback card border override scoped to game screen */
+#game-screen .feedback-card {
+    margin-top: 30px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    #game-screen #noticia-titulo {
+        font-size: 2.0em;
+        margin-top: 30px;
+    }
+
+    #game-screen .btn-game {
+        width: 170px;
+        height: 68px;
+        font-size: 1.12em;
+    }
+}
+
+@media (max-width: 480px) {
+    #game-screen #noticia-titulo {
+        font-size: 1.8em;
+        margin-top: 24px;
+    }
+
+    #game-screen #noticia-conteudo {
+        padding: 18px;
+    }
+
+    #game-screen .buttons-row {
+        flex-direction: column;
+        gap: 14px;
+        align-items: center;
+    }
+
+    #game-screen .btn-game {
+        width: 92%;
+        max-width: 320px;
+        height: 64px;
+        font-size: 1.05em;
+    }
+}
+
+/* ========================================
+   TELA DE INVESTIGAÇÃO - LAYOUT MINIMALISTA
+   ======================================== */
+
+/* Container principal da notícia */
+.noticia-card {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 30px;
+    background: transparent;
+}
+
+/* Título da Notícia */
+#noticia-titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.3em;
+    font-weight: 700;
+    color: #8B0000;
+    text-transform: uppercase;
+    text-align: center;
+    margin: 40px auto 15px;
+    max-width: 850px;
+    line-height: 1.3;
+    text-shadow: 2px 2px 4px rgba(139, 0, 0, 0.15);
+    letter-spacing: 0.5px;
+}
+
+/* Linha decorativa abaixo do título */
+#noticia-titulo::after {
+    content: '◆───────◆';
+    display: block;
+    text-align: center;
+    color: #D4AF37;
+    font-size: 0.35em;
+    letter-spacing: 4px;
+    margin: 20px auto 35px;
+    font-weight: normal;
+}
+
+/* Container do texto da notícia */
+#noticia-conteudo {
+    max-width: 750px;
+    margin: 0 auto;
+    padding: 30px;
+    background: rgba(245, 230, 211, 0.3);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Texto da notícia */
+#noticia-conteudo p {
+    font-family: Arial, sans-serif;
+    font-size: 1.1em;
+    line-height: 1.85;
+    color: #2c2c2c;
+    text-align: justify;
+    margin-bottom: 18px;
+}
+
 #noticia-conteudo p:last-child {
-    margin-bottom: 30px;
+    margin-bottom: 0;
 }
 
 #noticia-conteudo strong {
     font-weight: 700;
-    color: #764ba2;
-    background: linear-gradient(135deg, rgba(118, 75, 162, 0.1), rgba(102, 126, 234, 0.1));
-    padding: 2px 6px;
+    color: #6c5ce7;
+    background: rgba(108, 92, 231, 0.12);
+    padding: 2px 7px;
     border-radius: 4px;
 }
 
 #noticia-conteudo em {
     font-style: italic;
-    color: #555;
+    color: #636e72;
 }
 
 #noticia-conteudo br {
     display: block;
     content: "";
-    margin-top: 8px;
+    margin-top: 10px;
 }
 
 /* ========================================
@@ -1769,10 +2207,7 @@ h2 {
         padding: 20px 40px;
     }
 
-    .categories-grid {
-        grid-template-columns: 1fr;
-    }
-
+    /* Grid de conquistas mantém responsividade existente */
     .achievements-grid {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     }
@@ -2111,7 +2546,7 @@ h2 {
     width: 60px;
     height: 60px;
     margin: 0 auto;
-    background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
+    background: linear-gradient(135deg, #1a12e 0%, #2d2d44 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -2379,7 +2814,7 @@ h2 {
 .credential-form-card {
     width: 100%;
     max-width: 450px;
-    background: linear-gradient(135deg, #f5f5dc 0%, #e8dcc0 100%);
+    background: linear-gradient(135deg, #f5f5dc 0%, #e8dcc4 100%);
     border-radius: 20px;
     box-shadow:
         0 15px 50px rgba(0, 0, 0, 0.4),
@@ -2749,6 +3184,22 @@ h2 {
     align-items: center;
 }
 
+/* Ajuste de compensação para telas com navbar fixa */
+#category-screen {
+    padding-top: 95px; /* compensa altura da navbar fixa */
+    position: relative;
+    z-index: 1; /* garante que o conteúdo fique abaixo, mas visível */
+}
+
+/* Título da navbar da tela de categorias */
+.category-navbar-title {
+    font-family: 'Playfair Display', serif;
+    color: #8B0000;
+    font-size: 1.3em;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
 /* Card de Jogador (Lado Esquerdo) */
 .player-card {
     display: flex;
@@ -2896,10 +3347,37 @@ h2 {
 .menu-cards-container {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; /* alinhar ao topo para ficar logo abaixo do título */
     gap: 40px;
-    min-height: 100vh;
-    padding: 95px 20px 20px; /* Padding-top aumentado para compensar navbar */
+    min-height: auto; /* removido centro vertical forçado */
+    padding: 20px 20px 40px; /* padding-top reduzido para aproximar do título */
+}
+
+/* Responsiviade Menu*/
+@media (max-width: 768px) {
+    .menu-title {
+        font-size: 2.2em;
+        padding: 95px 0 30px 0;
+    }
+
+    .menu-cards-container {
+        flex-direction: column;
+        gap: 25px;
+        padding: 0 20px 30px;
+        min-height: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .menu-title {
+        font-size: 1.8em;
+        padding: 85px 0 25px 0;
+        letter-spacing: 1.5px;
+    }
+
+    .menu-cards-container {
+        padding: 0 15px 25px;
+    }
 }
 
 /* Card Individual */
@@ -2914,7 +3392,7 @@ h2 {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-radius: 15px;
-    border: 3px solid #D4AF37;
+    border: 3px solid #000000; /* borda preta (alterado conforme solicitado) */
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -2984,8 +3462,8 @@ h2 {
 
 /* Hover do Card */
 .menu-card:hover {
-    transform: translateY(-15px) scale(1.08);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    transform: translateY(-12px) scale(1.04);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.28);
 }
 
 .menu-card:active {
@@ -3109,7 +3587,7 @@ h2 {
 }
 
 /* ========================================
-   RESPONSIVIDADE DO MENU
+   RESPONSIVIDADE - TELA DE CATEGORIAS
    ======================================== */
 
 @media (max-width: 1024px) {
@@ -3149,6 +3627,11 @@ h2 {
 
     .navbar-content {
         padding: 0 20px;
+    }
+
+    /* Compensação proporcional do conteúdo em tablets */
+    #category-screen {
+        padding-top: 85px;
     }
 
     .player-card {
@@ -3209,6 +3692,22 @@ h2 {
 
     .card-title {
         font-size: 1.1em;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Navbar menor em mobile */
+    .top-navbar {
+        height: 60px;
+    }
+
+    .navbar-content {
+        padding: 0 15px;
+    }
+
+    /* Compensação menor do conteúdo em mobile */
+    #category-screen {
+        padding-top: 80px;
     }
 }
 
@@ -3405,3 +3904,196 @@ h2 {
     }
 }
 
+/* Manchetes Title (jornal) */
+.manchetes-title {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 2.6em;
+    /* Fallback de cor sólida para navegadores sem suporte a background-clip */
+    color: #8B0000;
+    margin: 40px 0 30px 0;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    /* Legibilidade + contorno dourado (fallback cross-browser via text-shadow) */
+    text-shadow:
+        /* contorno dourado multi-direção para navegadores sem -webkit-text-stroke */
+        1px 0 #D4AF37,
+        -1px 0 #D4AF37,
+        0 1px #D4AF37,
+        0 -1px #D4AF37,
+        1px 1px #D4AF37,
+        -1px -1px #D4AF37,
+        1px -1px #D4AF37,
+        -1px 1px #D4AF37,
+        /* leve glow para separar do fundo */
+        0 0 8px rgba(0,0,0,0.22);
+    /* Gradiente somente em tons de vermelho (preenchimento interno totalmente vermelho) */
+    background-image: linear-gradient(180deg, #660000 0%, #b30000 60%, #ff0000 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent; /* necessário para o WebKit */
+    /* contorno dourado real para navegadores que suportam */
+    -webkit-text-stroke: 1.1px #D4AF37;
+    padding-bottom: 16px; /* espaço para a barra de destaque */
+    display: block;
+    position: relative; /* necessário para o ::after */
+}
+
+.manchetes-title::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0;
+    height: 8px;
+    width: min(60%, 520px);
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(212,175,55,0) 0%, rgba(212,175,55,0.85) 50%, rgba(212,175,55,0) 100%);
+    box-shadow: 0 2px 12px rgba(212,175,55,0.45), 0 0 16px rgba(139,0,0,0.15);
+}
+
+/* Grid de categorias (lista de manchetes) */
+.categories-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+    padding: 0 10px 60px 10px;
+}
+
+/* ==============================
+   TELA DE CATEGORIAS (GRID 2x)
+   ============================== */
+#category-screen .categories-grid {
+    display: grid; /* substitui flex para grid 2 colunas */
+    grid-template-columns: repeat(2, minmax(280px, 1fr));
+    gap: 26px; /* 24–28px desktop */
+    width: 100%;
+    max-width: 1100px; /* centraliza e limita largura total do grid */
+    margin: 0 auto;
+    padding: 10px 20px 60px; /* respeita respiro inferior */
+    align-items: stretch; /* garante altura uniforme por linha */
+}
+
+#category-screen .category-card {
+    width: 100%;
+    height: 100%;
+    min-height: 170px; /* altura consistente entre cards */
+}
+
+/* Tablet (<=768px): manter 2 colunas se couber confortavelmente */
+@media (max-width: 768px) {
+    #category-screen .categories-grid {
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 22px; /* 20–25px */
+        padding: 10px 20px 50px;
+    }
+}
+
+/* Mobile (<=480px): 1 coluna, largura 100% */
+@media (max-width: 480px) {
+    #category-screen .categories-grid {
+        grid-template-columns: 1fr;
+        gap: 18px; /* 15–20px */
+        max-width: 600px;
+        padding: 10px 15px 40px;
+    }
+
+    #category-screen .category-card {
+        min-height: 160px;
+    }
+}
+
+/* Card estilo manchete de jornal */
+.category-card {
+    width: 90%;
+    max-width: 700px;
+    /* Usa a imagem de background para os cards de categoria com overlay bege para legibilidade (reduzida para a imagem aparecer) */
+    background: linear-gradient(rgba(245, 230, 211, 0.75), rgba(245, 230, 211, 0.75)), url('../assets/images/backgroundCardCategoria.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: 2px solid #000000; /* borda preta (alterado conforme solicitado) */
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    cursor: pointer;
+    /* transição mais específica e um pouco mais lenta para hover mais pronunciado */
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 0.35s ease;
+    overflow: hidden;
+}
+
+.category-card:hover {
+    /* efeito hover aumentado: deslocamento maior, leve escala e sombra mais forte */
+    transform: translateY(-12px) scale(1.04);
+    box-shadow: 0 14px 40px rgba(0,0,0,0.28);
+    border-color: #000000; /* manter contorno preto */
+}
+
+/* Espaço reservado para imagem (esquerda) */
+.category-image-placeholder {
+    width: 100px;
+    height: 100px;
+    background: #E0E0E0; /* placeholder cinza claro */
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+/* Conteúdo da categoria (texto) */
+.category-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    flex: 1;
+}
+
+.category-name {
+    font-family: 'Playfair Display', 'Arial', serif;
+    font-weight: 800;
+    font-size: 1.5em;
+    color: #8B0000;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+}
+
+.category-desc {
+    font-family: Arial, sans-serif;
+    font-size: 0.95em;
+    color: #333;
+    opacity: 0.9;
+    /* Garantir alinhamento à esquerda do texto explicativo da categoria */
+    text-align: left;
+}
+
+/* Animação fade-in sequencial */
+@keyframes fadeInUpCard {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.category-card[style] {
+    animation: fadeInUpCard 0.5s ease-out forwards;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+    .category-card { width: 95%; }
+    .category-image-placeholder { width: 80px; height: 80px; }
+    .category-name { font-size: 1.4em; }
+}
+
+@media (max-width: 480px) {
+    .manchetes-title { font-size: 2em; margin: 30px 0 20px 0; }
+    .manchetes-title::after { height: 6px; width: 70%; }
+    .category-card { width: 100%; padding: 10px; gap: 12px; }
+    .category-image-placeholder { width: 70px; height: 70px; }
+    .category-name { font-size: 1.2em; }
+}
