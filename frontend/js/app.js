@@ -496,47 +496,59 @@ function mostrarFeedback(resultado) {
     const feedbackCard = document.getElementById('feedback-card');
     feedbackCard.classList.remove('hidden', 'correct', 'incorrect');
 
+    // Preencher o carimbo (símbolo) e texto separados
+    const carimboSimbolo = document.querySelector('.carimbo-simbolo');
+    const carimboTexto = document.querySelector('.carimbo-texto-separado');
+
     if (resultado.acertou) {
         feedbackCard.classList.add('correct');
-        document.getElementById('feedback-title').textContent = '✅ Correto!';
+        carimboSimbolo.textContent = '✓';
+        carimboTexto.textContent = 'CORRETO';
     } else {
         feedbackCard.classList.add('incorrect');
-        document.getElementById('feedback-title').textContent = '❌ Incorreto!';
+        carimboSimbolo.textContent = '✗';
+        carimboTexto.textContent = 'INCORRETO';
     }
 
     document.getElementById('feedback-message').innerHTML = formatarTexto(resultado.explicacao || '');
-    document.getElementById('feedback-fonte').textContent = resultado.fonte ? `Fonte: ${resultado.fonte}` : '';
 
     const pontosDiv = document.getElementById('pontos-ganhos');
-    pontosDiv.className = resultado.pontosGanhos > 0 ? 'positive' : 'negative';
+    pontosDiv.className = resultado.pontosGanhos > 0 ? 'veredito-pontos positive' : 'veredito-pontos negative';
 
-    // Montar mensagem de pontos com informações extras
-    let mensagemPontos = `${resultado.pontosGanhos > 0 ? '+' : ''}${resultado.pontosGanhos} pontos`;
+    // Montar mensagem de pontos com estrutura HTML melhorada
+    let mensagemPontos = `<div class="pontos-principal">${resultado.pontosGanhos > 0 ? '+' : ''}${resultado.pontosGanhos} PONTOS</div>`;
+
+    let infoExtras = [];
 
     // adicionar informação de nível global se subiu
     if (resultado.subiuNivelGlobal) {
-        mensagemPontos += `\n🎉 Subiu para Nível ${resultado.nivelGlobal}!`;
+        infoExtras.push(`<div class="pontos-info nivel">🎉 Subiu para Nível ${resultado.nivelGlobal}!</div>`);
     }
 
     // adicionar informação de título, se mudou
     if (resultado.mudouTitulo && resultado.tituloAtual) {
-        mensagemPontos += `\n👑 Novo título: ${resultado.tituloAtual}`;
+        infoExtras.push(`<div class="pontos-info titulo">👑 Novo título: ${resultado.tituloAtual}</div>`);
     }
 
     // adicionar informação de nível da categoria se subiu
     if (resultado.desbloqueouNovaPeca) {
-        mensagemPontos += `\n⭐ Subiu para nível ${resultado.nivelCategoria} nesta categoria!`;
-        
+        infoExtras.push(`<div class="pontos-info categoria">⭐ Nível ${resultado.nivelCategoria} nesta categoria!</div>`);
+
         // se subiu de nível, significa que desbloqueou uma nova peça
         if (resultado.nivelCategoria > 0 && resultado.nivelCategoria <= 4) {
-            mensagemPontos += `\n🎨 Nova peça da imagem desbloqueada! (${resultado.nivelCategoria}/4)`;
+            infoExtras.push(`<div class="pontos-info peca">🎨 Nova peça desbloqueada! (${resultado.nivelCategoria}/4)</div>`);
         }
     }
 
     // Verificar se categoria foi concluída (100%)
     const categoriaCompleta = resultado.percentualProgresso >= 100;
     if (categoriaCompleta) {
-        mensagemPontos += `\n🎊 Categoria concluída!`;
+        infoExtras.push(`<div class="pontos-info completa">🎊 Categoria 100% concluída!</div>`);
+    }
+
+    // Adicionar informações extras se houver
+    if (infoExtras.length > 0) {
+        mensagemPontos += `<div class="pontos-extras">${infoExtras.join('')}</div>`;
     }
 
     // Mostrar popup para conquistas desbloqueadas
@@ -546,7 +558,7 @@ function mostrarFeedback(resultado) {
         });
     }
 
-    pontosDiv.innerHTML = mensagemPontos.replace(/\n/g, '<br>');
+    pontosDiv.innerHTML = mensagemPontos;
 
     // atualizar badge de nível no header
     if (resultado.nivelGlobal !== undefined) {
@@ -555,11 +567,16 @@ function mostrarFeedback(resultado) {
 
     // Atualizar botão "Próxima Notícia" baseado no progresso
     const nextBtn = document.getElementById('next-btn');
+    const botaoTexto = nextBtn.querySelector('.botao-texto');
+    const botaoIcon = nextBtn.querySelector('.botao-icon');
+
     if (categoriaCompleta) {
-        nextBtn.textContent = '← Voltar para o menu';
+        if (botaoTexto) botaoTexto.textContent = 'VOLTAR PARA O MENU';
+        if (botaoIcon) botaoIcon.textContent = '←';
         nextBtn.onclick = () => showScreen('category-screen');
     } else {
-        nextBtn.textContent = 'Próxima Notícia →';
+        if (botaoTexto) botaoTexto.textContent = 'PRÓXIMA NOTÍCIA';
+        if (botaoIcon) botaoIcon.textContent = '▶';
         nextBtn.onclick = () => loadNextNoticia();
     }
 }
@@ -596,8 +613,13 @@ async function loadProfile() {
         document.getElementById('nivel-pontos-faltam').textContent = pontosFaltam;
         document.getElementById('nivel-progress-fill').style.width = `${percentualNivel}%`;
 
-        document.getElementById('total-respostas').textContent = perfil.totalRespostas || 0;
-        document.getElementById('total-acertos').textContent = perfil.totalAcertos || 0;
+        const totalRespostas = perfil.totalRespostas || 0;
+        const totalAcertos = perfil.totalAcertos || 0;
+        const totalErros = totalRespostas - totalAcertos;
+
+        document.getElementById('total-respostas').textContent = totalRespostas;
+        document.getElementById('total-acertos').textContent = totalAcertos;
+        document.getElementById('total-erros').textContent = totalErros;
         document.getElementById('taxa-acerto').textContent = perfil.taxaAcerto ? `${perfil.taxaAcerto.toFixed(1)}%` : '0%';
 
         // Carregar progresso por categoria

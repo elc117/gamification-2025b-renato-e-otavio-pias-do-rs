@@ -254,12 +254,42 @@
                     <button id="fact-btn" class="btn-game btn-fact">✅ FATO</button>
                 </div>
             </div>
+            <!-- Card de Veredito - Reformulado -->
             <div id="feedback-card" class="feedback-card hidden">
-                <h3 id="feedback-title"></h3>
-                <p id="feedback-message"></p>
-                <p id="feedback-fonte"></p>
-                <div id="pontos-ganhos"></div>
-                <button id="next-btn" class="btn-small">Próxima Notícia →</button>
+                <div class="veredito-box">
+                    <!-- Carimbo Principal -->
+                    <div class="carimbo-principal">
+                        <div class="carimbo-simbolo"></div>
+                        <div class="carimbo-texto-separado"></div>
+                    </div>
+
+                    <!-- Divisor -->
+                    <div class="divisor-linha"></div>
+
+                    <!-- Explicação -->
+                    <div class="veredito-explicacao-wrapper">
+                        <div class="explicacao-label">
+                            <svg class="explicacao-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 16v-4M12 8h.01"/>
+                            </svg>
+                            <span>ANÁLISE DETALHADA</span>
+                        </div>
+                        <div id="feedback-message" class="veredito-explicacao"></div>
+                    </div>
+
+                    <!-- Divisor antes dos pontos -->
+                    <div class="divisor-linha"></div>
+
+                    <!-- Pontos -->
+                    <div id="pontos-ganhos" class="veredito-pontos"></div>
+
+                    <!-- Botão -->
+                    <button id="next-btn" class="veredito-botao">
+                        <span class="botao-icon">▶</span>
+                        <span class="botao-texto">PRÓXIMA NOTÍCIA</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -271,38 +301,77 @@
             <h2>Meu Perfil</h2>
         </div>
         <div class="container">
-            <div class="profile-info">
-                <h1 id="profile-name">Usuário</h1>
-                <p id="profile-level">Nível 1</p>
+            <!-- Cartão de Identidade do Investigador -->
+            <div class="id-card">
+                <!-- Cabeçalho do Cartão -->
+                <div class="id-card-header">
+                    <div class="id-card-title">CREDENCIAL DE INVESTIGADOR</div>
+                    <div class="id-card-subtitle">FACT CHECKER OFICIAL</div>
+                </div>
 
-                <!-- Barra de Progresso de Nível Global -->
-                <div class="level-progress-section">
-                    <div class="level-info">
-                        <span id="nivel-pontos-atual">0</span> pontos
-                        <span style="opacity: 0.7;"> • </span>
-                        Faltam <span id="nivel-pontos-faltam">100</span> para o próximo nível
+                <!-- Seção Superior: Foto + Informações Principais -->
+                <div class="id-card-top-section">
+                    <div class="id-card-photo">
+                        <img src="assets/images/Silhueta.jpg" alt="Foto do Investigador" class="photo-img">
                     </div>
+                    <div class="id-card-main-info">
+                        <div class="id-info-row">
+                            <span class="id-label">NOME:</span>
+                            <span class="id-value" id="profile-name">Usuário</span>
+                        </div>
+                        <div class="id-info-row">
+                            <span class="id-label">NÍVEL:</span>
+                            <span class="id-level-badge">
+                                <span id="profile-level">Nível 1</span>
+                            </span>
+                        </div>
+                        <div class="id-info-row">
+                            <span class="id-label">PONTOS:</span>
+                            <span class="id-value">
+                                <span id="nivel-pontos-atual">0</span> pts
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Barra de Progresso de Nível -->
+                <div class="id-card-progress-section">
+                    <div class="id-progress-label">Progresso para o próximo nível (faltam <span id="nivel-pontos-faltam">100</span>):</div>
                     <div class="progress-bar level-bar">
                         <div class="progress-fill" id="nivel-progress-fill" style="width: 0%"></div>
                     </div>
                 </div>
 
-                <div class="stats">
-                    <div class="stat-item">
-                        <span class="stat-value" id="total-respostas">0</span>
-                        <span class="stat-label">Notícias respondidas</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-value" id="total-acertos">0</span>
-                        <span class="stat-label">Acertos</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-value" id="taxa-acerto">0%</span>
-                        <span class="stat-label">Taxa de Acerto</span>
+                <!-- Linha Decorativa -->
+                <div class="id-card-divider"></div>
+
+                <!-- Seção de Estatísticas -->
+                <div class="id-card-stats-section">
+                    <h3 class="id-stats-title">ESTATÍSTICAS</h3>
+                    <div class="id-stats-list">
+                        <div class="id-stat-row">
+                            <span class="id-stat-label">Notícias Respondidas:</span>
+                            <span class="id-stat-value" id="total-respostas">0</span>
+                        </div>
+                        <div class="id-stat-row">
+                            <span class="id-stat-label">Acertos:</span>
+                            <span class="id-stat-value id-stat-success" id="total-acertos">0</span>
+                        </div>
+                        <div class="id-stat-row">
+                            <span class="id-stat-label">Erros:</span>
+                            <span class="id-stat-value id-stat-error" id="total-erros">0</span>
+                        </div>
+                        <div class="id-stat-row id-stat-highlight">
+                            <span class="id-stat-label">Taxa de Acerto:</span>
+                            <span class="id-stat-value id-stat-percent" id="taxa-acerto">0%</span>
+                        </div>
                     </div>
                 </div>
             </div>
-            <h2 style="color: white; margin-top: 30px; text-align: center;">📊 Progresso por Categoria</h2>
+
+            <!-- Seção de Progresso por Categoria (NÃO MODIFICADA) -->
+            <h2 class="categoria-section-title">Progresso por Categoria</h2>
+            <div class="categoria-section-divider"></div>
             <div id="categorias-progresso" class="categorias-progresso-container">
                 <!-- Progresso será carregado aqui dinamicamente -->
             </div>
