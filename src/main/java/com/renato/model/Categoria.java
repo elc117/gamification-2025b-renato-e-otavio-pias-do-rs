@@ -23,6 +23,9 @@ public class Categoria {
     @Column(name = "caminho_imagem_completa", length = 255)
     private String caminhoImagemCompleta;
 
+    @Column(name = "caminho_imagem_categoria", length = 255)
+    private String caminhoImagemCategoria;
+
     public Categoria() {
     }
 
@@ -79,5 +82,13 @@ public class Categoria {
 
     public void setCaminhoImagemCompleta(String caminhoImagemCompleta) {
         this.caminhoImagemCompleta = caminhoImagemCompleta;
+    }
+
+    public String getCaminhoImagemCategoria() {
+        return caminhoImagemCategoria;
+    }
+
+    public void setCaminhoImagemCategoria(String caminhoImagemCategoria) {
+        this.caminhoImagemCategoria = caminhoImagemCategoria;
     }
 }

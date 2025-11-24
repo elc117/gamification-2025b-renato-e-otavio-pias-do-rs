@@ -208,6 +208,11 @@ document.getElementById('login-btn').addEventListener('click', async () => {
         console.log('🔵 Mudando para tela menu-screen...');
         showScreen('menu-screen');
 
+        // Iniciar música de fundo
+        if (window.startBackgroundMusic) {
+            window.startBackgroundMusic();
+        }
+
         console.log('✅ Login completo!');
     } catch (error) {
         console.error('❌ ERRO CAPTURADO:', error);
@@ -334,8 +339,12 @@ async function loadCategories() {
             // usar style attribute para permitir seletor [style] animação
             card.setAttribute('style', `animation-delay: ${index * 0.1}s`);
 
+            const imagemCategoria = categoria.caminhoImagemCategoria || 'assets/images/default.png';
+
             card.innerHTML = `
-                <div class="category-image-placeholder" aria-hidden="true"></div>
+                <div class="category-image-placeholder" aria-hidden="true">
+                    <img src="${imagemCategoria}" alt="${categoria.nome}">
+                </div>
                 <div class="category-content">
                     <div class="category-name">${categoria.nome}</div>
                     <div class="category-desc">${categoria.descricao || 'Clique para jogar'}</div>
@@ -553,6 +562,11 @@ function mostrarFeedback(resultado) {
 
     // Mostrar popup para conquistas desbloqueadas
     if (resultado.conquistasDesbloqueadas && resultado.conquistasDesbloqueadas.length > 0) {
+        // Tocar som de conquista
+        if (window.playAchievementSound) {
+            window.playAchievementSound();
+        }
+
         resultado.conquistasDesbloqueadas.forEach(conquista => {
             showToast(`🏆 Conquista desbloqueada: ${conquista.nome}!`, 'success');
         });
@@ -776,3 +790,241 @@ window.addEventListener('load', async () => {
         showScreen('login-screen');
     }
 });
+
+// ========== INICIALIZAÇÃO DO ÁUDIO ==========
+const backgroundMusic = document.getElementById('background-music');
+const achievementSound = document.getElementById('achievement-sound');
+let audioStarted = false;
+
+// Função global para iniciar o áudio
+window.startBackgroundMusic = function() {
+    if (!audioStarted && backgroundMusic) {
+        // Garantir que o volume está configurado
+        if (backgroundMusic.volume === 0) {
+            backgroundMusic.volume = 0.7;
+        }
+
+        backgroundMusic.play().then(() => {
+            audioStarted = true;
+            console.log('🎵 Música de fundo iniciada com sucesso!');
+        }).catch(err => {
+            console.log('ℹ️ Aguardando interação do usuário para iniciar música:', err.message);
+        });
+    }
+};
+
+// Função global para tocar som de conquista com fade
+window.playAchievementSound = function() {
+    if (!achievementSound || !backgroundMusic) return;
+
+    // Salvar volume original da música de fundo
+    const originalVolume = backgroundMusic.volume;
+
+    // Fade out da música de fundo (reduzir para 10% em ~1 segundo)
+    let fadeOutSteps = 0;
+    const maxFadeOutSteps = 20;
+    const fadeOutInterval = setInterval(() => {
+        fadeOutSteps++;
+        const targetVolume = originalVolume * 0.1; // 10% do volume original
+        const step = (originalVolume - targetVolume) / maxFadeOutSteps;
+
+        if (fadeOutSteps < maxFadeOutSteps) {
+            backgroundMusic.volume = Math.max(targetVolume, backgroundMusic.volume - step);
+        } else {
+            clearInterval(fadeOutInterval);
+            backgroundMusic.volume = targetVolume;
+        }
+    }, 50); // A cada 50ms
+
+    // Tocar som de conquista
+    achievementSound.currentTime = 0;
+    achievementSound.volume = 0.8; // Volume fixo para o som de conquista
+
+    achievementSound.play().catch(err => {
+        console.log('ℹ️ Não foi possível tocar som de conquista:', err.message);
+        // Se falhar, restaurar volume da música imediatamente
+        clearInterval(fadeOutInterval);
+        backgroundMusic.volume = originalVolume;
+    });
+
+    // Quando o som de conquista terminar, fazer fade in da música de fundo
+    achievementSound.onended = function() {
+        let fadeInSteps = 0;
+        const maxFadeInSteps = 20;
+        const currentVolume = backgroundMusic.volume;
+
+        const fadeInInterval = setInterval(() => {
+            fadeInSteps++;
+            const step = (originalVolume - currentVolume) / maxFadeInSteps;
+
+            if (fadeInSteps < maxFadeInSteps) {
+                backgroundMusic.volume = Math.min(originalVolume, backgroundMusic.volume + step);
+            } else {
+                clearInterval(fadeInInterval);
+                backgroundMusic.volume = originalVolume; // Restaurar volume original exato
+            }
+        }, 50); // A cada 50ms
+    };
+};
+
+// Tentar iniciar áudio na primeira interação do usuário (qualquer clique)
+document.addEventListener('click', window.startBackgroundMusic, { once: true });
+
+// Tentar também em outras interações
+document.addEventListener('keydown', window.startBackgroundMusic, { once: true });
+document.addEventListener('touchstart', window.startBackgroundMusic, { once: true });
+
+// ========== CONTROLE DE VOLUME FLUTUANTE ==========
+
+(function() {
+    // Elementos do DOM
+    const audio = document.getElementById('background-music');
+    const volumeIcon = document.getElementById('volume-icon');
+    const volumeEmoji = document.getElementById('volume-emoji');
+    const sliderContainer = document.getElementById('volume-slider-container');
+    const volumeSlider = document.getElementById('volume-slider');
+    const volumePercentage = document.getElementById('volume-percentage');
+
+    // Estado do controle
+    let isSliderVisible = false;
+    let isMuted = false;
+    let previousVolume = 0.7; // Volume padrão 70%
+    let hideSliderTimeout = null;
+
+    // Inicializar volume
+    audio.volume = 0.7;
+    volumeSlider.value = 70;
+
+    // Função para atualizar o emoji do volume
+    function updateVolumeEmoji(volume) {
+        if (volume === 0 || isMuted) {
+            volumeEmoji.textContent = '🔇';
+        } else if (volume < 0.3) {
+            volumeEmoji.textContent = '🔉';
+        } else {
+            volumeEmoji.textContent = '🔊';
+        }
+    }
+
+    // Função para mostrar o slider
+    function showSlider() {
+        sliderContainer.classList.remove('volume-slider-hidden');
+        sliderContainer.classList.add('volume-slider-visible');
+        isSliderVisible = true;
+        resetHideSliderTimeout();
+    }
+
+    // Função para esconder o slider
+    function hideSlider() {
+        sliderContainer.classList.remove('volume-slider-visible');
+        sliderContainer.classList.add('volume-slider-hidden');
+        isSliderVisible = false;
+    }
+
+    // Função para resetar o timeout de esconder o slider
+    function resetHideSliderTimeout() {
+        if (hideSliderTimeout) {
+            clearTimeout(hideSliderTimeout);
+        }
+        hideSliderTimeout = setTimeout(() => {
+            hideSlider();
+        }, 2000);
+    }
+
+    // Evento de clique no ícone
+    let clickCount = 0;
+    let clickTimeout = null;
+
+    volumeIcon.addEventListener('click', (e) => {
+        e.stopPropagation();
+        clickCount++;
+
+        // Limpar timeout anterior
+        if (clickTimeout) {
+            clearTimeout(clickTimeout);
+        }
+
+        // Primeiro clique: mostrar slider
+        if (clickCount === 1) {
+            clickTimeout = setTimeout(() => {
+                if (!isSliderVisible) {
+                    showSlider();
+                }
+                clickCount = 0;
+            }, 300);
+        }
+        // Segundo clique: mutar/desmutar
+        else if (clickCount === 2) {
+            clearTimeout(clickTimeout);
+            clickCount = 0;
+
+            if (isMuted) {
+                // Desmutar
+                audio.volume = previousVolume;
+                volumeSlider.value = previousVolume * 100;
+                volumePercentage.textContent = Math.round(previousVolume * 100) + '%';
+                isMuted = false;
+                updateVolumeEmoji(previousVolume);
+            } else {
+                // Mutar
+                previousVolume = audio.volume;
+                audio.volume = 0;
+                volumeSlider.value = 0;
+                volumePercentage.textContent = '0%';
+                isMuted = true;
+                updateVolumeEmoji(0);
+            }
+        }
+    });
+
+    // Evento de mudança no slider
+    volumeSlider.addEventListener('input', (e) => {
+        const value = e.target.value / 100;
+        audio.volume = value;
+        volumePercentage.textContent = e.target.value + '%';
+
+        // Se estava mutado, desmutar
+        if (isMuted && value > 0) {
+            isMuted = false;
+        }
+
+        // Se foi para 0, considerar mutado
+        if (value === 0) {
+            isMuted = true;
+        } else {
+            previousVolume = value;
+        }
+
+        updateVolumeEmoji(value);
+        resetHideSliderTimeout();
+    });
+
+    // Manter slider visível ao interagir com ele
+    sliderContainer.addEventListener('mouseenter', () => {
+        if (hideSliderTimeout) {
+            clearTimeout(hideSliderTimeout);
+        }
+    });
+
+    sliderContainer.addEventListener('mouseleave', () => {
+        resetHideSliderTimeout();
+    });
+
+    // Esconder slider ao clicar fora
+    document.addEventListener('click', (e) => {
+        if (!volumeIcon.contains(e.target) && !sliderContainer.contains(e.target)) {
+            if (isSliderVisible) {
+                hideSlider();
+            }
+        }
+    });
+
+    // Impedir que cliques no slider fechem ele
+    sliderContainer.addEventListener('click', (e) => {
+        e.stopPropagation();
+        resetHideSliderTimeout();
+    });
+
+    // Atualizar emoji inicial
+    updateVolumeEmoji(audio.volume);
+})();

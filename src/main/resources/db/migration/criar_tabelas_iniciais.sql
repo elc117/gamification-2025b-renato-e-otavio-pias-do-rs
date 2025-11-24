@@ -18,7 +18,8 @@ CREATE TABLE categorias (
     descricao TEXT,
     total_niveis INTEGER NOT NULL DEFAULT 0,
     pontos_para_proximo_nivel INTEGER NOT NULL DEFAULT 0,
-    caminho_imagem_completa VARCHAR(255)
+    caminho_imagem_completa VARCHAR(255),
+    caminho_imagem_categoria VARCHAR(255)
 );
 
 CREATE TABLE noticias (

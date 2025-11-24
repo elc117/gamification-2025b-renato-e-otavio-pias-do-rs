@@ -4644,6 +4644,17 @@ h2 {
     background: #E0E0E0; /* placeholder cinza claro */
     border-radius: 8px;
     flex-shrink: 0;
+    padding: 3px; /* espaçamento para o contorno */
+    border: 3px solid #8B0000; /* contorno bordô */
+    box-shadow: 0 2px 8px rgba(139, 0, 0, 0.3); /* sombra sutil na cor do contorno */
+}
+
+.category-image-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 5px; /* arredondamento interno para acompanhar o placeholder */
+    display: block;
 }
 
 /* Conteúdo da categoria (texto) */
@@ -5207,6 +5218,224 @@ h2 {
 
     .botao-icon {
         font-size: 1em !important;
+    }
+}
+
+/* ===== CONTROLE DE VOLUME FLUTUANTE ===== */
+
+/* Container principal do controle de volume */
+#volume-control-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Botão do ícone de volume */
+#volume-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #8B0000 0%, #A52A2A 100%);
+    border: 3px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(139, 0, 0, 0.4);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0;
+    outline: none;
+}
+
+#volume-icon:hover {
+    transform: scale(1.1) translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4),
+                0 0 30px rgba(139, 0, 0, 0.6);
+    background: linear-gradient(135deg, #A52A2A 0%, #8B0000 100%);
+}
+
+#volume-icon:active {
+    transform: scale(0.95);
+}
+
+/* Emoji do volume */
+#volume-emoji {
+    font-size: 28px;
+    line-height: 1;
+    user-select: none;
+    transition: transform 0.2s ease;
+}
+
+#volume-icon:hover #volume-emoji {
+    transform: scale(1.1);
+}
+
+/* Container do slider de volume */
+#volume-slider-container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    padding: 20px 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2),
+                0 0 15px rgba(139, 0, 0, 0.3);
+    border: 2px solid rgba(139, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: bottom center;
+}
+
+/* Estados de visibilidade do slider */
+.volume-slider-hidden {
+    opacity: 0;
+    transform: translateY(10px) scale(0.9);
+    pointer-events: none;
+}
+
+.volume-slider-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: all;
+}
+
+/* Slider vertical de volume */
+#volume-slider {
+    -webkit-appearance: slider-vertical;
+    writing-mode: bt-lr;
+    width: 8px;
+    height: 120px;
+    background: linear-gradient(to top,
+                #8B0000 0%,
+                #A52A2A 50%,
+                #CD5C5C 100%);
+    border-radius: 10px;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Thumb do slider - WebKit (Chrome, Safari) */
+#volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid #8B0000;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+}
+
+#volume-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 3px 12px rgba(139, 0, 0, 0.5);
+}
+
+#volume-slider::-webkit-slider-thumb:active {
+    transform: scale(1.1);
+}
+
+/* Thumb do slider - Firefox */
+#volume-slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid #8B0000;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+}
+
+#volume-slider::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 3px 12px rgba(139, 0, 0, 0.5);
+}
+
+/* Track do slider - Firefox */
+#volume-slider::-moz-range-track {
+    background: linear-gradient(to top,
+                #8B0000 0%,
+                #A52A2A 50%,
+                #CD5C5C 100%);
+    border-radius: 10px;
+}
+
+/* Percentual do volume */
+#volume-percentage {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #8B0000;
+    text-align: center;
+    min-width: 40px;
+    user-select: none;
+}
+
+/* Responsividade para mobile */
+@media (max-width: 768px) {
+    #volume-control-container {
+        bottom: 15px;
+        right: 15px;
+    }
+
+    #volume-icon {
+        width: 50px;
+        height: 50px;
+    }
+
+    #volume-emoji {
+        font-size: 24px;
+    }
+
+    #volume-slider {
+        height: 100px;
+    }
+
+    #volume-slider-container {
+        padding: 15px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    #volume-control-container {
+        bottom: 10px;
+        right: 10px;
+    }
+
+    #volume-icon {
+        width: 45px;
+        height: 45px;
+    }
+
+    #volume-emoji {
+        font-size: 22px;
+    }
+
+    #volume-slider {
+        height: 90px;
+        width: 7px;
+    }
+
+    #volume-slider::-webkit-slider-thumb {
+        width: 20px;
+        height: 20px;
+    }
+
+    #volume-slider::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
     }
 }
 
