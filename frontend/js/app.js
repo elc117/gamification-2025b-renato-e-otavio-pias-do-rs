@@ -124,6 +124,40 @@ function showScreen(screenId) {
     document.getElementById(screenId).classList.add('active');
 }
 
+// função para mostrar/ocultar loading
+function showLoading(show = true, text = 'Carregando...', subtext = 'Por favor, aguarde') {
+    let overlay = document.getElementById('loading-overlay');
+    
+    if (!overlay) {
+        // criar overlay se não existir
+        overlay = document.createElement('div');
+        overlay.id = 'loading-overlay';
+        overlay.className = 'loading-overlay';
+        overlay.innerHTML = `
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <div class="loading-text" id="loading-text">${text}</div>
+                <div class="loading-subtext" id="loading-subtext">${subtext}</div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+    }
+    
+    // atualizar os textos
+    const textEl = document.getElementById('loading-text');
+    const subtextEl = document.getElementById('loading-subtext');
+    if (textEl) textEl.textContent = text;
+    if (subtextEl) subtextEl.textContent = subtext;
+    
+    // mostrar ou ocultar
+    if (show) {
+        overlay.classList.add('active');
+    }
+    else {
+        overlay.classList.remove('active');
+    }
+}
+
 // ========== TELA DE LOGIN ==========
 document.getElementById('login-btn').addEventListener('click', async () => {
     const email = document.getElementById('email-input').value.trim();
@@ -138,6 +172,9 @@ document.getElementById('login-btn').addEventListener('click', async () => {
     }
 
     console.log('🔵 Iniciando login com email:', email);
+    
+    // Mostrar loading
+    showLoading(true, 'Fazendo login...', 'Aguarde enquanto verificamos suas credenciais');
 
     try {
         // Fazer requisição diretamente com fetch para ter mais controle
@@ -213,8 +250,13 @@ document.getElementById('login-btn').addEventListener('click', async () => {
             window.startBackgroundMusic();
         }
 
+        // Ocultar loading
+        showLoading(false);
+        
         console.log('✅ Login completo!');
     } catch (error) {
+        // ocultar loading em caso de erro
+        showLoading(false);
         console.error('❌ ERRO CAPTURADO:', error);
         console.error('❌ Tipo do erro:', typeof error);
         console.error('❌ error.message:', error.message);
@@ -243,6 +285,9 @@ document.getElementById('register-btn').addEventListener('click', async () => {
         showToast('Por favor, preencha todos os campos', 'error');
         return;
     }
+    
+    // mostrar o loading
+    showLoading(true, 'Criando conta...', 'Aguarde enquanto preparamos sua credencial');
 
     try {
         await apiRequest('/usuarios', {
@@ -250,10 +295,16 @@ document.getElementById('register-btn').addEventListener('click', async () => {
             body: JSON.stringify({ nome, email, senha })
         });
 
+        // ocultar o loading
+        showLoading(false);
+        
         showToast('Conta criada com sucesso! 🎉 Faça login agora.', 'success');
         showScreen('login-screen');
         document.getElementById('email-input').value = email;
-    } catch (error) {
+    }
+    catch (error) {
+        // ocultar o loading em caso de erro
+        showLoading(false);
         showToast('Erro ao criar conta: ' + error.message, 'error');
     }
 });
