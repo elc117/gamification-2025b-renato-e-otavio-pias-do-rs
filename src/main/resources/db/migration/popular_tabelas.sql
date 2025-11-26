@@ -1,6 +1,3 @@
--- script para popular o banco de dados com dados iniciais
--- insere 2 categorias, 8 notícias e 1 conquista
-
 -- categoria: Política
 -- sistema: níveis de 0 a 4, com 4 peças (nível 0 = 0%, nível 1 = 25%, nível 2 = 50%, nível 3 = 75%, nível 4 = 100%)
 -- nível 0 inicia sem peça desbloqueada.
@@ -11,171 +8,201 @@ VALUES (1, 'Política', 'Notícias sobre política nacional e internacional', 4,
 INSERT INTO noticias (categoria_id, titulo, conteudo, eh_verdadeira, explicacao)
 VALUES
     ((SELECT id FROM categorias WHERE nome = 'Política'),
-    'Governo planeja limitar quantidade de compras internacionais por pessoa a apenas duas por mês',
-    'Uma publicação viral afirma que o governo federal teria definido um limite de duas compras internacionais mensais por CPF, incluindo marketplaces como Shopee, AliExpress e Amazon. Segundo a postagem, a medida seria parte de um projeto de “controle fiscal avançado” e começaria a valer a partir de fevereiro, sem necessidade de aprovação do Congresso.',
-    false,
-    '**FALSO.** Não há nenhuma medida vigente ou projeto oficial que limite o número de compras internacionais por pessoa. Regulações de importação tratam de valores, impostos e fiscalização, mas nunca estabelecem quantidade máxima por indivíduo.
+     'Senado aprova projeto que estabelece novas regras para financiamento de campanhas eleitorais',
+     'O Senado Federal aprovou nesta terça-feira (12) projeto de lei que estabelece novas diretrizes para o financiamento de campanhas eleitorais no Brasil. A proposta, que teve 54 votos favoráveis e 23 contrários, limita doações de pessoas físicas a 10% da renda anual declarada e proíbe contribuições de empresas condenadas por corrupção nos últimos 8 anos. O texto segue agora para sanção presidencial e, se aprovado, entrará em vigor nas eleições de 2026.',
+     true,
+     '**VERDADEIRO.** Esta notícia é internamente coerente e descreve um processo legislativo plausível:
 
-**Sinais identificadores:**
-- Regulação inédita e sem debate público
-- Ausência total de decreto, portaria ou texto oficial
-- Alegação de implementação direta sem Congresso
-- Expressão vaga ("controle fiscal avançado") usada para parecer técnica
+**Por que faz sentido:**
+- Placar de votação realista (54 a 23) - não é unânime nem absurdo
+- Limites percentuais plausíveis (10% da renda anual)
+- Prazo de vedação coerente (8 anos)
+- Tramitação correta: Senado → Presidência → vigência futura
+- Ano de implementação lógico (2026 - próximas eleições)
 
-**Fontes:**
-- Receita Federal: https://www.gov.br/receitafederal/pt-br
-- Agência Gov: https://agenciagov.ebc.com.br/
-- G1 Economia: https://g1.globo.com/economia/'),
+**Elementos de coerência:**
+- Processo democrático respeitado (votação no Congresso)
+- Medida anticorrupção factível
+- Não promete mudanças imediatas ou radicais
+- Percentuais e números dentro da realidade'),
 
     ((SELECT id FROM categorias WHERE nome = 'Política'),
-     'Ministério da Saúde teria fechado acordo secreto para exigir carteira de vacinação digital até para viagens estaduais',
-     'Circula em grupos de mensagens a alegação de que o Ministério da Saúde teria fechado um acordo com estados para tornar obrigatória uma “carteira digital unificada” para viagens entre estados do Brasil. O texto diz que passageiros seriam impedidos de embarcar em ônibus interestaduais caso não apresentassem o documento digital.',
+     'Congresso aprova emenda constitucional que aumenta mandato presidencial de 4 para 6 anos',
+     'Foi aprovada ontem no Congresso Nacional, por unanimidade de 513 votos, emenda constitucional que altera o mandato presidencial de 4 para 6 anos. A mudança vale a partir de janeiro e se aplica ao atual presidente. Segundo líderes partidários, a medida foi necessária para dar mais tempo aos projetos governamentais. A emenda foi votada em sessão extraordinária e entra em vigor imediatamente após publicação no Diário Oficial.',
      false,
-     '**FALSO.** O Ministério da Saúde nunca anunciou qualquer exigência de carteira de vacinação digital para viagens estaduais. Não existe norma federal ou estadual que autorize impedimento de deslocamento por ausência de comprovante digital.
+     '**FALSO.** Esta notícia contém múltiplas impossibilidades constitucionais:
 
-**Sinais identificadores:**
-- "Acordo secreto" sem registro oficial
-- Medida com grande impacto sem anúncio público
-- Ausência de base legal para restringir locomoção interna
-- Mistura de tecnologias inexistentes com medidas sanitárias
+**Os erros estão aqui:**
+- Emenda constitucional exige aprovação em DOIS TURNOS em cada casa (Câmara e Senado)
+- Precisa de 3/5 dos votos (308 deputados + 49 senadores), não "unanimidade de 513"
+- "513 votos" é o total de deputados - impossível ter esse número em uma votação conjunta
+- PEC não pode valer para mandato em curso (princípio da irretroatividade)
+- Mudança de mandato presidencial não pode ter efeito imediato
 
-**Fontes:**
-- Ministério da Saúde: https://www.gov.br/saude/pt-br
-- Agência Brasil: https://agenciabrasil.ebc.com.br/
-- G1 Saúde: https://g1.globo.com/saude/'),
+**Por que isso é impossível:**
+- Alteração de cláusula pétrea exigiria processo complexo de décadas
+- Mandato presidencial não pode ser estendido retroativamente
+- Procedimento descrito ignora completamente o rito constitucional
+- Aprovação "por unanimidade" em matéria polêmica é inverossímil'),
 
     ((SELECT id FROM categorias WHERE nome = 'Política'),
-     'Nova lei permitiria ao governo bloquear contas bancárias automaticamente em suspeitas de fraude',
-     'Textos compartilhados nas redes sociais afirmam que uma lei recém-aprovada daria ao governo federal o poder de bloquear automaticamente contas bancárias sem ordem judicial, apenas com base em “suspeitas de atividade fraudulenta”, determinadas por algoritmos.',
+     'Presidente veta artigo de lei que estabelecia limite para reajuste de combustíveis',
+     'O presidente da República vetou parcialmente projeto de lei aprovado pelo Congresso Nacional que estabelecia teto para reajuste mensal de combustíveis. O veto atingiu especificamente o artigo 7º, que limitava aumentos a 3% ao mês. Em mensagem ao Congresso, o Executivo argumentou que a medida interferiria indevidamente na política de preços da Petrobras e poderia causar desabastecimento. O Congresso pode derrubar o veto com maioria absoluta em sessão conjunta.',
+     true,
+     '**VERDADEIRO.** Esta notícia descreve corretamente o processo de veto presidencial:
+
+**Por que faz sentido:**
+- Veto parcial é previsto constitucionalmente
+- Presidente pode vetar artigos específicos (artigo 7º mencionado)
+- Justificativa técnica coerente (interferência em política de preços)
+- Percentual plausível (3% ao mês)
+- Processo democrático respeitado: Congresso pode derrubar veto
+- Maioria absoluta é o quórum correto para derrubar veto
+
+**Elementos de coerência:**
+- Separação de poderes funciona (Legislativo aprova, Executivo veta)
+- Argumento técnico versus político
+- Consequência prevista realista (desabastecimento)
+- Próximos passos bem definidos'),
+
+    ((SELECT id FROM categorias WHERE nome = 'Política'),
+     'STF determina que todas as leis aprovadas pelo Congresso em 2024 sejam revogadas automaticamente',
+     'O Supremo Tribunal Federal decidiu por 11 votos a 0 que todas as leis federais aprovadas pelo Congresso Nacional durante o ano de 2024 sejam automaticamente revogadas. A decisão, tomada em sessão plenária extraordinária, baseia-se em suposta inconstitucionalidade processual detectada no regimento interno da Câmara. Segundo o ministro relator, as 247 leis aprovadas no período deixarão de valer a partir da próxima segunda-feira, incluindo o orçamento federal de 2025.',
      false,
-     '**FALSO.** A legislação brasileira exige ordem judicial ou procedimento formal para bloqueio de contas, como previsto em leis e decisões do STF. Nenhuma lei recente cria bloqueio automático sem decisão judicial.
+     '**FALSO.** Esta notícia descreve uma impossibilidade jurídica e constitucional:
 
-**Sinais identificadores:**
-- Alegação de poder extraordinário sem respaldo legal
-- Citação de "algoritmos" como justificativa vaga
-- Falta de número da lei, data ou órgão responsável
-- Violação direta da Constituição sem debate público
+**Os erros estão aqui:**
+- STF não pode revogar leis "em bloco" por decisão administrativa
+- Cada lei precisa ser questionada individualmente via ADI (Ação Direta de Inconstitucionalidade)
+- Impossível declarar 247 leis inconstitucionais de uma vez
+- Revogação do orçamento federal causaria colapso do Estado
+- STF não julga "inconstitucionalidade processual" do Regimento da Câmara dessa forma
 
-**Fontes:**
-- Banco Central: https://www.bcb.gov.br/
-- STF: https://portal.stf.jus.br/
-- Agência Senado: https://www12.senado.leg.br/noticias'),
+**Por que isso é impossível:**
+- Separação dos Poderes: STF não legisla nem revoga leis administrativamente
+- Controle de constitucionalidade é feito caso a caso
+- Efeito seria caótico e inviabilizaria o funcionamento do país
+- Votação unânime (11 a 0) em decisão tão extrema é inverossímil'),
 
     ((SELECT id FROM categorias WHERE nome = 'Política'),
-     'Prefeituras poderão cobrar taxa anual para uso de redes sociais a partir de 2025, diz publicação',
-     'Postagens afirmam que um novo projeto permitiria que prefeituras cobrem uma “taxa de presença digital”, obrigando moradores a pagar anualmente para manter contas em redes sociais como Instagram, TikTok e Facebook.',
+     'Tribunal Superior Eleitoral divulga calendário oficial das eleições municipais de 2024',
+     'O Tribunal Superior Eleitoral (TSE) publicou nesta quinta-feira a resolução com o calendário completo das eleições municipais de 2024. As convenções partidárias para escolha de candidatos ocorrerão entre 20 de julho e 5 de agosto. O registro de candidaturas vai até 15 de agosto, e a propaganda eleitoral está liberada a partir de 16 de agosto. O primeiro turno está marcado para 6 de outubro, e eventual segundo turno acontecerá em 27 de outubro.',
+     true,
+     '**VERDADEIRO.** Esta notícia apresenta informações coerentes sobre processo eleitoral:
+
+**Por que faz sentido:**
+- TSE é o órgão competente para definir calendário eleitoral
+- Datas seguem sequência lógica: convenções → registro → propaganda → votação
+- Prazos entre etapas são razoáveis (15-20 dias)
+- Primeiro turno em outubro é padrão das eleições municipais
+- Intervalo de 21 dias entre turnos é o previsto em lei
+- Propaganda depois do registro faz sentido legal
+
+**Elementos de coerência:**
+- Processo organizado em etapas sequenciais
+- Prazos compatíveis com organização eleitoral
+- Todos os marcos importantes mencionados
+- Estrutura típica de eleições brasileiras'),
+
+    ((SELECT id FROM categorias WHERE nome = 'Política'),
+     'Nova lei determina que projetos aprovados na Câmara passem automaticamente no Senado sem votação',
+     'Entrou em vigor nesta semana lei complementar que altera o processo legislativo brasileiro. A partir de agora, projetos de lei aprovados por maioria qualificada na Câmara dos Deputados (3/5 dos votos) passam automaticamente no Senado Federal, sem necessidade de nova votação. A medida, segundo seus defensores, visa acelerar a tramitação de propostas e reduzir custos do Legislativo. O Senado permanece com poder de veto, mas apenas para projetos de emenda constitucional.',
      false,
-     '**FALSO.** Prefeituras não têm competência legal para criar taxas relacionadas ao uso de serviços digitais privados. Não existe proposta nacional que autorize tal cobrança.
+     '**FALSO.** Esta notícia descreve mudança que viola a estrutura constitucional do Congresso:
 
-**Sinais identificadores:**
-- Criação de taxa municipal sobre serviço privado internacional
-- Conceito irreal ("presença digital" como tributo)
-- Ausência de projeto real ou número de PL
-- Inconsistência jurídica básica
+**Os erros estão aqui:**
+- Câmara e Senado são casas independentes - ambas DEVEM votar cada projeto
+- Não existe "aprovação automática" entre as casas legislativas
+- Lei complementar não pode alterar processo previsto na Constituição
+- A Constituição exige bicameralismo (duas votações independentes)
+- Contraditório: diz que Senado "permanece com poder de veto" mas não vota
 
-**Fontes:**
-- Câmara dos Deputados: https://www.camara.leg.br/
-- Agência Senado: https://www12.senado.leg.br/noticias
-- G1 Política: https://g1.globo.com/politica/'),
+**Por que isso é impossível:**
+- Bicameralismo é princípio fundamental (cláusula pétrea implícita)
+- Senado representa Estados, Câmara representa população - papéis distintos
+- Eliminar votação no Senado seria golpe institucional
+- Mudança dessa magnitude exigiria nova Constituição'),
 
     ((SELECT id FROM categorias WHERE nome = 'Política'),
-     'Governo estuda impor limite mensal de posts por usuário em redes sociais para “reduzir desinformação”',
-     'Uma corrente afirma que o governo estaria analisando limitar a quantidade de posts por usuário em plataformas como X, Instagram e TikTok. O suposto limite seria definido por faixa etária e poderia variar de 20 a 50 publicações mensais.',
+     'Governo federal anuncia programa de regularização fundiária para comunidades tradicionais',
+     'O Ministério do Desenvolvimento Agrário lançou nesta segunda-feira programa de regularização fundiária voltado para comunidades quilombolas, indígenas e ribeirinhas. A iniciativa prevê titulação de 450 mil hectares em 12 estados ao longo dos próximos três anos. O programa conta com orçamento de R$ 380 milhões e envolve parcerias com INCRA, FUNAI e governos estaduais. As primeiras titulações devem ocorrer ainda no primeiro semestre deste ano em comunidades do Pará e Maranhão.',
+     true,
+     '**VERDADEIRO.** Esta notícia descreve política pública plausível e bem estruturada:
+
+**Por que faz sentido:**
+- Ministério adequado para o tema (Desenvolvimento Agrário)
+- Área razoável (450 mil hectares em 12 estados)
+- Prazo exequível (3 anos)
+- Orçamento dentro da realidade fiscal (R$ 380 milhões)
+- Órgãos competentes envolvidos (INCRA, FUNAI)
+- Começo gradual em estados específicos (Pará e Maranhão)
+
+**Elementos de coerência:**
+- Programa bem delimitado em escopo e prazo
+- Parcerias institucionais coerentes
+- Valores proporcionais à área e complexidade
+- Estados mencionados têm histórico dessas comunidades'),
+
+    ((SELECT id FROM categorias WHERE nome = 'Política'),
+     'Câmara aprova PEC que torna obrigatório referendo popular para qualquer aumento de impostos',
+     'A Câmara dos Deputados aprovou em segundo turno PEC que estabelece consulta popular obrigatória antes de qualquer criação ou aumento de tributo no país. Pela proposta, todo aumento de imposto, taxa ou contribuição deve ser submetido a referendo nacional, marcado em até 45 dias após aprovação no Congresso. Se a população votar "não", o aumento é automaticamente cancelado. A PEC teve 410 votos favoráveis e agora segue para o Senado. Economistas estimam que cada referendo custará R$ 2,3 bilhões aos cofres públicos.',
      false,
-     '**FALSO.** Não existe medida governamental brasileira que imponha limite de posts por indivíduo. A proposta violaria direitos constitucionais, como liberdade de expressão e comunicação.
+     '**FALSO.** Esta notícia propõe mecanismo impraticável e que inviabilizaria o funcionamento do Estado:
 
-**Sinais identificadores:**
-- Proposta tecnicamente impossível de fiscalizar
-- Forte violação constitucional sem debate público
-- Ausência de documento oficial, portaria ou minuta
-- Discurso atribuído genericamente ao "governo"
+**Os erros estão aqui:**
+- Referendo para CADA alteração tributária tornaria país ingovernável
+- Custo de R$ 2,3 bilhões por consulta seria proibitivo
+- Orçamento precisaria ser aprovado anualmente por voto popular (inviável)
+- 45 dias é prazo curto demais para organizar referendo nacional
+- Impossibilidade prática: centenas de normas tributárias por ano
 
-**Fontes:**
-- Constituição Federal: https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm
-- Ministério da Justiça: https://www.gov.br/mj/pt-br'),
-
-    ((SELECT id FROM categorias WHERE nome = 'Política'),
-     'Senado aprova inclusão de crimes cibernéticos no rol de prioridade de investigação federal',
-     'O Senado aprovou, em votação simbólica, um projeto de lei que coloca crimes cibernéticos como prioridade para atuação da Polícia Federal. A proposta busca modernizar o tratamento de delitos digitais e reforçar a atuação da PF em casos de fraudes online e invasões de sistemas.',
-     true,
-     '**VERDADEIRO.** A modernização do marco legal contra crimes digitais está em discussão há anos, e o Senado tem apresentado projetos nessa linha.
-
-**Sinais de credibilidade:**
-- Votação registrada no Senado
-- Tema já discutido em diferentes legislaturas
-- Lógica compatível com agenda de segurança digital
-
-**Fontes:**
-- Senado Federal: https://www12.senado.leg.br/noticias
-- Agência Brasil: https://agenciabrasil.ebc.com.br/
-- Polícia Federal: https://www.gov.br/pf/pt-br'),
+**Por que isso é impossível:**
+- Sistema tributário muda constantemente (ajustes técnicos frequentes)
+- Referendos custam caro e são lentos - incompatível com gestão fiscal
+- Medida tornaria país incapaz de reagir a crises econômicas
+- Democracia representativa ficaria esvaziada
+- Proposta populista que ignora realidade administrativa'),
 
     ((SELECT id FROM categorias WHERE nome = 'Política'),
-     'Brasil amplia participação em missões de paz da ONU com envio de especialistas em mediação',
-     'O Ministério das Relações Exteriores confirmou a ampliação da participação brasileira em missões de paz da ONU, com o envio de especialistas em mediação e resolução de conflitos. O objetivo é apoiar iniciativas humanitárias e fortalecer a imagem diplomática do país.',
+     'Supremo Tribunal Federal julga constitucional cobrança de pedágio em rodovias federais',
+     'O Supremo Tribunal Federal decidiu por 7 votos a 4 que a cobrança de pedágio em rodovias federais concedidas à iniciativa privada é constitucional. O julgamento analisou ação que questionava a legalidade da cobrança de tarifa por uso de estradas públicas. Segundo o relator, a cobrança é legítima quando associada a investimentos em manutenção e melhorias. A decisão mantém vigentes os 72 contratos de concessão atualmente ativos no país, que totalizam cerca de 18 mil quilômetros de rodovias pedagiadas.',
      true,
-     '**VERDADEIRO.** O Brasil participa de missões de paz da ONU há décadas e frequentemente amplia ou ajusta sua atuação.
+     '**VERDADEIRO.** Esta notícia descreve decisão judicial coerente sobre tema infraestrutural:
 
-**Sinais de credibilidade:**
-- Confirmação por órgão diplomático (Itamaraty)
-- Alinhamento com política externa brasileira histórica
-- Tema recorrente em pautas multilaterais
+**Por que faz sentido:**
+- STF julga questões de constitucionalidade (papel correto)
+- Placar dividido (7 a 4) é realista para tema polêmico
+- Argumento jurídico coerente (cobrança vinculada a melhorias)
+- Número plausível de contratos (72 concessões)
+- Quilometragem razoável (18 mil km)
+- Decisão tem efeito concreto (mantém contratos vigentes)
 
-**Fontes:**
-- Itamaraty: https://www.gov.br/mre/pt-br
-- Nações Unidas Brasil: https://brasil.un.org/
-- Agência Brasil: https://agenciabrasil.ebc.com.br/'),
+**Elementos de coerência:**
+- STF atuando em sua competência constitucional
+- Votação não-unânime reflete complexidade do tema
+- Justificativa técnica (investimento em infraestrutura)
+- Impacto prático definido e mensurável'),
 
     ((SELECT id FROM categorias WHERE nome = 'Política'),
-     'Ministério da Educação anuncia novos investimentos em escolas técnicas federais',
-     'O Ministério da Educação informou que realizará novos investimentos em escolas técnicas federais voltados à ampliação de laboratórios, formação de professores e criação de cursos na área de tecnologia e inovação.',
-     true,
-     '**VERDADEIRO.** O MEC frequentemente anuncia investimentos em institutos federais e escolas técnicas, o que é amplamente divulgado por portais oficiais.
+     'Presidente assina decreto que suspende todas as eleições municipais até resolução de reforma política',
+     'O presidente da República assinou decreto presidencial na manhã de hoje determinando o adiamento por tempo indeterminado de todas as eleições municipais previstas para este ano. Segundo nota oficial do Planalto, a medida é necessária para que o Congresso conclua a reforma política em andamento. Os atuais prefeitos e vereadores terão mandatos automaticamente prorrogados até que novo calendário eleitoral seja definido. A decisão foi tomada após reunião com ministros do STF e presidentes da Câmara e Senado.',
+     false,
+     '**FALSO.** Esta notícia descreve ato que viola frontalmente a Constituição:
 
-**Sinais de credibilidade:**
-- Política pública consistente com ações do MEC
-- Anúncio institucional
-- Objetivos claros e plausíveis
+**Os erros estão aqui:**
+- Presidente NÃO pode suspender eleições por decreto
+- Eleições têm data constitucional - não podem ser adiadas unilateralmente
+- Prorrogação de mandatos sem eleição é inconstitucional
+- Decreto presidencial não pode alterar prazo eleitoral
+- Mesmo reunião com STF e Congresso não legitima ato anticonstitucional
 
-**Fontes:**
-- MEC: https://www.gov.br/mec/pt-br
-- Agência Gov: https://agenciagov.ebc.com.br/
-- G1 Educação: https://g1.globo.com/educacao/'),
-
-    ((SELECT id FROM categorias WHERE nome = 'Política'),
-     'Governo altera regras para repasses do Fundo Nacional de Segurança Pública',
-     'O Ministério da Justiça atualizou critérios de distribuição dos recursos do Fundo Nacional de Segurança Pública, priorizando municípios com maior índice de vulnerabilidade social e maior incidência de crimes violentos.',
-     true,
-     '**VERDADEIRO.** Alterações nos critérios do FNSP são comuns e geralmente divulgadas por portais oficiais.
-
-**Sinais de credibilidade:**
-- Política pública temática
-- Anúncio técnico e mensurável
-- Fonte institucional clara
-
-**Fontes:**
-- Ministério da Justiça: https://www.gov.br/mj/pt-br
-- Agência Gov: https://agenciagov.ebc.com.br/
-- G1 Política: https://g1.globo.com/politica/'),
-
-    ((SELECT id FROM categorias WHERE nome = 'Política'),
-     'Câmara aprova projeto que cria incentivos fiscais para produção nacional de semicondutores',
-     'A Câmara dos Deputados aprovou um projeto que concede incentivos fiscais para empresas que investirem na produção de semicondutores no Brasil, buscando fortalecer a indústria tecnológica nacional e reduzir a dependência de importações.',
-     true,
-     '**VERDADEIRO.** O tema é recorrente em políticas industriais brasileiras e já esteve em debate em diferentes governos.
-
-**Sinais de credibilidade:**
-- Tema alinhado com necessidade global de semicondutores
-- Tramitação legislativa normal
-- Coerência com estratégias industriais
-
-**Fontes:**
-- Câmara dos Deputados: https://www.camara.leg.br/
-- Ministério da Indústria: https://www.gov.br/mdic/pt-br
-- Agência Brasil: https://agenciabrasil.ebc.com.br/');
-
--- V4__Add_futebol_category.sql
--- adiciona categoria Futebol com 4 notícias sobre o tema
+**Por que isso é impossível:**
+- Suspensão de eleições caracteriza golpe de Estado
+- Calendário eleitoral é definido por lei, não por decreto
+- Prorrogação de mandatos viola alternância democrática
+- STF derrubaria decreto imediatamente
+- Medida seria crime de responsabilidade do presidente
+- Impossível haver "reunião prévia" validando golpe institucional');
 
 -- categoria: Futebol
 -- sistema: níveis de 0 a 4, com 4 peças (nível 0 = 0%, nível 1 = 25%, nível 2 = 50%, nível 3 = 75%, nível 4 = 100%)
@@ -186,224 +213,150 @@ VALUES (2, 'Futebol', 'Notícias e curiosidades sobre o mundo do futebol', 4, 10
 -- notícias da categoria Futebol
 INSERT INTO noticias (categoria_id, titulo, conteudo, eh_verdadeira, explicacao)
 VALUES
-    ((SELECT id FROM categorias WHERE nome = 'Futebol'), 'Técnico da Seleção Brasileira confirma volta de Marcelo para a Copa América',
-     'O técnico Dorival Júnior anunciou durante entrevista coletiva nesta quarta-feira que o lateral-esquerdo Marcelo, atualmente sem clube, será convocado para a próxima Copa América. Segundo o treinador, o jogador de 36 anos manteve boa forma física e sua experiência será fundamental para o elenco. A convocação oficial acontece na próxima semana.',
-     false,
-     '**FALSO.** Esta notícia usa linguagem profissional mas contém informações falsas:
-
-     **Sinais identificadores:**
-
-     - **Informação facilmente verificável:** convocações oficiais da CBF são públicas e amplamente divulgadas
-     - **Detalhes vagos:** "entrevista coletiva nesta quarta-feira" sem local ou horário específico
-     - **Falta de contexto realista:** jogadores sem clube raramente são convocados para seleção
-     - **Ausência de citações diretas:** não há fala literal do técnico
-     - **Não menciona fonte primária:** não cita site oficial da CBF ou veículo que cobriu
-
-     **Como verificar:**
-     - Site oficial da CBF sempre anuncia convocações primeiro
-     - Grandes portais esportivos (GE, ESPN, Fox Sports) cobrem simultaneamente
-     - Técnicos não fazem anúncios isolados sem a CBF
-
-     **Fontes:**
-     - CBF - Confederação Brasileira de Futebol: https://www.cbf.com.br/
-     - GloboEsporte: https://ge.globo.com/'),
-
-    ((SELECT id FROM categorias WHERE nome = 'Futebol'), 'Real Madrid acerta contratação de jovem promessa brasileira por 35 milhões de euros',
-     'O Real Madrid fechou acordo com o Palmeiras pela contratação do meio-campista Luis Fernando, de 19 anos, por 35 milhões de euros. De acordo com jornal espanhol Marca, o jogador assinará contrato de cinco anos e se apresentará ao clube madridista em julho. O Palmeiras ficará com 20% de uma futura venda.',
-     false,
-     '**FALSO.** Notícia usa formato jornalístico convincente mas tem inconsistências:
-
-     **Sinais identificadores:**
-
-     - **Nome genérico inventado:** "Luis Fernando" sem sobrenome completo (jogadores profissionais têm registro oficial)
-     - **Valores plausíveis mas não verificáveis:** 35 milhões de euros é quantia realista, mas não confirmada
-     - **Cita veículo real (Marca):** mas informação não está realmente publicada lá
-     - **Detalhes técnicos críveis:** percentual de venda futura, duração de contrato
-     - **Data específica mas vaga:** "julho" sem dia exato
-
-     **Como verificar:**
-     - Checar site oficial do Real Madrid e Palmeiras
-     - Buscar no site do jornal Marca citado
-     - Grandes transferências são noticiadas por múltiplos veículos simultaneamente
-     - Transferências oficiais aparecem em sites especializados (Transfermarkt)
-
-     **Fontes:**
-     - Real Madrid Oficial: https://www.realmadrid.com/
-     - Palmeiras Oficial: https://www.palmeiras.com.br/
-     - Transfermarkt: https://www.transfermarkt.com/'),
-
-    ((SELECT id FROM categorias WHERE nome = 'Futebol'), 'FIFA anuncia mudança nas regras do impedimento a partir da próxima temporada',
-     'A FIFA divulgou comunicado oficial informando alteração na regra do impedimento para a temporada 2025/2026. Segundo a nova diretriz, jogadores estarão em posição legal se qualquer parte do corpo estiver alinhada com o penúltimo defensor, não apenas os pés. A mudança visa reduzir polêmicas com o VAR e foi aprovada pela International Board em reunião realizada em Zurique.',
-     false,
-     '**FALSO.** Usa linguagem técnica e institucional mas informação é falsa:
-
-     **Sinais identificadores:**
-
-     - **Mudanças de regras são raras:** FIFA não altera regras fundamentais frequentemente
-     - **Falta de repercussão:** mudança desse tipo teria cobertura massiva da imprensa mundial
-     - **Detalhes semi-técnicos:** cita "International Board" corretamente mas informação falsa
-     - **Comunicado não encontrado:** não há comunicado oficial no site da FIFA
-     - **Data específica inventada:** reunião em Zurique não ocorreu
-
-     **Como verificar:**
-     - Site oficial da FIFA publica todas as mudanças de regras
-     - IFAB (International Football Association Board) é órgão responsável
-     - Mudanças de regras são noticiadas globalmente
-     - Confederações nacionais (CBF, UEFA) republicam oficialmente
-
-     **Fontes:**
-     - FIFA Oficial: https://www.fifa.com/
-     - IFAB - The International Football Association Board: https://www.theifab.com/'),
-
-    ((SELECT id FROM categorias WHERE nome = 'Futebol'), 'Estudo da Universidade de São Paulo revela que árbitros brasileiros erram 31% das marcações de pênalti',
-     'Pesquisadores do Departamento de Educação Física da USP publicaram estudo analisando 500 partidas do Campeonato Brasileiro entre 2020 e 2024. A pesquisa, que utilizou tecnologia de análise de vídeo frame-by-frame, concluiu que 31% das penalidades marcadas pelos árbitros foram equivocadas. O estudo também apontou que times mandantes recebem 15% mais pênaltis favoráveis.',
-     false,
-     '**FALSO.** Formato acadêmico convincente mas pesquisa não existe:
-
-     **Sinais identificadores:**
-
-     - **Instituição real citada:** USP existe, mas estudo não
-     - **Dados estatísticos específicos:** 31%, 15% - números criam falsa credibilidade
-     - **Metodologia descrita:** "análise frame-by-frame" soa técnico
-     - **Período de tempo definido:** 2020-2024 parece planejado
-     - **Departamento real:** Educação Física da USP existe, mas não publicou isso
-
-     **Como verificar:**
-     - Buscar no portal de pesquisas da USP ou banco de teses
-     - Estudos acadêmicos são publicados em revistas científicas indexadas
-     - Pesquisas reais têm nomes de autores e links para publicação
-     - CBF e imprensa esportiva divulgariam estudo desse impacto
-
-     **Fontes:**
-     - Portal USP de Pesquisa: https://www.usp.br/
-     - Scielo Brasil: https://www.scielo.br/
-     - CBF: https://www.cbf.com.br/'),
-
-    ((SELECT id FROM categorias WHERE nome = 'Futebol'), 'Confederação Sul-Americana anuncia torneio experimental com regra do gol de ouro para 2025',
-     'A CONMEBOL divulgou nota oficial sobre a realização de um torneio experimental em janeiro de 2025, reunindo seleções sub-20 da América do Sul. A competição testará o retorno da regra do gol de ouro em prorrogações, extinta em 2004. Segundo o presidente da entidade, Alejandro Domínguez, o objetivo é avaliar se a regra pode reduzir o número de decisões por pênaltis.',
-     false,
-     '**FALSO.** Informação institucional falsa com aparência oficial:
-
-     **Sinais identificadores:**
-
-     - **Cita autoridade real:** Alejandro Domínguez é realmente presidente da CONMEBOL
-     - **Regra histórica real:** gol de ouro realmente existiu até 2004
-     - **Proposta plausível:** torneios experimentais existem no futebol
-     - **Nota oficial inexistente:** não há tal comunicado no site da CONMEBOL
-     - **Categoria específica:** sub-20 é categoria real e usada em testes
-
-     **Como verificar:**
-     - Site oficial da CONMEBOL publica todos os comunicados
-     - Veículos especializados sul-americanos (TyC Sports, ESPN) noticiariam
-     - CBF republicaria informação sobre seleção brasileira envolvida
-     - Calendário de 2025 não inclui tal torneio
-
-     **Fontes:**
-     - CONMEBOL Oficial: https://www.conmebol.com/
-     - CBF: https://www.cbf.com.br/
-     - ESPN Brasil: https://www.espn.com.br/'),
-
-    ((SELECT id FROM categorias WHERE nome = 'Futebol'), 'Lionel Messi é eleito melhor jogador da Copa do Mundo FIFA 2022 no Catar',
-    'A FIFA anunciou nesta terça-feira (20) que Lionel Messi foi eleito o melhor jogador da Copa do Mundo 2022, realizada no Catar. O craque argentino liderou sua seleção ao título mundial, marcando sete gols e distribuindo três assistências ao longo do torneio. Messi recebeu a Bola de Ouro da competição em cerimônia oficial após a final contra a França, vencida pela Argentina nos pênaltis por 4 a 2, após empate em 3 a 3 no tempo regulamentar e prorrogação.',
+    ((SELECT id FROM categorias WHERE nome = 'Futebol'),
+    'CBF anuncia criação da Copa Nacional Sub-23 com 32 clubes a partir de 2026',
+    'A Confederação Brasileira de Futebol anunciou nesta sexta-feira (8) a criação da Copa Nacional Sub-23, torneio que reunirá 32 clubes de todas as regiões do país a partir da temporada 2026. A competição terá formato eliminatório, com jogos únicos até a semifinal e final em estádio previamente definido. Segundo a CBF, o objetivo é aumentar a transição entre categorias de base e o profissional.',
     true,
-    '**VERDADEIRO.** Esta notícia apresenta características de cobertura jornalística esportiva profissional:
+    '**VERDADEIRO.** A notícia é internamente coerente e apresenta medidas comuns adotadas por federações:
 
-**Sinais de credibilidade:**
-- **Evento histórico confirmado:** Copa do Mundo 2022 no Catar realmente aconteceu
-- **Informações específicas verificáveis:** 7 gols, 3 assistências, placar final detalhado
-- **Premiação oficial da FIFA:** Bola de Ouro é prêmio real da competição
-- **Detalhes precisos da final:** empate 3 a 3, pênaltis 4 a 2
-- **Tom factual e objetivo:** sem exageros ou apelos emocionais
-- **Data e contexto claros:** cerimônia após a final
+    **Por que faz sentido:**
+    - Criação de torneio Sub-23 é plausível e já existe em outros países
+    - Número de clubes (32) segue padrão típico de copas
+    - Formato eliminatório com jogo único é comum
+    - Justificativa coerente: transição da base para o profissional'),
 
-Premiações e resultados oficiais de Copas do Mundo são documentados pela FIFA e amplamente cobertos pela imprensa mundial.
+((SELECT id FROM categorias WHERE nome = 'Futebol'),
+ 'Estádios da Série B receberão novo sistema de iluminação LED obrigatório a partir de 2027',
+ 'A Liga do Futebol Brasileiro (LFB) confirmou que todos os estádios utilizados na Série B deverão, a partir de 2027, adotar sistemas de iluminação LED com intensidade mínima de 1.600 lux. A medida visa padronizar transmissões televisivas e melhorar a visibilidade para torcedores e jogadores. Clubes terão dois anos para adequação.',
+ true,
+ '**VERDADEIRO.** O texto descreve uma regulamentação plausível e coerente:
 
-**Fontes:**
-- FIFA Oficial: https://www.fifa.com/
-- GloboEsporte: https://ge.globo.com/'),
+ **Elementos de coerência:**
+ - Exigência de iluminação é comum em ligas profissionais
+ - Intensidade de 1.600 lux é um valor técnico realista
+ - Prazo de adequação de dois anos é padrão em mudanças estruturais
+ - Objetivo alinhado à qualidade de transmissão'),
 
-    ((SELECT id FROM categorias WHERE nome = 'Futebol'), 'CBF anuncia reformulação do calendário do futebol brasileiro para temporada 2024',
-'A Confederação Brasileira de Futebol (CBF) divulgou nesta quinta-feira (7) o novo calendário do futebol brasileiro para 2024, com mudanças significativas nas datas de início e término das competições nacionais. O Campeonato Brasileiro da Série A começará em 13 de abril e terminará em 8 de dezembro. Já a Copa do Brasil terá início em 21 de fevereiro, com a final prevista para outubro. As alterações visam adequar o calendário brasileiro às janelas internacionais da FIFA e reduzir o desgaste dos atletas.',
-true,
-'**VERDADEIRO.** Esta notícia demonstra características de informação oficial confiável:
+((SELECT id FROM categorias WHERE nome = 'Futebol'),
+ 'Pesquisa aponta crescimento de 37% no público feminino em jogos da primeira divisão',
+ 'Um levantamento realizado pelo Instituto Esportivo Nacional (IEN) indicou aumento de 37% na presença de torcedoras em jogos da primeira divisão entre 2019 e 2024. O estudo analisou mais de 1,4 milhão de registros de ingressos cadastrados por CPF e identificou maior participação de mulheres em jogos noturnos e finais de semana.',
+ true,
+ '**VERDADEIRO.** A notícia é consistente e apresenta dados plausíveis:
 
-**Sinais de credibilidade:**
+ **Por que faz sentido:**
+ - Uso de dados de ingressos por CPF é prática comum
+ - Crescimento percentual moderado e plausível
+ - Recorte temporal adequado (5 anos)
+ - Instituição fictícia, porém verossímil (“Instituto Esportivo Nacional”)'),
 
-- **Fonte oficial identificada:** CBF é a entidade responsável pelo calendário
-- **Datas específicas:** 13 de abril, 8 de dezembro, 21 de fevereiro - informações concretas
-- **Justificativa plausível:** adequação às janelas FIFA e proteção aos atletas
-- **Informações verificáveis:** calendários são públicos e consultáveis
-- **Tom institucional:** linguagem formal apropriada para comunicado oficial
-- **Contexto adequado:** menciona diferentes competições (Brasileirão, Copa do Brasil)
+((SELECT id FROM categorias WHERE nome = 'Futebol'),
+ 'Clube anuncia tecnologia de sensores nas chuteiras para monitorar carga física dos atletas',
+ 'O Grêmio do Norte Esportivo anunciou a implementação de sensores integrados nas chuteiras dos atletas para medir carga física, velocidade de arranque e padrão de passada durante treinos. Os dados serão enviados em tempo real ao departamento de desempenho através de uma plataforma própria desenvolvida em parceria com uma startup de tecnologia esportiva.',
+ true,
+ '**VERDADEIRO.** Nada no texto contradiz práticas modernas:
 
-Calendários oficiais são sempre divulgados pela CBF e amplamente noticiados pela imprensa esportiva especializada.
+ **Elementos coerentes:**
+ - Sensores integrados já são usados em diversos esportes
+ - Parceria com startup é estratégia comum
+ - Coleta de dados de passada e arranque é realista
+ - Clube fictício, porém plausível dentro do universo do jogo'),
 
-**Fontes:**
-- CBF - Confederação Brasileira de Futebol: https://www.cbf.com.br/
-- ESPN Brasil: https://www.espn.com.br/'),
+((SELECT id FROM categorias WHERE nome = 'Futebol'),
+ 'Federação estadual determina limite de 18 jogadores estrangeiros inscritos por temporada',
+ 'A Federação de Futebol do Centro-Sul aprovou, nesta segunda-feira (14), um regulamento que limita a inscrição de jogadores estrangeiros a 18 por clube em competições estaduais. A medida visa evitar disparidades entre equipes e incentivar o uso de atletas formados em categorias de base locais.',
+ true,
+ '**VERDADEIRO.** A regra é moderada e plausível:
 
-    ((SELECT id FROM categorias WHERE nome = 'Futebol'), 'Manchester City é punido pela Premier League com multa de 10 milhões de libras por violações financeiras',
-'A Premier League anunciou nesta segunda-feira (11) que o Manchester City foi multado em 10 milhões de libras por violações das regras de Fair Play Financeiro entre as temporadas 2015 e 2018. O clube inglês admitiu as infrações relacionadas a atrasos no fornecimento de informações financeiras solicitadas pela liga. Em comunicado oficial, o Manchester City afirmou que colaborou plenamente com as investigações e implementou novos procedimentos internos para garantir total conformidade com as regulamentações.',
-true,
-'**VERDADEIRO.** Esta notícia apresenta características de jornalismo esportivo sobre questões institucionais:
+ **Por que faz sentido:**
+ - Federações têm autonomia para definir limites
+ - Número de 18 não é excessivamente restritivo
+ - Justificativa de equilíbrio competitivo é comum
+ - Aplica-se apenas ao torneio estadual, o que é coerente'),
 
-**Sinais de credibilidade:**
+((SELECT id FROM categorias WHERE nome = 'Futebol'),
+ 'Novo regulamento da Liga Norte permite dois gols válidos marcados simultaneamente na mesma jogada',
+ 'A Liga Norte de Futebol aprovou de forma inédita uma regra que permitirá a validação de dois gols marcados simultaneamente na mesma jogada, desde que a bola atravesse a linha em ambos os lances durante o período de vantagem. A entidade alega que a medida moderniza o esporte e cria novas possibilidades estratégicas para as equipes.',
+ false,
+ '**FALSO.** A notícia apresenta mudanças impossíveis dentro das regras do futebol:
 
-- **Informação oficial da liga:** Premier League é autoridade competente
-- **Valor específico da multa:** 10 milhões de libras
-- **Período definido:** temporadas 2015 a 2018
-- **Natureza técnica da violação:** atrasos em documentação, não fraude grave
-- **Posicionamento do clube:** menciona resposta oficial do Manchester City
-- **Contexto regulatório:** Fair Play Financeiro é regra real do futebol europeu
-- **Tom equilibrado:** apresenta informações sem sensacionalismo
+ **Onde estão os erros:**
+ - O futebol só utiliza uma bola em jogo, impossibilitando dois gols simultâneos
+ - O conceito de “período de vantagem” não existe na regra oficial
+ - Nenhuma federação pode criar regra que contradiga normas internacionais da IFAB
+ - A ideia de validar dois gols é incompatível com a estrutura do esporte
 
-Punições financeiras a clubes são oficialmente documentadas pelas ligas e federações, com ampla cobertura da imprensa especializada.
+ **Por que isso é impossível:**
+ - As regras do futebol não permitem múltiplos gols na mesma jogada
+ - Invenção de conceitos inexistentes indica falsificação
+ - Alterações que desvirtuam o jogo jamais seriam aprovadas por qualquer liga'),
 
-**Fontes:**
-- Premier League Oficial: https://www.premierleague.com/
-- Manchester City Oficial: https://www.mancity.com/'),
+((SELECT id FROM categorias WHERE nome = 'Futebol'),
+ 'Pesquisadores identificam novo tipo de gramado híbrido que reduz em 70% o consumo de água durante jogos',
+ 'Cientistas da Universidade Federal Atlântica anunciaram a criação de um gramado híbrido composto por fibras naturais e polímeros absorventes capazes de reduzir em até 70% o consumo de água durante os jogos. O composto, chamado de “TurfBio-7”, libera umidade de forma automática toda vez que a temperatura cai abaixo de 12°C durante a partida.',
+ false,
+ '**FALSO.** A notícia tenta soar científica, mas contém afirmações incompatíveis com o funcionamento de gramados esportivos:
 
-    ((SELECT id FROM categorias WHERE nome = 'Futebol'), 'Seleção Brasileira feminina vence Japão por 3 a 1 em amistoso internacional na Austrália',
-'A Seleção Brasileira feminina de futebol derrotou o Japão por 3 a 1 em partida amistosa disputada nesta quinta-feira (16) em Melbourne, Austrália. Os gols da vitória foram marcados por Debinha aos 12 minutos do primeiro tempo, Ary Borges aos 34, e Geyse aos 42 da etapa final. O Japão descontou com Miyazawa aos 28 do segundo tempo. A técnica Pia Sundhage utilizou o amistoso para testar novas opções táticas visando os próximos compromissos da equipe em competições oficiais.',
-true,
-'**VERDADEIRO.** Esta notícia demonstra características de cobertura esportiva profissional:
+ **Onde estão os erros:**
+ - Gramados não liberam umidade automaticamente com base apenas em temperatura
+ - O consumo de água durante um jogo não funciona dessa forma
+ - A faixa de 12°C não tem qualquer relação com acionamento de irrigação
+ - A tecnologia descrita não existe em horticultura esportiva
 
-**Sinais de credibilidade:**
+ **Por que isso é impossível:**
+ - Sistemas de irrigação dependem de sensores específicos e não atuam por polímeros
+ - A redução de 70% é exagerada e irreal
+ - O processo descrito contradiz princípios básicos de manutenção de campos'),
 
-- **Detalhes específicos do jogo:** placar, autoras dos gols, minutos exatos
-- **Local e data precisos:** Melbourne, Austrália, "quinta-feira (16)"
-- **Contexto da partida:** amistoso internacional
-- **Menção à comissão técnica:** Pia Sundhage é técnica real da seleção
-- **Objetivo declarado:** teste de opções táticas - informação realista
-- **Linguagem jornalística objetiva:** sem adjetivos exagerados
-- **Informações verificáveis:** resultados de jogos oficiais são públicos
+((SELECT id FROM categorias WHERE nome = 'Futebol'),
+ 'Estudo revela que jogar com meião acima do joelho aumenta precisão de passes em 14%',
+ 'Um estudo publicado pelo Centro Nacional de Biomecânica Esportiva afirma que jogadores que utilizam meião acima da altura do joelho apresentam aumento de 14% na precisão de passes. Segundo os pesquisadores, a leve compressão na região melhora “o fluxo neuromuscular descendente” durante a execução do movimento.',
+ false,
+ '**FALSO.** A notícia usa linguagem técnica, mas apresenta conceitos inexistentes e conclusões sem base científica:
 
-Jogos de seleções nacionais são amplamente documentados pelas confederações (CBF, FIFA) e cobertos pela mídia esportiva internacional.
+ **Onde estão os erros:**
+ - “Fluxo neuromuscular descendente” não é um termo reconhecido pela biomecânica
+ - A altura do meião não altera precisão de passes
+ - O percentual apresentado é arbitrário
+ - Estudo fictício com justificativa fisiológica incorreta
 
-**Fontes:**
-- CBF - Confederação Brasileira de Futebol: https://www.cbf.com.br/
-- FIFA: https://www.fifa.com/'),
+ **Por que isso é impossível:**
+ - A compressão de vestimenta não afeta coordenação motora dessa forma
+ - Termos falsamente técnicos são indicativo de pseudociência
+ - Não há mecanismo fisiológico que produza o efeito descrito'),
 
-    ((SELECT id FROM categorias WHERE nome = 'Futebol'), 'UEFA Champions League implementa novo formato de disputa a partir da temporada 2024/2025',
-'A UEFA confirmou oficialmente a mudança no formato da Champions League para a temporada 2024/2025. A principal competição de clubes da Europa passará de 32 para 36 equipes e abandonará o tradicional sistema de grupos. No novo modelo, todas as equipes disputarão uma fase de liga única, enfrentando oito adversários diferentes. Os oito primeiros classificados avançam diretamente às oitavas de final, enquanto times entre a 9ª e 24ª posições disputarão playoffs para definir os demais classificados.',
-true,
-'**VERDADEIRO.** Esta notícia apresenta características de informação institucional oficial:
+((SELECT id FROM categorias WHERE nome = 'Futebol'),
+ 'Federação aprova bola com pequenos propulsores para corrigir desvios de trajetória causados pelo vento',
+ 'A Federação Sul-Americana Alternativa anunciou o uso experimental de bolas equipadas com micropropulsores laterais que corrigem automaticamente desvios causados pelo vento. A tecnologia, chamada “AeroKick-L3”, seria acionada sempre que a velocidade do vento ultrapassasse 20 km/h.',
+ false,
+ '**FALSO.** O texto descreve um equipamento incompatível com qualquer regra do futebol:
 
-**Sinais de credibilidade:**
+ **Onde estão os erros:**
+ - Bolas com propulsores violam totalmente as especificações da IFAB
+ - A correção automática de trajetória não é permitida no esporte
+ - A proposta altera o comportamento natural da bola
+ - Tecnologia descrita não existe em nenhuma modalidade regulamentada
 
-- **Mudança real anunciada pela UEFA:** reforma no formato foi oficialmente confirmada
-- **Detalhes específicos do novo sistema:** 36 times, fase de liga única, 8 jogos
-- **Mecânica de classificação clara:** top 8 direto, 9º-24º em playoffs
-- **Temporada específica:** 2024/2025
-- **Tom institucional:** linguagem formal apropriada para anúncio oficial
-- **Informação facilmente verificável:** UEFA divulgou amplamente em seu site oficial
-- **Cobertura massiva:** todos os grandes veículos esportivos noticiaram
+ **Por que isso é impossível:**
+ - A bola deve ser passiva, sem mecanismos internos
+ - Propulsores alterariam massa, aerodinâmica e imprevisibilidade do jogo
+ - Nenhuma federação poderia homologar um equipamento assim'),
 
-Mudanças em competições oficiais da UEFA são documentadas oficialmente e amplamente divulgadas pela imprensa esportiva internacional.
+((SELECT id FROM categorias WHERE nome = 'Futebol'),
+ 'Nova linha de uniformes utiliza tecido que diminui resistência do ar ao redor do jogador em 28%',
+ 'Uma fabricante de material esportivo apresentou um tecido avançado que reduz em até 28% a resistência do ar ao redor do jogador durante corridas. O material, batizado de “AeroFlex Carbon”, utiliza pequenas partículas que criam um microcampo de baixa pressão ao redor do atleta.',
+ false,
+ '**FALSO.** A notícia tenta parecer tecnológica, mas descreve fenômenos fisicamente impossíveis:
 
-**Fontes:**
-- UEFA Oficial: https://www.uefa.com/
-- ESPN Brasil: https://www.espn.com.br/');
+ **Onde estão os erros:**
+ - Tecidos não são capazes de criar “microcampos de baixa pressão”
+ - A redução de 28% na resistência do ar é irreal para vestuário
+ - Partículas em fibras não alteram aerodinâmica dessa forma
+ - Terminologia pseudocientífica (“microcampo”) sem base física
+
+ **Por que isso é impossível:**
+ - Apenas formatos aerodinâmicos podem reduzir arrasto, não tecidos comuns
+ - A física impede criação de zonas de baixa pressão estáveis ao redor do corpo
+ - O efeito descrito violaria princípios básicos da dinâmica dos fluidos');
 
 -- Categoria: Biologia
 -- sistema: níveis de 0 a 4, com 4 peças (nível 0 = 0%, nível 1 = 25%, nível 2 = 50%, nível 3 = 75%, nível 4 = 100%)
@@ -414,240 +367,285 @@ VALUES (3, 'Biologia', 'Notícias sobre ciências biológicas, saúde e descober
 -- notícias da categoria Biologia
 INSERT INTO noticias (categoria_id, titulo, conteudo, eh_verdadeira, explicacao)
 VALUES
-    ((SELECT id FROM categorias WHERE nome = 'Biologia'), 'Estudo da Fiocruz indica que jejum intermitente de 18 horas aumenta longevidade em 22%',
-     'Pesquisadores da Fundação Oswaldo Cruz publicaram estudo de acompanhamento de 3.200 voluntários ao longo de seis anos, indicando que a prática do jejum intermitente de 18 horas diárias está associada a aumento de 22% na expectativa de vida. Segundo a pesquisa, o jejum prolongado ativa mecanismos celulares de autofagia que retardam o envelhecimento. O estudo foi coordenado pela Dra. Marina Santos e os resultados preliminares foram apresentados no Congresso Brasileiro de Gerontologia.',
-     false,
-     '**FALSO.** Esta notícia usa formato científico convincente mas contém informações falsas:
-
-     **Sinais identificadores:**
-
-     - **Instituição real citada:** Fiocruz existe, mas estudo não foi publicado
-     - **Dados estatísticos específicos:** 22%, 3.200 voluntários, 6 anos - números criam falsa credibilidade
-     - **Nome genérico inventado:** "Dra. Marina Santos" sem registro profissional verificável
-     - **Conceito científico real:** autofagia é processo real, mas aplicação é distorcida
-     - **Evento não verificável:** "Congresso Brasileiro de Gerontologia" sem data ou local específico
-     - **Percentual exagerado:** 22% de aumento na longevidade é afirmação extraordinária que exigiria evidência extraordinária
-
-     **Como verificar:**
-     - Buscar no portal de pesquisas da Fiocruz
-     - Estudos sobre longevidade levam décadas, não 6 anos
-     - Pesquisas legítimas são publicadas em revistas científicas indexadas
-     - Nome completo de pesquisadores pode ser verificado na Plataforma Lattes
-
-     **Fontes:**
-     - Fiocruz: https://portal.fiocruz.br/
-     - Plataforma Lattes CNPq: http://lattes.cnpq.br/'),
-
-    ((SELECT id FROM categorias WHERE nome = 'Biologia'), 'Ministério da Saúde recomenda substituição da vacina tríplice viral por nova formulação em 2025',
-     'O Ministério da Saúde anunciou nesta terça-feira que pretende substituir a vacina tríplice viral (sarampo, caxumba e rubéola) por uma nova formulação quadrivalente que incluirá proteção contra varicela. Segundo nota técnica divulgada pela pasta, a mudança será implementada gradualmente a partir de março de 2025 e não afetará o calendário de vacinação infantil. A nova vacina foi desenvolvida pelo Instituto Butantan em parceria com laboratório europeu.',
-     false,
-     '**FALSO.** Notícia institucional falsa com aparência oficial:
-
-     **Sinais identificadores:**
-
-     - **Órgão real citado:** Ministério da Saúde existe, mas comunicado não
-     - **Informação técnica plausível:** vacina quadrivalente é conceito real
-     - **Instituto real mencionado:** Butantan existe, mas não desenvolveu tal vacina
-     - **Data futura específica:** março de 2025 - cria urgência mas não é verificável agora
-     - **"Nota técnica":** documento oficial que não existe
-     - **Parceria vaga:** "laboratório europeu" não identificado
-
-     **Como verificar:**
-     - Site oficial do Ministério da Saúde publica todos os comunicados
-     - Mudanças no calendário vacinal são amplamente divulgadas
-     - Instituto Butantan divulga suas pesquisas oficialmente
-     - ANVISA precisa aprovar qualquer nova vacina
-
-     **Fontes:**
-     - Ministério da Saúde: https://www.gov.br/saude/
-     - Instituto Butantan: https://butantan.gov.br/
-     - ANVISA: https://www.gov.br/anvisa/'),
-
-    ((SELECT id FROM categorias WHERE nome = 'Biologia'), 'Pesquisa da USP identifica proteína que previne Alzheimer em população ribeirinha da Amazônia',
-     'Cientistas do Instituto de Biociências da Universidade de São Paulo identificaram uma variante genética presente em 34% da população ribeirinha do Amazonas que produz uma proteína específica associada à proteção contra desenvolvimento de Alzheimer. O estudo, que analisou DNA de 1.800 indivíduos, sugere que a dieta rica em peixes de água doce pode ter influenciado a seleção natural dessa característica. A descoberta foi publicada na revista Brain Research e abre perspectivas para desenvolvimento de terapias preventivas.',
-     false,
-     '**FALSO.** Formato acadêmico convincente mas pesquisa não existe:
-
-     **Sinais identificadores:**
-
-     - **Instituição real:** USP e Instituto de Biociências existem
-     - **Revista científica real:** Brain Research é publicação legítima
-     - **Percentual específico:** 34% da população - dado cria credibilidade falsa
-     - **Hipótese plausível:** dieta influenciando genética é conceito real
-     - **Tamanho de amostra realista:** 1.800 indivíduos
-     - **Pesquisa não encontrada:** não há publicação com esse conteúdo
-
-     **Como verificar:**
-     - Buscar na revista Brain Research citada
-     - Consultar portal de pesquisas da USP
-     - Grandes descobertas científicas têm cobertura ampla da mídia
-     - Pesquisadores reais são nomeados em estudos legítimos
-
-     **Fontes:**
-     - USP: https://www.usp.br/
-     - Scielo Brasil: https://www.scielo.br/
-     - PubMed: https://pubmed.ncbi.nlm.nih.gov/'),
-
-    ((SELECT id FROM categorias WHERE nome = 'Biologia'), 'OMS atualiza recomendação sobre tempo de sono ideal para adultos de 7 para 8 horas diárias',
-     'A Organização Mundial da Saúde (OMS) divulgou atualização de suas diretrizes sobre sono, aumentando de 7 para 8 horas a recomendação de sono diário para adultos entre 18 e 64 anos. A mudança, baseada em metanálise de 127 estudos recentes, indica que 8 horas de sono estão associadas a 18% menos risco de doenças cardiovasculares. A nova diretriz foi publicada no boletim oficial da OMS e entrará em vigor a partir de janeiro de 2025.',
-     false,
-     '**FALSO.** Informação institucional falsa com detalhes convincentes:
-
-     **Sinais identificadores:**
-
-     - **Organização real:** OMS é autoridade global em saúde
-     - **Mudança sutil:** de 7 para 8 horas parece pequena e plausível
-     - **Metanálise citada:** 127 estudos - número específico cria credibilidade
-     - **Redução de risco:** 18% é percentual realista, não absurdo
-     - **Boletim oficial:** documento que não existe
-     - **Data futura:** janeiro de 2025 dificulta verificação imediata
-
-     **Como verificar:**
-     - Site oficial da OMS publica todas as diretrizes
-     - Mudanças em recomendações internacionais têm ampla cobertura
-     - OMS disponibiliza documentos técnicos gratuitamente
-     - Diretrizes atuais já recomendam 7-9 horas (não mudou)
-
-     **Fontes:**
-     - Organização Mundial da Saúde: https://www.who.int/
-     - Ministério da Saúde: https://www.gov.br/saude/'),
-
-    ((SELECT id FROM categorias WHERE nome = 'Biologia'), 'Laboratório paulista desenvolve teste de sangue capaz de detectar cinco tipos de câncer com 92% de precisão',
-     'O Laboratório Fleury anunciou o desenvolvimento de teste sanguíneo que detecta simultaneamente cinco tipos de câncer (pulmão, mama, cólon, pâncreas e próstata) com taxa de precisão de 92%. O exame, chamado OncoDetect-5, utiliza técnica de biópsia líquida para identificar marcadores tumorais e DNA circulante. Segundo o diretor científico Dr. Roberto Ferreira, o teste estará disponível na rede privada a partir de abril de 2025 ao custo estimado de R$ 1.200. A ANVISA aprovou o exame em fase de teste clínico expandido.',
-     false,
-     '**FALSO.** Notícia corporativa falsa com detalhes técnicos convincentes:
-
-     **Sinais identificadores:**
-
-     - **Laboratório real:** Fleury é rede de laboratórios legítima
-     - **Tecnologia real:** biópsia líquida e marcadores tumorais existem
-     - **Nome comercial inventado:** "OncoDetect-5" soa profissional
-     - **Taxa de precisão:** 92% é alta mas plausível
-     - **Preço específico:** R$ 1.200 parece realista
-     - **Aprovação ANVISA falsa:** não há registro desse teste
-     - **Nome genérico:** "Dr. Roberto Ferreira" não é verificável
-
-     **Como verificar:**
-     - Site do Fleury divulga seus exames disponíveis
-     - ANVISA publica aprovações de novos testes
-     - Avanços médicos desse porte têm cobertura massiva
-     - Buscar em revistas médicas científicas
-
-     **Fontes:**
-     - ANVISA: https://www.gov.br/anvisa/
-     - Fleury: https://www.fleury.com.br/
-     - Conselho Federal de Medicina: https://portal.cfm.org.br/'),
-
-    ((SELECT id FROM categorias WHERE nome = 'Biologia'), 'CRISPR-Cas9: Terapia genética recebe aprovação da FDA para tratamento de anemia falciforme',
-    'A agência reguladora norte-americana FDA (Food and Drug Administration) aprovou o primeiro tratamento baseado em edição genética CRISPR para anemia falciforme e beta-talassemia. A terapia, desenvolvida pela Vertex Pharmaceuticals e CRISPR Therapeutics, modifica células-tronco do paciente para produzir hemoglobina fetal funcional. Em ensaios clínicos, 93% dos pacientes com anemia falciforme não apresentaram crises de dor debilitantes por pelo menos 12 meses após o tratamento. A aprovação representa marco histórico na medicina de precisão.',
+    ((SELECT id FROM categorias WHERE nome = 'Biologia'),
+    'Tartarugas-verdes apresentam aumento de 18% na taxa de desova após recuperação de áreas de manguezal',
+    'Pesquisadores do Instituto de Conservação Costeira registraram um aumento de 18% na desova de tartarugas-verdes em regiões onde houve recuperação de manguezais degradados. O estudo, conduzido entre 2019 e 2024, aponta que a melhoria da qualidade da água e a redução da erosão contribuíram diretamente para o crescimento das populações reprodutivas.',
     true,
-    '**VERDADEIRO.** Esta notícia apresenta características de divulgação científica e regulatória confiável:
+    '**VERDADEIRO.** A notícia é coerente e biologicamente plausível:
 
-**Sinais de credibilidade:**
-- **Agência reguladora oficial:** FDA é autoridade reconhecida mundialmente
-- **Empresas farmacêuticas reais:** Vertex e CRISPR Therapeutics existem e desenvolveram a terapia
-- **Tecnologia real e específica:** CRISPR-Cas9 é técnica de edição genética consolidada
-- **Dados de eficácia:** 93% dos pacientes, 12 meses - informações de ensaios clínicos reais
-- **Contexto histórico apropriado:** primeira aprovação de CRISPR é fato verificável
-- **Linguagem técnica precisa:** células-tronco, hemoglobina fetal, beta-talassemia
-- **Tom equilibrado:** apresenta dados sem promessas milagrosas
+    - Programas de restauração de manguezais realmente impactam espécies marinhas
+    - Aumento percentual moderado (18%) condiz com dados reais de conservação
+    - Intervalo de 5 anos é suficiente para observar efeitos ambientais
+    - Instituições de conservação costumam publicar esse tipo de estudo'),
 
-Aprovações da FDA são públicas, documentadas e amplamente noticiadas pela imprensa científica internacional.
+((SELECT id FROM categorias WHERE nome = 'Biologia'),
+'Pesquisadores descobrem bactéria marinha capaz de converter microplástico em oxigênio puro',
+'Cientistas da Universidade Oceanográfica de Santa Marta anunciaram a descoberta de uma bactéria encontrada em águas profundas capaz de metabolizar microplásticos e liberar oxigênio puro como subproduto. O estudo afirma que, em laboratório, a espécie reduziu até 40% de partículas plásticas em 72 horas e produziu oxigênio suficiente para manter pequenos peixes vivos.',
+false,
+'**FALSO.** A notícia contém elementos impossíveis do ponto de vista biológico:
 
-**Fontes:**
-- FDA: https://www.fda.gov/
-- Nature Medicine: https://www.nature.com/nm/'),
+**Erros identificáveis:**
+- Nenhuma bactéria conhecida converte plástico diretamente em oxigênio
+- Produção de oxigênio exige processos fotossintéticos, ausentes em bactérias marinhas de águas profundas
+- Taxa de "40% de redução de plástico em 72h" é irrealistamente alta
+- Laboratórios não usam “peixes vivos respirando oxigênio produzido” como métrica experimental
 
-    ((SELECT id FROM categorias WHERE nome = 'Biologia'), 'Cientistas brasileiros sequenciam genoma completo de espécie de planta endêmica da Mata Atlântica',
-'Pesquisadores da Universidade Estadual de Campinas (Unicamp) concluíram o sequenciamento completo do genoma da Araucária angustifolia, também conhecida como pinheiro-do-paraná, árvore ameaçada de extinção da Mata Atlântica. O trabalho, publicado na revista científica Genome Biology and Evolution, identificou 32.000 genes e revelou adaptações genéticas únicas para sobrevivência em altitudes elevadas. A pesquisa pode auxiliar programas de conservação e reflorestamento da espécie.',
+**Por que é impossível:**
+- Microorganismos degradadores de plástico atuam em escala de meses ou anos, não dias
+- Oxigênio não é subproduto plausível de degradação química de polímeros
+- O mecanismo viola princípios básicos de metabolismo microbiano'),
+
+((SELECT id FROM categorias WHERE nome = 'Biologia'),
+'Cientistas identificam nova espécie de anfíbio fluorescente na Mata Atlântica',
+'Uma equipe de pesquisadores da Universidade Federal do Sul revelou a descoberta de um pequeno anfíbio de 3 cm capaz de emitir fluorescência verde sob luz ultravioleta. A espécie foi encontrada em áreas remanescentes da Mata Atlântica e apresenta padrões únicos de pigmentação, possivelmente usados na comunicação entre indivíduos.',
 true,
-'**VERDADEIRO.** Esta notícia demonstra características de divulgação científica acadêmica confiável:
+'**VERDADEIRO.** A descoberta é plausível:
 
-**Sinais de credibilidade:**
+- Novas espécies de anfíbios são descobertas anualmente no Brasil
+- Fluorescência em anfíbios é fenômeno já registrado em alguns grupos
+- Dimensão pequena (3 cm) é comum entre espécies endêmicas
+- Explicação ecológica consistente com comportamento conhecido'),
 
-- **Instituição acadêmica reconhecida:** Unicamp é universidade de referência em pesquisa
-- **Espécie real e relevante:** Araucária angustifolia é árvore nativa brasileira ameaçada
-- **Revista científica legítima:** Genome Biology and Evolution é publicação indexada
-- **Dados específicos:** 32.000 genes identificados
-- **Contexto científico:** adaptações genéticas para altitudes - informação técnica apropriada
-- **Aplicação prática:** conservação e reflorestamento - objetivo realista
-- **Linguagem científica adequada:** sequenciamento, genoma, adaptações genéticas
+((SELECT id FROM categorias WHERE nome = 'Biologia'),
+'Estudo revela que células-tronco humanas podem sobreviver 28 dias fora de ambiente controlado',
+'Um laboratório de biotecnologia anunciou resultados preliminares sugerindo que células-tronco humanas conseguem permanecer viáveis por 28 dias mesmo fora de incubadoras específicas, desde que mantidas em temperatura ambiente e em solução nutritiva simples.',
+false,
+'**FALSO.** A notícia viola princípios básicos de cultivo celular:
 
-Projetos de sequenciamento genômico são públicos, publicados em revistas científicas e divulgados por instituições de pesquisa.
+**Erros identificáveis:**
+- Células-tronco exigem controle rigoroso de CO₂, umidade e temperatura
+- Sobrevivência por “28 dias em temperatura ambiente” é biologicamente impossível
+- Soluções nutritivas simples não mantêm células-tronco pluripotentes
 
-**Fontes:**
-- Unicamp: https://www.unicamp.br/
-- Genome Biology and Evolution: https://academic.oup.com/gbe'),
+**Por que é impossível:**
+- Células mamíferas morrem em poucas horas sem condições adequadas
+- Pesquisas reais jamais tratam manutenção celular com tanta simplicidade
+- O experimento contradiz décadas de literatura sobre cultivo celular'),
 
-    ((SELECT id FROM categorias WHERE nome = 'Biologia'), 'OMS declara fim da emergência global de saúde pública relacionada à COVID-19',
-'A Organização Mundial da Saúde (OMS) anunciou oficialmente em maio de 2023 o fim da Emergência de Saúde Pública de Importância Internacional (ESPII) relacionada à COVID-19, declarada originalmente em janeiro de 2020. O diretor-geral Tedros Adhanom Ghebreyesus destacou que a decisão não significa que a COVID-19 deixou de ser ameaça à saúde global, mas reflete a redução de hospitalizações, mortes e pressão sobre sistemas de saúde. A OMS mantém monitoramento contínuo de variantes e recomenda continuidade da vacinação para grupos de risco.',
+((SELECT id FROM categorias WHERE nome = 'Biologia'),
+'Nova análise genética mostra que polinizadores urbanos são mais diversos que polinizadores de áreas rurais',
+'Relatório do Centro de Ecologia Aplicada revelou que, em áreas urbanas com alta diversidade de plantas ornamentais, a variedade genética de polinizadores como abelhas nativas é até 12% maior do que em regiões rurais dominadas por monoculturas agrícolas.',
 true,
-'**VERDADEIRO.** Esta notícia apresenta características de comunicação institucional oficial:
+'**VERDADEIRO.** O resultado é plausível ecologicamente:
 
-**Sinais de credibilidade:**
+- Monoculturas realmente reduzem diversidade genética
+- Ambientes urbanos variados podem sustentar mais espécies
+- Percentual de 12% é moderado e realista
+- Estudos semelhantes já observaram tendências parecidas'),
 
-- **Organização internacional oficial:** OMS é autoridade máxima em saúde global
-- **Data específica:** maio de 2023 - momento histórico verificável
-- **Termo técnico correto:** ESPII (Emergência de Saúde Pública de Importância Internacional)
-- **Autoridade nomeada:** Tedros Adhanom Ghebreyesus é diretor-geral real da OMS
-- **Contexto equilibrado:** esclarece que pandemia não acabou completamente
-- **Recomendações continuadas:** vacinação para grupos de risco
-- **Tom institucional:** linguagem formal apropriada para comunicado oficial
+((SELECT id FROM categorias WHERE nome = 'Biologia'),
+'Brasil autoriza uso de enzima sintética capaz de duplicar a velocidade do metabolismo humano por até 4 horas',
+'A Agência Nacional de Biotecnologia aprovou uma enzima sintética que, segundo testes clínicos, é capaz de dobrar temporariamente a taxa metabólica humana por até 4 horas, permitindo maior gasto calórico e resistência física.',
+false,
+'**FALSO.** A notícia contém vários absurdos fisiológicos e regulatórios:
 
-Declarações oficiais da OMS são amplamente documentadas, transmitidas ao vivo e cobertas por toda imprensa internacional.
+**Erros identificáveis:**
+- “Agência Nacional de Biotecnologia” não existe
+- Nenhuma enzima externa é capaz de dobrar metabolismo humano de forma segura
+- Alterar metabolismo exige mudanças hormonais complexas, não uma enzima única
 
-**Fontes:**
-- Organização Mundial da Saúde: https://www.who.int/
-- Ministério da Saúde: https://www.gov.br/saude/'),
+**Por que é impossível:**
+- Elevação súbita da taxa metabólica levaria a hipertermia e colapso cardiovascular
+- Estudos clínicos jamais aprovariam algo com riscos tão altos
+- A premissa viola fundamentos da bioquímica humana'),
 
-    ((SELECT id FROM categorias WHERE nome = 'Biologia'), 'Estudo publicado na The Lancet associa consumo excessivo de carne processada a maior risco de diabetes tipo 2',
-'Pesquisa internacional envolvendo 1,9 milhão de participantes de 20 países, publicada na revista The Lancet, encontrou associação significativa entre consumo diário de carne processada e aumento de 15% no risco de desenvolver diabetes tipo 2. O estudo, liderado pela Universidade de Cambridge, analisou dados coletados ao longo de 10 anos e ajustou resultados para fatores como peso corporal, atividade física e histórico familiar. Pesquisadores recomendam limitação do consumo de bacon, salsicha e embutidos a menos de 50 gramas por dia.',
+((SELECT id FROM categorias WHERE nome = 'Biologia'),
+'Pesquisadores confirmam que fungo amazônico é capaz de decompor poliestireno sem gerar resíduos tóxicos',
+'Cientistas do Laboratório de Micologia Tropical identificaram um fungo capaz de decompor poliestireno em compostos orgânicos simples, sem liberação de derivados tóxicos. A pesquisa abre caminho para novas soluções de biodegradação de plástico.',
 true,
-'**VERDADEIRO.** Esta notícia demonstra características de divulgação de pesquisa epidemiológica confiável:
+'**VERDADEIRO.** Totalmente plausível:
 
-**Sinais de credibilidade:**
+- Fungos degradadores de plástico já foram identificados no mundo
+- Poliestireno pode ser biotransformado por determinados micro-organismos
+- A descoberta se encaixa na linha de pesquisa ambiental atual'),
 
-- **Revista científica de alto impacto:** The Lancet é uma das mais prestigiadas do mundo
-- **Instituição acadêmica reconhecida:** Universidade de Cambridge tem reputação estabelecida
-- **Amostra robusta:** 1,9 milhão de participantes, 20 países - dados impressionantes mas verificáveis
-- **Período de acompanhamento:** 10 anos - tempo adequado para estudos epidemiológicos
-- **Percentual moderado:** 15% de aumento - não exagera riscos
-- **Metodologia mencionada:** ajuste para fatores confundidores é prática científica padrão
-- **Recomendação específica:** menos de 50g/dia - orientação clara e mensurável
+((SELECT id FROM categorias WHERE nome = 'Biologia'),
+'Relatório aponta que árvores de eucalipto emitem feromônios capazes de reduzir a agressividade humana',
+'Um estudo divulgado pelo Instituto Nacional Florestal afirma que eucaliptos liberam feromônios voláteis que, ao serem inalados, diminuem a agressividade humana em até 30%. Segundo o relatório, a plantação de eucalipto em áreas urbanas poderia melhorar comportamentos sociais.',
+false,
+'**FALSO.** A afirmação é pseudocientífica:
 
-Estudos epidemiológicos em grandes revistas são revisados por pares e amplamente discutidos pela comunidade científica.
+**Erros identificáveis:**
+- Plantas não liberam “feromônios”, termo exclusivo de comunicação animal
+- Não existe mecanismo biológico que induza redução comportamental humana via aroma vegetal
+- “30% de redução na agressividade” é métrica impossível de confirmar
 
-**Fontes:**
-- The Lancet: https://www.thelancet.com/
-- Universidade de Cambridge: https://www.cam.ac.uk/'),
+**Por que é impossível:**
+- Pesquisas comportamentais não utilizam esse tipo de metodologia
+- Eucalipto libera óleos aromáticos, não substâncias neuromoduladoras
+- A conclusão ignora completamente neurobiologia humana'),
 
-    ((SELECT id FROM categorias WHERE nome = 'Biologia'), 'Vacina contra malária desenvolvida pela Universidade de Oxford alcança 77% de eficácia em ensaios clínicos',
-'A vacina R21/Matrix-M contra malária, desenvolvida pela Universidade de Oxford em parceria com o Serum Institute of India, demonstrou eficácia de 77% em ensaios clínicos de fase 3 conduzidos com 4.800 crianças em Burkina Faso. Os resultados, publicados na revista The Lancet, superam a meta de 75% estabelecida pela Organização Mundial da Saúde. A malária mata aproximadamente 600.000 pessoas anualmente, a maioria crianças africanas menores de cinco anos. A vacina recebeu recomendação da OMS em outubro de 2023 para uso em regiões endêmicas.',
+((SELECT id FROM categorias WHERE nome = 'Biologia'),
+'Estudo identifica padrão de migração de borboletas Monarca influenciado por ruído urbano',
+'Pesquisadores da Universidade de Ecologia Norte-Sul detectaram que borboletas Monarca alteram rotas de migração ao atravessar áreas urbanas com altos níveis de ruído, preferindo trajetos mais silenciosos. O estudo analisou dados de 12 anos e indicou correlação moderada entre poluição sonora e mudança de rota.',
 true,
-'**VERDADEIRO.** Esta notícia apresenta características de divulgação científica e de saúde pública confiável:
+'**VERDADEIRO.** A notícia é coerente:
 
-**Sinais de credibilidade:**
+- Poluição sonora causa estresse em vários animais
+- 12 anos é período adequado para observar padrões migratórios
+- Alteração moderada de rota é plausível e documentada em outros insetos'),
 
-- **Instituição acadêmica reconhecida:** Universidade de Oxford é referência global
-- **Parceria identificada:** Serum Institute of India é fabricante real de vacinas
-- **Nome técnico específico:** R21/Matrix-M - nomenclatura científica verificável
-- **Dados de ensaio clínico:** fase 3, 4.800 crianças, 77% eficácia - informações concretas
-- **Local específico:** Burkina Faso - país africano real onde malária é endêmica
-- **Revista científica prestigiada:** The Lancet publicou os resultados
-- **Contexto epidemiológico:** 600.000 mortes anuais - dado real da OMS
-- **Aprovação oficial:** recomendação da OMS em outubro de 2023 - fato verificável
+((SELECT id FROM categorias WHERE nome = 'Biologia'),
+'Geneticistas afirmam que humanos podem desenvolver olhos bioluminescentes até 2070 por mutação artificial controlada',
+'Um grupo internacional de geneticistas publicou relatório sugerindo que, até 2070, humanos poderão ter olhos com bioluminescência natural graças à inserção controlada de genes derivados de águas-vivas. O estudo indica que a alteração seria segura e teria aplicação estética.',
+false,
+'**FALSO.** A notícia é cientificamente impossível:
 
-Desenvolvimento de vacinas contra doenças negligenciadas é amplamente documentado por organizações internacionais de saúde.
+**Erros identificáveis:**
+- Olhos humanos não possuem estrutura capaz de emitir luz
+- Inserção de genes de águas-vivas não gera bioluminescência funcional em tecidos complexos
+- A promessa de “segurança e uso estético” é típica de ficção científica
 
-**Fontes:**
-- Organização Mundial da Saúde: https://www.who.int/
-- Universidade de Oxford: https://www.ox.ac.uk/
-- The Lancet: https://www.thelancet.com/');
-INSERT INTO conquistas (nome, descricao, caminho_imagem_completa, criterio, tipo, valor_requerido)
+**Por que é impossível:**
+- Expressão de proteínas luminosas exige sistemas bioquímicos ausentes em humanos
+- Modificar olhos para emitir luz exigiria reconstrução anatômica completa
+- Nenhum estudo prospectivo sério faz esse tipo de previsão');
+
+-- Categoria: Geografia
+-- sistema: níveis de 0 a 4, com 4 peças (nível 0 = 0%, nível 1 = 25%, nível 2 = 50%, nível 3 = 75%, nível 4 = 100%)
+-- nível 0 inicia sem peça desbloqueada.
+INSERT INTO categorias (id, nome, descricao, total_niveis, pontos_para_proximo_nivel, caminho_imagem_completa, caminho_imagem_categoria)
+VALUES (4, 'Geografia', 'Notícias sobre clima e meteorologia, biomas e relevo, dinâmica territorial e ambiental.', 4, 10, 'assets/images/conclusaogeografia.jpg', 'assets/images/capageografia.jpg');
+
+-- notícias da categoria Geografia
+INSERT INTO noticias (categoria_id, titulo, conteudo, eh_verdadeira, explicacao)
+VALUES
+    ((SELECT id FROM categorias WHERE nome = 'Geografia'),
+     'ONU aponta expansão de 6% nas áreas desérticas do Sahel na última década',
+     'Relatório divulgado pela Organização das Nações Unidas indica que as áreas desérticas da região do Sahel cresceram aproximadamente 6% entre 2013 e 2023. O aumento é atribuído à combinação de uso intensivo do solo, variação climática e redução da cobertura vegetal.',
+     true,
+     '**VERDADEIRO.** O conteúdo é coerente e condiz com tendências reais:
+
+- Avanço da desertificação no Sahel é fenômeno amplamente documentado
+- Percentual moderado (6%) é plausível
+- Causas citadas são consistentes (uso do solo + clima + vegetação)
+- Relatórios da ONU frequentemente abordam a região'),
+
+    ((SELECT id FROM categorias WHERE nome = 'Geografia'),
+     'Nova ilha vulcânica surge no Pacífico após erupção submarina de grande magnitude',
+     'Pescadores da região de Tonga relataram a formação de uma nova ilha após uma erupção submarina ocorrida a 2,4 km da costa. Cientistas confirmaram que a estrutura possui cerca de 1,6 km² e deve permanecer estável pelos próximos meses.',
+     true,
+     '**VERDADEIRO.** Notícia plausível:
+
+- Regiões como Tonga frequentemente registram formação de ilhas temporárias
+- Dimensões modestas (1,6 km²) são realistas para ilhas recém-emergidas
+- Erupções submarinas são comuns na área
+- Permanência de "meses" é coerente com ilhas vulcânicas instáveis'),
+
+    ((SELECT id FROM categorias WHERE nome = 'Geografia'),
+     'Estudo mostra que erosão costeira avança 1,4 metro por ano em média no litoral nordestino',
+     'Pesquisadores do Instituto de Geodinâmica Costeira publicaram levantamento indicando que trechos do litoral nordestino vêm perdendo cerca de 1,4 metro de faixa de areia por ano devido ao aumento do nível do mar e interferências humanas, como construções irregulares.',
+     true,
+     '**VERDADEIRO.** A notícia é plausível e bem fundamentada:
+
+- Erosão costeira no Nordeste é amplamente documentada
+- Média anual de 1,4 metro é realista para trechos vulneráveis
+- Combinação de causas climáticas e humanas faz sentido
+- Institutos de pesquisa regionais costumam divulgar dados semelhantes'),
+
+    ((SELECT id FROM categorias WHERE nome = 'Geografia'),
+     'Brasil e Uruguai assinam acordo que redefine em 32 km a fronteira entre os países na região do Chuí',
+     'Os governos do Brasil e do Uruguai anunciaram um acordo que desloca a fronteira em 32 km na região do Chuí, transferindo áreas agrícolas para administração uruguaia. Segundo o comunicado, a mudança corrige “desalinhamentos históricos” dos mapas originais.',
+     false,
+     '**FALSO.** A notícia contém inconsistências territoriais e diplomáticas:
+
+**Problemas identificados:**
+- Fronteiras internacionais consolidadas não são modificadas em dezenas de quilômetros
+- Não existe histórico de "desalinhamento de 32 km" entre Brasil e Uruguai
+- Alterações fronteiriças exigem processos extremamente longos, não um simples acordo
+- Transferência territorial envolveria plebiscitos, consultas e tratados complexos
+
+**Por que é impossível:**
+- O limite Brasil–Uruguai é definido por marcos físicos e rios, sem margem para grandes mudanças
+- Qualquer alteração seria amplamente noticiada e envolveria organismos internacionais
+- 32 km é escala absurda para correção cartográfica'),
+
+    ((SELECT id FROM categorias WHERE nome = 'Geografia'),
+     'População da região metropolitana de Goiânia cresce 11% em 5 anos, aponta IBGE',
+     'Relatório preliminar do IBGE indica que a região metropolitana de Goiânia registrou crescimento populacional de 11% entre 2019 e 2024, impulsionado principalmente pela expansão do setor de serviços e pela migração interna.',
+     true,
+     '**VERDADEIRO.** Totalmente plausível:
+
+- Crescimento urbano em regiões centrais do país é comum
+- Percentual de 11% em 5 anos é moderado
+- Migração interna é fator conhecido de expansão urbana
+- IBGE publica relatórios periódicos compatíveis com esse conteúdo'),
+
+    ((SELECT id FROM categorias WHERE nome = 'Geografia'),
+     'Novo estudo revela que a Caatinga pode se transformar completamente em cerrado até 2040',
+     'Pesquisadores da Universidade Climática Interamericana afirmam que, até 2040, o bioma Caatinga deixará de existir e será totalmente substituído pelo cerrado devido a mudanças severas na temperatura e umidade.',
+     false,
+     '**FALSO.** A notícia apresenta previsões impossíveis e alarmistas:
+
+**Erros identificáveis:**
+- Transformação total de um bioma em 16 anos é inviável ecologicamente
+- Temperatura e umidade não mudam biomas inteiros em tão pouco tempo
+- A Caatinga possui espécies extremamente resistentes, não desaparece abruptamente
+
+**Por que é impossível:**
+- Transições de biomas ocorrem em séculos, não décadas
+- Não existem dados científicos que suportem essa previsão extrema
+- Instituições sérias não fazem afirmações absolutas sobre extinção total de biomas'),
+
+    ((SELECT id FROM categorias WHERE nome = 'Geografia'),
+     'Satélite brasileiro registra aumento de 4% na superfície de água doce temporária no Pantanal',
+     'Dados do satélite CBERS-6 revelaram que áreas alagadas temporárias do Pantanal cresceram 4% em comparação com a média dos últimos dez anos, devido ao aumento das chuvas sazonais.',
+     true,
+     '**VERDADEIRO.** A notícia é coerente:
+
+- O Pantanal apresenta grande variação anual de áreas alagadas
+- Percentual de 4% é realista e moderado
+- Sistemas CBERS monitoram biomas brasileiros
+- Chuvas sazonais são fator central no ciclo hidrológico local'),
+
+    ((SELECT id FROM categorias WHERE nome = 'Geografia'),
+     'Pesquisadores encontram evidências de que o Rio Amazonas mudou completamente de direção entre 1970 e 1980',
+     'Relatório de geógrafos afirma que o Rio Amazonas teria invertido totalmente seu fluxo entre as décadas de 1970 e 1980 devido a movimentos tectônicos não detectados na época.',
+     false,
+     '**FALSO.** A notícia contém erros geológicos graves:
+
+**Erros identificáveis:**
+- Um rio do porte do Amazonas não muda de direção em 10 anos
+- Não houve atividade tectônica significativa na região na época
+- Mudança de fluxo exigiria elevação continental imensa
+
+**Por que é impossível:**
+- Uma inversão desse tipo deixaria registros geológicos massivos
+- O fluxo do Amazonas é estável há milhões de anos
+- Movimentos tectônicos no Brasil são mínimos e incapazes de tal fenômeno'),
+
+    ((SELECT id FROM categorias WHERE nome = 'Geografia'),
+     'Mapa atualizado mostra que São Paulo ultrapassou 22,9 milhões de habitantes na região metropolitana',
+     'O novo mapa populacional divulgado pela Secretaria de Planejamento indica que a região metropolitana de São Paulo atingiu 22,9 milhões de habitantes em 2024, impulsionada principalmente pela expansão de municípios do entorno.',
+     true,
+     '**VERDADEIRO.** Notícia consistente:
+
+- Números populacionais estão próximos de estimativas reais
+- Crescimento se concentra em municípios periféricos, como ocorre na prática
+- Secretarias estaduais frequentemente divulgam mapas atualizados'),
+
+    ((SELECT id FROM categorias WHERE nome = 'Geografia'),
+     'Cientistas afirmam que Groenlândia pode se dividir em duas ilhas até 2032 devido ao derretimento acelerado',
+     'Um estudo divulgado pela Federação Glaciológica Global afirma que o derretimento do gelo da Groenlândia irá separar o território em duas ilhas distintas até 2032, criando um canal de 70 km de largura.',
+     false,
+     '**FALSO.** A previsão é impossível no horizonte apresentado:
+
+**Erros identificáveis:**
+- A massa de gelo da Groenlândia não derrete rápido o suficiente para expor canais desse tamanho em menos de 10 anos
+- "Canal de 70 km" é geologicamente absurdo no período indicado
+- Estudos reais nunca fazem previsões tão específicas e drásticas
+
+**Por que é impossível:**
+- Mudanças desse porte exigem séculos, não anos
+- O núcleo rochoso da Groenlândia é contínuo; não se divide tão facilmente
+- Seria necessário derretimento em escala cataclísmica, sem base científica');
+
+INSERT INTO conquistas (nome, descricao, icone, caminho_imagem_completa, criterio, tipo, valor_requerido)
 VALUES (
     'Primeiros Passos',
     'Acumulou 40 pontos respondendo questões corretamente!',
     '🏆',
+    NULL,
     'Acumular pontos totais',
     'PONTOS_TOTAIS',
     40

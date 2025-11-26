@@ -60,6 +60,7 @@ CREATE TABLE conquistas (
     id BIGSERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     descricao TEXT NOT NULL,
+    icone VARCHAR(50),
     caminho_imagem_completa VARCHAR(255),
     criterio VARCHAR(50) NOT NULL,
     tipo VARCHAR(50) NOT NULL,
