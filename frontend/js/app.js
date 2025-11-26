@@ -468,14 +468,9 @@ async function loadNextNoticia() {
 
 async function updateProgressoDisplay() {
     try {
-        const progresso = await apiRequest(`/categorias/${currentCategory.id}/meu-progresso`);
-        // percentualProgresso pode estar em estatisticas ou diretamente no objeto
-        let percentualProgresso = 0;
-        if (progresso.estatisticas && progresso.estatisticas.percentualProgresso !== undefined) {
-            percentualProgresso = progresso.estatisticas.percentualProgresso;
-        } else if (progresso.percentualProgresso !== undefined) {
-            percentualProgresso = progresso.percentualProgresso;
-        }
+        const response = await apiRequest(`/categorias/${currentCategory.id}/meu-progresso`);
+        // Composição OO: response.estatisticas.percentualProgresso
+        const percentualProgresso = response.estatisticas?.percentualProgresso || 0;
         document.getElementById('progresso-percent').textContent = `${percentualProgresso.toFixed(1)}%`;
     } catch (error) {
         console.error('Erro ao carregar progresso:', error);
@@ -694,19 +689,16 @@ async function loadProfile() {
 
         for (const categoria of categorias) {
             try {
-                const progresso = await apiRequest(`/categorias/${categoria.id}/meu-progresso`);
+                const response = await apiRequest(`/categorias/${categoria.id}/meu-progresso`);
 
-                // Obter estatísticas (pode estar em progresso.estatisticas ou direto em progresso)
-                const estatisticas = progresso.estatisticas || progresso;
-                const percentualProgresso = estatisticas.percentualProgresso || 0;
-                const acertosUnicos = estatisticas.acertosUnicos || 0;
-                const totalNoticias = estatisticas.totalNoticias || 0;
-                const taxaAcertoCategoria = estatisticas.taxaAcertoCategoria || 0;
-                const tentativasNaCategoria = estatisticas.tentativasNaCategoria || 0;
-
-                // Peças desbloqueadas do backend
-                const pecasDesbloqueadas = progresso.pecasDesbloqueadas || [];
-                const nivelCategoria = progresso.nivelAtual || 0;
+                // Composição OO: objetos separados (categoria, progresso, estatisticas)
+                const percentualProgresso = response.estatisticas?.percentualProgresso || 0;
+                const acertosUnicos = response.estatisticas?.acertosUnicos || 0;
+                const totalNoticias = response.estatisticas?.totalNoticias || 0;
+                const taxaAcertoCategoria = response.estatisticas?.taxaAcertoCategoria || 0;
+                const tentativasNaCategoria = response.estatisticas?.tentativasNaCategoria || 0;
+                const pecasDesbloqueadas = response.progresso?.pecasDesbloqueadas || [];
+                const nivelCategoria = response.progresso?.nivelAtual || 0;
 
                 const progressoItem = document.createElement('div');
                 progressoItem.className = 'progress-item';
@@ -784,20 +776,33 @@ async function loadAchievements() {
             let dataFormatada = '';
             if (conquista.desbloqueada && conquista.dataDesbloqueio) {
                 try {
-                    const data = new Date(conquista.dataDesbloqueio);
-                    dataFormatada = `<small>Desbloqueada em ${data.toLocaleDateString('pt-BR', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    })}</small>`;
+                    // LocalDateTime do Java pode vir como array [ano, mês, dia, hora, minuto, segundo]
+                    let data;
+                    if (Array.isArray(conquista.dataDesbloqueio)) {
+                        // Formato: [2025, 11, 26, 14, 30, 45]
+                        const [ano, mes, dia, hora, minuto] = conquista.dataDesbloqueio;
+                        data = new Date(ano, mes - 1, dia, hora || 0, minuto || 0);
+                    } else {
+                        // Formato string ISO ou timestamp
+                        data = new Date(conquista.dataDesbloqueio);
+                    }
+                    
+                    if (!isNaN(data.getTime())) {
+                        dataFormatada = `<small>Desbloqueada em ${data.toLocaleDateString('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        })}</small>`;
+                    }
                 } catch (e) {
                     console.error('Erro ao formatar data:', e);
                     dataFormatada = '';
                 }
             }
 
+            // Herança - ConquistaComStatus extends Conquista
             card.innerHTML = `
                 <div class="achievement-icon">${conquista.desbloqueada ? '🏆' : '🔒'}</div>
                 <h4>${conquista.nome || 'Conquista'}</h4>

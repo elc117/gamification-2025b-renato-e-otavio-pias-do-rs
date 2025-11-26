@@ -27,7 +27,5 @@
         <mapping class="com.renato.model.Conquista"/>
         <mapping class="com.renato.model.ConquistaUsuario"/>
         <mapping class="com.renato.model.ProgressoCategoria"/>
-        <mapping class="com.renato.model.PecaRecompensa"/>
-        <mapping class="com.renato.model.PecaUsuario"/>
     </session-factory>
 </hibernate-configuration>

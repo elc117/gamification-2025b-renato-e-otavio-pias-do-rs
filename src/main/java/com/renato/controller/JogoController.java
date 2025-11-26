@@ -1,13 +1,13 @@
 package com.renato.controller;
 
 import com.renato.controller.dto.RespostaRequest;
+import com.renato.controller.dto.ResultadoJogadaDTO;
 import com.renato.model.Noticia;
 import com.renato.model.Resposta;
 import com.renato.service.JogoOrquestradorService;
 import com.renato.service.RespostaService;
 import io.javalin.http.Context;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Controller responsável pela lógica principal do jogo.
@@ -51,7 +51,7 @@ public class JogoController {
             RespostaRequest respostaRequest = ctx.bodyAsClass(RespostaRequest.class);
             boolean respostaUsuario = respostaRequest.isResposta();
 
-            Map<String, Object> resultado = jogoService.processarResposta(usuarioId, noticiaId, respostaUsuario);
+            ResultadoJogadaDTO resultado = jogoService.processarResposta(usuarioId, noticiaId, respostaUsuario);
 
             ctx.status(201).json(resultado);
         } catch (IllegalArgumentException e) {

@@ -1,13 +1,13 @@
 package com.renato.service;
 
+import com.renato.controller.dto.ProgressoCategoriaDTO;
+import com.renato.controller.dto.EstatisticasCategoriaDTO;
 import com.renato.model.ProgressoCategoria;
 import com.renato.repository.NoticiaRepository;
 import com.renato.repository.ProgressoCategoriaRepository;
 import com.renato.repository.RespostaRepository;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Service responsável por gerenciar o progresso do usuário nas categorias.
@@ -18,10 +18,20 @@ public class ProgressoCategoriaService {
     private final NoticiaRepository noticiaRepository;
     private final RespostaRepository respostaRepository;
 
+    // Construtor padrão
     public ProgressoCategoriaService() {
-        this.progressoRepository = new ProgressoCategoriaRepository();
-        this.noticiaRepository = new NoticiaRepository();
-        this.respostaRepository = new RespostaRepository();
+        this(new ProgressoCategoriaRepository(), 
+             new NoticiaRepository(), 
+             new RespostaRepository());
+    }
+
+    // Construtor com Injeção de Dependências
+    public ProgressoCategoriaService(ProgressoCategoriaRepository progressoRepository,
+                                    NoticiaRepository noticiaRepository,
+                                    RespostaRepository respostaRepository) {
+        this.progressoRepository = progressoRepository;
+        this.noticiaRepository = noticiaRepository;
+        this.respostaRepository = respostaRepository;
     }
 
     /**
@@ -29,9 +39,9 @@ public class ProgressoCategoriaService {
      * 
      * @param usuarioId ID do usuário
      * @param categoriaId ID da categoria
-     * @return Map com informações sobre o progresso atualizado
+     * @return ProgressoCategoriaDTO com informações sobre o progresso atualizado
      */
-    public Map<String, Object> atualizarProgresso(Long usuarioId, Long categoriaId) {
+    public ProgressoCategoriaDTO atualizarProgresso(Long usuarioId, Long categoriaId) {
         ProgressoCategoria progresso = progressoRepository.findByUsuarioAndCategoria(usuarioId, categoriaId);
 
         // Criar progresso se não existe
@@ -40,10 +50,10 @@ public class ProgressoCategoriaService {
             progressoRepository.save(progresso);
         }
 
-        // Incrementar tentativas na categoria
+        // incrementar tentativas na categoria
         progresso.incrementarTentativas();
 
-        // Calcular cobertura de notícias
+        // calcular cobertura de notícias
         long totalNoticias = noticiaRepository.countByCategoria(categoriaId);
         long acertosUnicos = respostaRepository.countAcertosByUsuarioAndCategoria(usuarioId, categoriaId);
 
@@ -51,18 +61,9 @@ public class ProgressoCategoriaService {
             ? (acertosUnicos * 100.0 / totalNoticias)
             : 0;
 
-        // Peças anteriores (para detectar desbloqueio)
-        List<Integer> pecasAnteriores = new ArrayList<>(progresso.getPecasDesbloqueadas());
-
-        // Determinar peças desbloqueadas
-        List<Integer> pecasDesbloqueadas = calcularPecasDesbloqueadas(percentualProgresso);
-
-        // Atualizar progresso
-        progresso.setPecasDesbloqueadas(pecasDesbloqueadas);
-        progresso.setPontosMaestria((int) acertosUnicos);
-        progresso.setNivelAtual(pecasDesbloqueadas.size());
-
-        boolean desbloqueouNovaPeca = pecasDesbloqueadas.size() > pecasAnteriores.size();
+        // atualizar progresso usando comportamento da entidade
+        boolean desbloqueouNovaPeca = progresso.atualizarProgresso(percentualProgresso);
+        progresso.setPontosMaestriaDiretamente((int) acertosUnicos);
 
         // Salvar
         progressoRepository.update(progresso);
@@ -72,33 +73,23 @@ public class ProgressoCategoriaService {
                               acertosUnicos, totalNoticias);
     }
 
-    /**
-     * Calcula quais peças devem estar desbloqueadas baseado no percentual.
-     */
-    private List<Integer> calcularPecasDesbloqueadas(double percentualProgresso) {
-        List<Integer> pecas = new ArrayList<>();
-        if (percentualProgresso >= 25.0) pecas.add(1);
-        if (percentualProgresso >= 50.0) pecas.add(2);
-        if (percentualProgresso >= 75.0) pecas.add(3);
-        if (percentualProgresso >= 100.0) pecas.add(4);
-        return pecas;
-    }
+
 
     /**
      * Monta o resultado com todas as informações de progresso.
      */
-    private Map<String, Object> montarResultado(boolean desbloqueouNovaPeca, ProgressoCategoria progresso,
+    private ProgressoCategoriaDTO montarResultado(boolean desbloqueouNovaPeca, ProgressoCategoria progresso,
                                                double percentualProgresso, long acertosUnicos, long totalNoticias) {
-        Map<String, Object> resultado = new HashMap<>();
-        resultado.put("subiuNivel", desbloqueouNovaPeca);
-        resultado.put("nivelAtual", progresso.getNivelAtual());
-        resultado.put("pontosMaestria", progresso.getPontosMaestria());
-        resultado.put("pecasDesbloqueadas", progresso.getPecasDesbloqueadas());
-        resultado.put("percentualProgresso", Math.round(percentualProgresso * 100.0) / 100.0);
-        resultado.put("acertosUnicos", acertosUnicos);
-        resultado.put("totalNoticias", totalNoticias);
-        resultado.put("noticiasFaltantes", totalNoticias - acertosUnicos);
-        return resultado;
+        return new ProgressoCategoriaDTO(
+            desbloqueouNovaPeca,
+            progresso.getNivelAtual(),
+            progresso.getPontosMaestria(),
+            progresso.getPecasDesbloqueadas(),
+            Math.round(percentualProgresso * 100.0) / 100.0,
+            acertosUnicos,
+            totalNoticias,
+            totalNoticias - acertosUnicos
+        );
     }
 
     /**
@@ -132,9 +123,7 @@ public class ProgressoCategoriaService {
     /**
      * Calcula estatísticas detalhadas do usuário em uma categoria específica.
      */
-    public Map<String, Object> obtemEstatisticasCategoria(Long usuarioId, Long categoriaId) {
-        Map<String, Object> estatisticas = new HashMap<>();
-
+    public EstatisticasCategoriaDTO obtemEstatisticasCategoria(Long usuarioId, Long categoriaId) {
         long totalNoticias = noticiaRepository.countByCategoria(categoriaId);
         long acertosUnicos = respostaRepository.countAcertosByUsuarioAndCategoria(usuarioId, categoriaId);
 
@@ -151,14 +140,14 @@ public class ProgressoCategoriaService {
 
         long erros = tentativasNaCategoria - acertosUnicos;
 
-        estatisticas.put("totalNoticias", totalNoticias);
-        estatisticas.put("acertosUnicos", acertosUnicos);
-        estatisticas.put("tentativasNaCategoria", tentativasNaCategoria);
-        estatisticas.put("errosNaCategoria", erros);
-        estatisticas.put("taxaAcertoCategoria", Math.round(taxaAcerto * 100.0) / 100.0);
-        estatisticas.put("percentualProgresso", Math.round(percentualProgresso * 100.0) / 100.0);
-        estatisticas.put("noticiasFaltantes", totalNoticias - acertosUnicos);
-
-        return estatisticas;
+        return new EstatisticasCategoriaDTO(
+            totalNoticias,
+            acertosUnicos,
+            tentativasNaCategoria,
+            erros,
+            Math.round(taxaAcerto * 100.0) / 100.0,
+            Math.round(percentualProgresso * 100.0) / 100.0,
+            totalNoticias - acertosUnicos
+        );
     }
 }

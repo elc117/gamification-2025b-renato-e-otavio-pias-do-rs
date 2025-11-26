@@ -127,4 +127,79 @@ public class Usuario {
         this.taxaAcerto = taxaAcerto;
     }
 
+    // ========== COMPORTAMENTOS (Métodos de Negócio) ==========
+
+    /**
+     * Registra uma tentativa de resposta e atualiza estatísticas automaticamente.
+     * Encapsula a lógica de cálculo da taxa de acerto.
+     */
+    public void registrarTentativa(boolean acertou) {
+        this.totalTentativas++;
+        if (acertou) {
+            this.acertosTotais++;
+        }
+        recalcularTaxaAcerto();
+    }
+
+    /**
+     * Adiciona pontos ao usuário e verifica se subiu de nível.
+     * @return true se subiu de nível
+     */
+    public boolean adicionarPontos(int pontos) {
+        int nivelAnterior = this.nivel;
+        this.pontuacaoTotal += pontos;
+        this.nivel = calcularNivel(this.pontuacaoTotal);
+        return this.nivel > nivelAnterior;
+    }
+
+    /**
+     * Atualiza o título baseado no nível atual.
+     * @return true se o título mudou
+     */
+    public boolean atualizarTitulo() {
+        String tituloAnterior = this.tituloAtual;
+        this.tituloAtual = calcularTitulo(this.nivel);
+        return !this.tituloAtual.equals(tituloAnterior);
+    }
+
+    /**
+     * Calcula pontos necessários para o próximo nível.
+     */
+    public int calcularPontosParaProximoNivel() {
+        int pontosProximoNivel = 100 * this.nivel;
+        return Math.max(0, pontosProximoNivel - this.pontuacaoTotal);
+    }
+
+    /**
+     * Recalcula a taxa de acerto baseada nas estatísticas atuais.
+     */
+    private void recalcularTaxaAcerto() {
+        if (this.totalTentativas > 0) {
+            this.taxaAcerto = (this.acertosTotais * 100.0) / this.totalTentativas;
+        } else {
+            this.taxaAcerto = 0.0;
+        }
+    }
+
+    /**
+     * Calcula o nível baseado na pontuação total.
+     * Regra: Cada 100 pontos = 1 nível
+     */
+    private int calcularNivel(int pontuacao) {
+        return 1 + (pontuacao / 100);
+    }
+
+    /**
+     * Determina o título baseado no nível do usuário.
+     */
+    private String calcularTitulo(int nivel) {
+        if (nivel >= 20) return "Lenda da Verdade";
+        if (nivel >= 15) return "Mestre Investigador";
+        if (nivel >= 10) return "Detetive Expert";
+        if (nivel >= 7) return "Caçador de Fakes";
+        if (nivel >= 5) return "Verificador";
+        if (nivel >= 3) return "Aprendiz";
+        return "Iniciante";
+    }
+
 }

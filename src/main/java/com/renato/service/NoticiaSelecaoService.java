@@ -18,10 +18,18 @@ public class NoticiaSelecaoService {
     private final RespostaRepository respostaRepository;
     private final Random random;
 
+    // construtor padrão
     public NoticiaSelecaoService() {
-        this.noticiaRepository = new NoticiaRepository();
-        this.respostaRepository = new RespostaRepository();
-        this.random = new Random();
+        this(new NoticiaRepository(), new RespostaRepository(), new Random());
+    }
+
+    // construtor com injeção de dependências
+    public NoticiaSelecaoService(NoticiaRepository noticiaRepository,
+                                RespostaRepository respostaRepository,
+                                Random random) {
+        this.noticiaRepository = noticiaRepository;
+        this.respostaRepository = respostaRepository;
+        this.random = random;
     }
 
     /**
@@ -30,7 +38,7 @@ public class NoticiaSelecaoService {
      * 
      * @param usuarioId ID do usuário
      * @param categoriaId ID da categoria
-     * @return Notícia aleatória ou null se já acertou todas
+     * @return notícia aleatória ou null se já acertou todas
      */
     public Noticia obterNoticiaAleatoria(Long usuarioId, Long categoriaId) {
         List<Noticia> noticiasDaCategoria = noticiaRepository.findByCategoria(categoriaId);

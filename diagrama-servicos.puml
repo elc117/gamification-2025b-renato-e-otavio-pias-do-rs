@@ -28,7 +28,7 @@ class JogoService <<Service>> {
     - categoriaRepository: CategoriaRepository
     --
     + obterNoticiaAleatoriaPorCategoria(Long usuarioId, Long categoriaId): Noticia
-    + processarResposta(Long usuarioId, Long noticiaId, boolean resposta): Map<String, Object>
+    + processarResposta(Long usuarioId, Long noticiaId, boolean resposta): ResultadoJogadaDTO
     --
     - verificarConquistas(Long usuarioId): void
     - calcularNivelUsuario(int pontos): int
@@ -45,7 +45,7 @@ class RecompensaService <<Service>> {
     --
     + verificarDesbloqueio(Long usuarioId, Long categoriaId): void
     + obterPecasDesbloqueadas(Long usuarioId, Long categoriaId): List<Integer>
-    + obterProgressoVisual(Long usuarioId, Long categoriaId): Map<String, Object>
+    + obterProgressoVisual(Long usuarioId, Long categoriaId): ProgressoImagemDTO
 }
 
 ' ==========================

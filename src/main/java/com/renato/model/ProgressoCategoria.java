@@ -136,12 +136,58 @@ public class ProgressoCategoria {
         if (this.pontosMaestria < 0) {
             this.pontosMaestria = 0;
         }
-        atualizarNivel();
     }
 
-    private void atualizarNivel() {
-    
+    // ========== COMPORTAMENTOS (Métodos de Negócio) ==========
+
+    /**
+     * Atualiza o progresso com base no percentual de cobertura.
+     * Desbloqueia peças automaticamente conforme o percentual.
+     * @param percentualProgresso percentual de notícias acertadas (0-100)
+     * @return true se desbloqueou uma nova peça
+     */
+    public boolean atualizarProgresso(double percentualProgresso) {
+        int pecasAnteriores = this.pecasDesbloqueadas.size();
+        
+        // recalcular peças baseado no percentual
+        List<Integer> novasPecas = calcularPecasDesbloqueadas(percentualProgresso);
+        this.pecasDesbloqueadas = novasPecas;
+        this.nivelAtual = novasPecas.size();
+        
+        return novasPecas.size() > pecasAnteriores;
+    }
+
+    /**
+     * Calcula quais peças devem estar desbloqueadas baseado no percentual.
+     * Sistema de recompensas: 25%, 50%, 75%, 100%
+     */
+    private List<Integer> calcularPecasDesbloqueadas(double percentualProgresso) {
+        List<Integer> pecas = new ArrayList<>();
+        if (percentualProgresso >= 25.0) pecas.add(1);
+        if (percentualProgresso >= 50.0) pecas.add(2);
+        if (percentualProgresso >= 75.0) pecas.add(3);
+        if (percentualProgresso >= 100.0) pecas.add(4);
+        return pecas;
+    }
+
+    /**
+     * Verifica se possui todas as peças desbloqueadas (imagem completa).
+     */
+    public boolean possuiImagemCompleta() {
+        return pecasDesbloqueadas.size() >= 4;
+    }
+
+    /**
+     * Verifica se uma peça específica está desbloqueada.
+     */
+    public boolean possuiPeca(int numeroPeca) {
+        return pecasDesbloqueadas.contains(numeroPeca);
+    }
+
+    /**
+     * Registra pontos de maestria (equivale a acertos únicos na categoria).
+     */
+    public void setPontosMaestriaDiretamente(int pontos) {
+        this.pontosMaestria = pontos;
     }
 }
-
-

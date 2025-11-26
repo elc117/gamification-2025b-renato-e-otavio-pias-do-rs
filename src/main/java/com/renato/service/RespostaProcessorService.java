@@ -1,13 +1,11 @@
 package com.renato.service;
 
+import com.renato.controller.dto.ResultadoRespostaDTO;
 import com.renato.model.Noticia;
 import com.renato.model.Resposta;
 import com.renato.model.Usuario;
 import com.renato.repository.RespostaRepository;
 import com.renato.repository.UsuarioRepository;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Service responsável por processar respostas e calcular pontuações.
@@ -17,12 +15,17 @@ public class RespostaProcessorService {
 
     private final RespostaRepository respostaRepository;
     private final UsuarioRepository usuarioRepository;
-    private final UsuarioService usuarioService;
 
+    // Construtor padrão
     public RespostaProcessorService() {
-        this.respostaRepository = new RespostaRepository();
-        this.usuarioRepository = new UsuarioRepository();
-        this.usuarioService = new UsuarioService();
+        this(new RespostaRepository(), new UsuarioRepository());
+    }
+
+    // Construtor com Injeção de Dependências
+    public RespostaProcessorService(RespostaRepository respostaRepository, 
+                                   UsuarioRepository usuarioRepository) {
+        this.respostaRepository = respostaRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     /**
@@ -31,11 +34,10 @@ public class RespostaProcessorService {
      * @param usuarioId ID do usuário
      * @param noticia Notícia respondida
      * @param respostaUsuario Resposta do usuário (true/false)
-     * @return Map com informações sobre o processamento
+     * @return DTO com informações sobre o processamento
      */
-    public Map<String, Object> processarResposta(Long usuarioId, Noticia noticia, boolean respostaUsuario) {
-        // Verificar se a resposta está correta
-        boolean acertou = (respostaUsuario == noticia.isEhVerdadeira());
+    public ResultadoRespostaDTO processarResposta(Long usuarioId, Noticia noticia, boolean respostaUsuario) {
+        boolean acertou = (respostaUsuario == noticia.isEhVerdadeira()); // verificar se a resposta está correta
 
         // Verificar se já existe resposta anterior
         Resposta respostaExistente = respostaRepository.findByUsuarioAndNoticia(usuarioId, noticia.getId());
@@ -47,42 +49,35 @@ public class RespostaProcessorService {
             pontosGanhos = PONTOS_ACERTO;
         }
 
-        // Atualizar estatísticas do usuário
+        // atualizar as estatísticas do usuário usando comportamentos da entidade
         Usuario usuario = usuarioRepository.findById(usuarioId);
-        int nivelAnterior = usuario.getNivel();
-        String tituloAnterior = usuario.getTituloAtual();
 
-        // Incrementar tentativas sempre
-        usuarioService.incrementarTentativas(usuario);
+        // registrar tentativa (pra isso, encapsula lógica de acertos e taxa)
+        usuario.registrarTentativa(acertou);
 
-        // Incrementar acertos se acertou
-        if (acertou) {
-            usuarioService.incrementarAcertos(usuario);
-        }
-
-        // Adicionar pontos se ganhou
+        // adicionar pontos se ganhou (encapsula lógica de nível)
+        boolean subiuNivelGlobal = false;
         if (pontosGanhos > 0) {
-            usuarioService.adicionarPontos(usuario, pontosGanhos);
+            subiuNivelGlobal = usuario.adicionarPontos(pontosGanhos);
         }
+
+        // atualizar título (encapsula lógica de títulos)
+        boolean mudouTitulo = usuario.atualizarTitulo();
 
         usuarioRepository.update(usuario);
 
-        boolean subiuNivelGlobal = usuario.getNivel() > nivelAnterior;
-        boolean mudouTitulo = !Objects.equals(tituloAnterior, usuario.getTituloAtual());
-
-        // Salvar ou atualizar resposta
+        // salvar ou atualizar resposta
         salvarResposta(respostaExistente, usuarioId, noticia.getId(), respostaUsuario, acertou, pontosGanhos);
 
-        // Montar resultado
-        Map<String, Object> resultado = new HashMap<>();
-        resultado.put("acertou", acertou);
-        resultado.put("pontosGanhos", pontosGanhos);
-        resultado.put("explicacao", noticia.getExplicacao());
-        resultado.put("usuario", usuario);
-        resultado.put("subiuNivelGlobal", subiuNivelGlobal);
-        resultado.put("mudouTitulo", mudouTitulo);
-
-        return resultado;
+        // Retornar o DTO tipado
+        return new ResultadoRespostaDTO(
+            acertou,
+            pontosGanhos,
+            noticia.getExplicacao(),
+            usuario,
+            subiuNivelGlobal,
+            mudouTitulo
+        );
     }
 
     /**

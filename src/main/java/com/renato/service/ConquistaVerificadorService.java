@@ -2,8 +2,10 @@ package com.renato.service;
 
 import com.renato.model.Conquista;
 import com.renato.model.ConquistaUsuario;
+import com.renato.model.Usuario;
 import com.renato.repository.ConquistaRepository;
 import com.renato.repository.ConquistaUsuarioRepository;
+import com.renato.repository.UsuarioRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,12 +18,20 @@ import java.util.Set;
 public class ConquistaVerificadorService {
     private final ConquistaRepository conquistaRepository;
     private final ConquistaUsuarioRepository conquistaUsuarioRepository;
-    private final RespostaProcessorService respostaProcessorService;
+    private final UsuarioRepository usuarioRepository;
 
+    // construtor padrão
     public ConquistaVerificadorService() {
-        this.conquistaRepository = new ConquistaRepository();
-        this.conquistaUsuarioRepository = new ConquistaUsuarioRepository();
-        this.respostaProcessorService = new RespostaProcessorService();
+        this(new ConquistaRepository(), new ConquistaUsuarioRepository(), new UsuarioRepository());
+    }
+
+    // construtor com injeção de dependências
+    public ConquistaVerificadorService(ConquistaRepository conquistaRepository,
+                                      ConquistaUsuarioRepository conquistaUsuarioRepository,
+                                      UsuarioRepository usuarioRepository) {
+        this.conquistaRepository = conquistaRepository;
+        this.conquistaUsuarioRepository = conquistaUsuarioRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     /**
@@ -33,17 +43,19 @@ public class ConquistaVerificadorService {
     public List<Conquista> verificarConquistas(Long usuarioId) {
         List<Conquista> conquistasRecemDesbloqueadas = new ArrayList<>();
 
-        // Buscar todas as conquistas disponíveis
-        List<Conquista> todasConquistas = conquistaRepository.findAll();
+        List<Conquista> todasConquistas = conquistaRepository.findAll(); // buscar todas as conquistas disponíveis
         if (todasConquistas == null || todasConquistas.isEmpty()) {
             return conquistasRecemDesbloqueadas;
         }
 
-        // Buscar conquistas já desbloqueadas
+        // buscar conquistas já desbloqueadas
         Set<Long> conquistasJaDesbloqueadas = obterConquistasDesbloqueadas(usuarioId);
 
-        // Calcular pontos totais do usuário
-        int pontosTotais = respostaProcessorService.calcularPontosTotais(usuarioId);
+        Usuario usuario = usuarioRepository.findById(usuarioId); // buscar usuário e obter pontos totais
+        if (usuario == null) {
+            return conquistasRecemDesbloqueadas;
+        }
+        int pontosTotais = usuario.getPontuacaoTotal();
 
         // Verificar cada conquista
         for (Conquista conquista : todasConquistas) {
@@ -66,8 +78,8 @@ public class ConquistaVerificadorService {
     private Set<Long> obterConquistasDesbloqueadas(Long usuarioId) {
         List<ConquistaUsuario> conquistasUsuario = conquistaUsuarioRepository.findByUsuario(usuarioId);
         Set<Long> ids = new HashSet<>();
-        for (ConquistaUsuario cu : conquistasUsuario) {
-            ids.add(cu.getConquistaId());
+        for (ConquistaUsuario conqU : conquistasUsuario) {
+            ids.add(conqU.getConquistaId());
         }
         return ids;
     }

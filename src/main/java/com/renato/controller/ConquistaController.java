@@ -1,13 +1,12 @@
 package com.renato.controller;
 
+import com.renato.controller.dto.ConquistaComStatus;
 import com.renato.model.Conquista;
 import com.renato.model.ConquistaUsuario;
 import com.renato.service.ConquistaVerificadorService;
 import io.javalin.http.Context;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Controller responsável por operações relacionadas a conquistas.
@@ -27,7 +26,8 @@ public class ConquistaController {
     }
 
     /**
-     * Lista conquistas do usuário logado com dados completos.
+     * Lista conquistas do usuário logado usando herança OO.
+     * Retorna ConquistaComStatus que ESTENDE Conquista.
      */
     public void listarMinhasConquistas(Context ctx) {
         Long usuarioId = AuthController.getUsuarioAutenticado(ctx);
@@ -35,24 +35,15 @@ public class ConquistaController {
         
         List<ConquistaUsuario> conquistasDoUsuario = conquistaService.obtemConquistasUsuario(usuarioId);
 
-        // Criar lista com dados completos
-        List<Map<String, Object>> conquistasCompletas = new ArrayList<>();
-        for (ConquistaUsuario conqU : conquistasDoUsuario) {
-            Conquista conquista = conquistaService.obtemConquista(conqU.getConquistaId());
-            if (conquista != null) {
-                Map<String, Object> conquistaMap = new HashMap<>();
-                conquistaMap.put("id", conqU.getId());
-                conquistaMap.put("usuarioId", conqU.getUsuarioId());
-                conquistaMap.put("conquistaId", conqU.getConquistaId());
-                conquistaMap.put("dataDesbloqueio", conqU.getDataDesbloqueio() != null 
-                    ? conqU.getDataDesbloqueio().toString() 
-                    : null);
-                conquistaMap.put("nome", conquista.getNome());
-                conquistaMap.put("descricao", conquista.getDescricao());
-                conquistaMap.put("desbloqueada", true);
-                conquistasCompletas.add(conquistaMap);
-            }
-        }
+        List<ConquistaComStatus> conquistasCompletas = conquistasDoUsuario.stream()
+            .map(conqU -> {
+                Conquista conquista = conquistaService.obtemConquista(conqU.getConquistaId());
+                return conquista != null 
+                    ? new ConquistaComStatus(conquista, conqU.getDataDesbloqueio(), true)
+                    : null;
+            })
+            .filter(c -> c != null)
+            .collect(Collectors.toList());
 
         ctx.json(conquistasCompletas);
     }

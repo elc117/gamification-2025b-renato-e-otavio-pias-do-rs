@@ -1,13 +1,12 @@
 package com.renato.controller;
 
+import com.renato.controller.dto.RespostaCategoriaDTO;
+import com.renato.controller.dto.EstatisticasCategoriaDTO;
 import com.renato.model.Categoria;
 import com.renato.model.ProgressoCategoria;
 import com.renato.service.CategoriaService;
 import com.renato.service.ProgressoCategoriaService;
 import io.javalin.http.Context;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Controller responsável por operações relacionadas a categorias.
@@ -81,28 +80,15 @@ public class CategoriaController {
         
         Long categoriaId = Long.parseLong(ctx.pathParam("id"));
         ProgressoCategoria progresso = progressoService.obtemProgressoCategoria(usuarioId, categoriaId);
-        Map<String, Object> estatisticas = progressoService.obtemEstatisticasCategoria(usuarioId, categoriaId);
+        EstatisticasCategoriaDTO estatisticas = progressoService.obtemEstatisticasCategoria(usuarioId, categoriaId);
+        Categoria categoria = categoriaService.encontrarCategoria(categoriaId);
 
-        if (progresso != null) {
-            // Montar resposta completa
-            Map<String, Object> respostaCompleta = new HashMap<>();
-            respostaCompleta.put("id", progresso.getId());
-            respostaCompleta.put("usuarioId", progresso.getUsuarioId());
-            respostaCompleta.put("categoriaId", progresso.getCategoriaId());
-            respostaCompleta.put("nivelAtual", progresso.getNivelAtual());
-            respostaCompleta.put("pontosMaestria", progresso.getPontosMaestria());
-            respostaCompleta.put("pecasDesbloqueadas", progresso.getPecasDesbloqueadas());
-            respostaCompleta.put("estatisticas", estatisticas);
+        RespostaCategoriaDTO resposta = new RespostaCategoriaDTO(
+            categoria,
+            progresso,
+            estatisticas
+        );
 
-            ctx.json(respostaCompleta);
-        } else {
-            // Progresso vazio
-            Map<String, Object> respostaVazia = new HashMap<>();
-            respostaVazia.putAll(estatisticas);
-            respostaVazia.put("pecasDesbloqueadas", new ArrayList<>());
-            respostaVazia.put("nivelAtual", 0);
-            respostaVazia.put("pontosMaestria", 0);
-            ctx.json(respostaVazia);
-        }
+        ctx.json(resposta);
     }
 }

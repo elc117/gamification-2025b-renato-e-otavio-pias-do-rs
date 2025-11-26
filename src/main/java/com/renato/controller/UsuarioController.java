@@ -1,5 +1,6 @@
 package com.renato.controller;
 
+import com.renato.controller.dto.PerfilUsuarioDTO;
 import com.renato.model.ConquistaUsuario;
 import com.renato.model.ProgressoCategoria;
 import com.renato.model.Usuario;
@@ -8,9 +9,7 @@ import com.renato.service.ProgressoCategoriaService;
 import com.renato.service.UsuarioService;
 import io.javalin.http.Context;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Controller responsável por operações relacionadas a usuários.
@@ -145,16 +144,17 @@ public class UsuarioController {
             int pontosFaltam = usuarioService.calcularPontosParaProximoNivel(usuario);
             int pontosProximoNivel = 100 * usuario.getNivel();
 
-            Map<String, Object> perfil = new HashMap<>();
-            perfil.put("usuario", usuario);
-            perfil.put("progressos", progressosUsuario != null ? progressosUsuario : new ArrayList<>());
-            perfil.put("conquistas", conquistasUsuarioLista != null ? conquistasUsuarioLista : new ArrayList<>());
-            perfil.put("totalRespostas", totalTentativas);
-            perfil.put("totalAcertos", totalAcertos);
-            perfil.put("taxaAcerto", taxaAcerto);
-            perfil.put("pontosAtuais", pontosAtuais);
-            perfil.put("pontosFaltam", pontosFaltam);
-            perfil.put("pontosProximoNivel", pontosProximoNivel);
+            PerfilUsuarioDTO perfil = new PerfilUsuarioDTO(
+                usuario,
+                progressosUsuario != null ? progressosUsuario : new ArrayList<>(),
+                conquistasUsuarioLista != null ? conquistasUsuarioLista : new ArrayList<>(),
+                totalTentativas,
+                totalAcertos,
+                taxaAcerto,
+                pontosAtuais,
+                pontosFaltam,
+                pontosProximoNivel
+            );
 
             ctx.json(perfil);
         } catch (Exception e) {

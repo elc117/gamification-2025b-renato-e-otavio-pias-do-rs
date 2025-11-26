@@ -1,11 +1,10 @@
 package com.renato.controller;
 
 import com.renato.controller.dto.LoginRequest;
+import com.renato.controller.dto.LoginRespostaDTO;
 import com.renato.model.Usuario;
 import com.renato.service.UsuarioService;
 import io.javalin.http.Context;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Controller responsável por autenticação e gerenciamento de sessão.
@@ -52,10 +51,11 @@ public class AuthController {
         // Criar sessão (para funcionar no Render)
         ctx.sessionAttribute(SESSION_USER_ID, usuario.getId());
         
-        Map<String, Object> resposta = new HashMap<>();
-        resposta.put("mensagem", "Login realizado com sucesso");
-        resposta.put("usuario", usuario);
-        resposta.put("token", usuario.getId().toString()); // Token simples para itch.io
+        LoginRespostaDTO resposta = new LoginRespostaDTO(
+            "Login realizado com sucesso",
+            usuario,
+            usuario.getId().toString()
+        );
 
         ctx.status(200).json(resposta);
     }
