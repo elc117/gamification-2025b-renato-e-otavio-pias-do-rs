@@ -391,7 +391,11 @@ Acesse este link: https://otaviozimmer.itch.io/fact-or-fake
 ---
 
 ## Resultado final
-<video src="DiagramaPng/videofactorfake.mp4" controls width="100%"></video>
+
+
+https://github.com/user-attachments/assets/d0554158-9eb3-4832-9241-180da8339c86
+
+
 
 ## Referências e créditos
 - Javalin: https://javalin.io/documentation#getting-started
@@ -437,3 +441,7 @@ https://docs.oracle.com/en/java/javase/17/language/records.html
 - Service Layer: https://martinfowler.com/eaaCatalog/serviceLayer.html
 
 - Dependency Injection: https://martinfowler.com/articles/injection.html
+
+- Música geral: gerada por Suno.ia - https://suno.com
+
+- Música de desbloqueio de conquista: AURA, feita por: Ogryzek - https://open.spotify.com/intl-pt/track/6DvGOGRRjhURCE7weXWV3x?si=685ad3d567f449b4
