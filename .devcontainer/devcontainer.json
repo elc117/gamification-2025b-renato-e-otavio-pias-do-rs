@@ -1,9 +1,7 @@
 {
   "name": "Fact-or-Fake Dev Container",
-  "build": {
-    "dockerfile": "Dockerfile"
-  },
-  "remoteUser": "vscode",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
   "workspaceFolder": "/workspace",
   "forwardPorts": [3000, 5432],
   "portsAttributes": {
@@ -31,22 +29,6 @@
     }
   },
   "postCreateCommand": "bash .devcontainer/setup.sh",
-  "containerEnv": {
-    "MAVEN_OPTS": "-Xmx1024m",
-    "DB_HOST": "localhost",
-    "DB_PORT": "5432",
-    "DB_NAME": "fact_or_fake",
-    "DB_USER": "postgres",
-    "DB_PASSWORD": "postgres"
-  },
-  "features": {
-    "ghcr.io/devcontainers/features/java:1": {
-      "version": "17",
-      "installMaven": "true"
-    },
-    "ghcr.io/devcontainers-contrib/features/postgres-asdf:1": {
-      "version": "latest"
-    }
-  }
+  "remoteUser": "vscode"
 }
 

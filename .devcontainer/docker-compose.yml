@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../..:/workspaces:cached
+    command: sleep infinity
+    network_mode: service:db
+    depends_on:
+      - db
+    environment:
+      - REMOTE_CONTAINERS=true
+      - DB_HOST=localhost
+      - DB_PORT=5432
+      - DB_NAME=fact_or_fake
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fact_or_fake
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      # Scripts SQL serão executados automaticamente na primeira inicialização
+      - ../src/main/resources/db/migration/criar_tabelas_iniciais.sql:/docker-entrypoint-initdb.d/1-criar_tabelas.sql
+      - ../src/main/resources/db/migration/popular_tabelas.sql:/docker-entrypoint-initdb.d/2-popular_tabelas.sql
+
+volumes:
+  postgres-data:

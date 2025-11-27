@@ -16,9 +16,25 @@ public class HibernateConfig {
                 String dbUrl = System.getenv("DATABASE_URL");
                 String dbUser = System.getenv("DB_USER");
                 String dbPassword = System.getenv("DB_PASSWORD");
+                
+                // --- Detectar ambiente DevContainer/Codespaces ---
+                String remoteContainers = System.getenv("REMOTE_CONTAINERS");
+                String codespaces = System.getenv("CODESPACES");
+                boolean isDevContainer = "true".equals(remoteContainers) || "true".equals(codespaces);
+                
+                if (isDevContainer) {
+                    System.out.println("[HibernateConfig] Ambiente DevContainer/Codespaces detectado!");
+                    System.out.println("[HibernateConfig] Usando configurações do DevContainer");
+                    
+                    // Configurações para DevContainer (docker-compose)
+                    configuration.setProperty("hibernate.connection.url", "jdbc:postgresql://localhost:5432/fact_or_fake");
+                    configuration.setProperty("hibernate.connection.username", "postgres");
+                    configuration.setProperty("hibernate.connection.password", "postgres");
+                    configuration.setProperty("hibernate.hbm2ddl.auto", "update");
+                }
 
                 // --- Tratamento especial para Render ---
-                if (dbUrl != null && !dbUrl.isEmpty()) {
+                else if (dbUrl != null && !dbUrl.isEmpty()) {
                     System.out.println("[HibernateConfig] DATABASE_URL detectada: " + dbUrl);
 
                     /*

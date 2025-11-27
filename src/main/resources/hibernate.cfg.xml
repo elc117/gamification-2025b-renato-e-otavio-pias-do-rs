@@ -4,7 +4,8 @@
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <!-- Configurações do banco de dados -->
+        <!-- Configurações do banco de dados LOCAL -->
+        <!-- Estas configurações são usadas quando roda fora do DevContainer/Codespaces -->
         <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
         <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/banco_local</property>
         <property name="hibernate.connection.username">postgres</property>
