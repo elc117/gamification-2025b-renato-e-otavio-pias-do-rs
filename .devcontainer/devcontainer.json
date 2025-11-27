@@ -2,7 +2,7 @@
   "name": "Fact-or-Fake Dev Container",
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
-  "workspaceFolder": "/workspace",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "forwardPorts": [3000, 5432],
   "portsAttributes": {
     "3000": {
