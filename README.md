@@ -194,7 +194,34 @@ Exemplo:
   ```
 - Isso facilita testes unitários
 
-### Contribuições dos integrantes
+### Como ficou organizado
+#### Modelo de Domínio
+- **Usuario.java** — representa um usuário do sistema.
+- **Categoria.java** — define categorias de notícis.
+- **Noticia.java** — contém informações de uma notícia.
+- **Resposta.java** — registra a resposta de um usuário para uma notícia, incluindo se está correta e pontos ganhos.
+- **Conquista.java** — define conquistas desbloqueáveis.
+- **ConquistaUsuario.java** — relaciona conquistas desbloqueadas por usuários com data de desbloqueio.
+- **ProgressoCategoria.java** — acompanha o progresso do usuário em cada categoria.
+
+#### Configuração
+- **HibernateConfig.java** — classe de configuração do Hibernate que gerencia a SessionFactory, responsável por inicializar a conexão com o banco de dados PostgreSQL e fornecer sessões para operações de persistência.
+
+#### Banco de Dados
+O projeto utiliza o **PostgreSQL** como sistema de gerenciamento de banco de dados. A estrutura inclui:
+
+**Tabelas:**
+- `usuarios` — armazena dados dos usuários
+- `categorias` — categorias de notícias
+- `noticias` — conteúdo de notícias verificadas
+- `respostas` — respostas dos usuários às notícias
+- `conquistas` — conquistas disponíveis no sistema
+- `conquistas_usuario` — conquistas desbloqueadas por usuários
+- `progresso_categoria` — progresso dos usuários em cada categoria
+
+Na primeira vez que incicializamos o projeto, nós rodamos duas queries, com os arquivos ``criar_tabelas_iniciais.sql`` e ``popular_tabelas.sql``, para inicializar o banco de dados e permitir que possam ser realizadas as requisições.
+
+### Algumas das contribuições dos integrantes
 
 #### **Otávio Krügel Zimmer:**
 - **Backend:**
@@ -223,36 +250,8 @@ Exemplo:
 **Trabalho em dupla:**
 - Decisões arquiteturais (padrões OO, estrutura de pastas)
 - Debug de problemas complexos (CORS, sessões, banco)
-- Refatoração final para OO puro (fizemos uma espécie de "pair programming" virtual)
 - README.md
 - Criação de diagramas UML
-
-## Projeto em si
-### Modelo de Domínio
-- **Usuario.java** — representa um usuário do sistema.
-- **Categoria.java** — define categorias de notícis.
-- **Noticia.java** — contém informações de uma notícia.
-- **Resposta.java** — registra a resposta de um usuário para uma notícia, incluindo se está correta e pontos ganhos.
-- **Conquista.java** — define conquistas desbloqueáveis.
-- **ConquistaUsuario.java** — relaciona conquistas desbloqueadas por usuários com data de desbloqueio.
-- **ProgressoCategoria.java** — acompanha o progresso do usuário em cada categoria.
-
-### Configuração
-- **HibernateConfig.java** — Classe de configuração do Hibernate que gerencia a SessionFactory, responsável por inicializar a conexão com o banco de dados PostgreSQL e fornecer sessões para operações de persistência.
-
-## Banco de Dados
-O projeto utiliza **PostgreSQL** como sistema de gerenciamento de banco de dados. A estrutura inclui:
-
-**Tabelas principais:**
-- `usuarios` — armazena dados dos usuários
-- `categorias` — categorias de notícias
-- `noticias` — conteúdo de notícias verificadas
-- `respostas` — respostas dos usuários às notícias
-- `conquistas` — conquistas disponíveis no sistema
-- `conquistas_usuario` — conquistas desbloqueadas por usuários
-- `progresso_categoria` — progresso dos usuários em cada categoria
-
-Na primeira vez que incicializamos o projeto, nós rodamos duas queries, com os arquivos ``criar_tabelas_iniciais.sql`` e ``popular_tabelas.sql``, para inicializar o banco de dados e permitir que possam ser realizadas as requisições.
 
 ## Sistema de gamificação do projeto
 
@@ -270,8 +269,6 @@ Exemplo:
 - **Critério:** acumular 40 pontos totais
 - **Tipo:** PONTOS_TOTAIS
 
-O sistema foi feito de forma extensível para futuros tipos de conquistas também.
-
 #### Progressão por Categoria
 Cada categoria possui sistema independente de níveis:
 - 5 níveis de progresso (0 a 4)
@@ -286,17 +283,6 @@ A progressão é **global** (soma de todas as categorias):
 XP necessário = 100 × nível atual
 ```
 
-| Nível | XP Necessário | XP Total Acumulado | Título |
-|-------|---------------|-------------------|---------|
-| 1 | 0 | 0 | Reporter |
-| 2-4 | 100-400 | 100-1000 | Reporter |
-| 5-9 | 500-900 | 1500-4500 | Analista |
-| 10-14 | 1000-1400 | 5500-10500 | Investigador |
-| 15-19 | 1500-1900 | 12000-19000 | Investigador Sênior |
-| 20-24 | 2000-2400 | 21000-30000 | Detetive |
-| 25-29 | 2500-2900 | 32500-43500 | Detetive Master |
-| 30+ | 3000+ | 46500+ | **Caçador Supremo** |
-
 #### Taxa de Acerto
 Métrica de desempenho geral:
 
@@ -306,7 +292,7 @@ Taxa de Acerto = (total_acertos / total_tentativas) × 100
 
 Não afeta pontos ou nível, apenas estatística.
 
-#### 🎮 Frontend
+#### Frontend
 
 Interface web desenvolvida com HTML, CSS e JavaScript.
 
@@ -349,53 +335,97 @@ O projeto está configurado com um **DevContainer** para facilitar o desenvolvim
 - PostgreSQL
 - Ferramentas de desenvolvimento
 
-### Como usar?
+### Como executar?
 
-#### Opção 1: GitHub Codespaces (Recomendado)
-1. Acesse o repositório no GitHub
-2. Clique em **Code** > **Codespaces** > **Create codespace on main**
-3. Aguarde o ambiente inicializar
-4. Execute: `mvn exec:java`
-5. Acesse: `http://localhost:3000`
+### Opção 1: GitHub Codespaces (Recomendado)
+1. Acesse: https://github.com/elc117/gamification-2025b-renato-e-otavio-pias-do-rs
+2. Clique no botão verde **"Code"**
+3. Selecione a aba **"Codespaces"**
+4. Clique em **"Create codespace on main"**
+5. Aguardar inicialização
+6. No terminal do Codespaces, execute: ``mvn exec:java``
+7. Para abrir a página, utilize um dos três métodos:
+Siga um destes métodos:
 
-#### Opção 2: VS Code Local
-1. Instale a extensão **Dev Containers**
-2. Abra o projeto
-3. Pressione `F1` > **Dev Containers: Reopen in Container**
-4. Execute: `mvn exec:java`
+##### Método 1: Notificação Automática (mais fácil)
+1. Quando o servidor iniciar, aparecerá uma notificação no canto inferior direito
+2. Clique em **"Open in Browser"** ou **"Preview in Editor"**
 
-## Como executar localmente (sem DevContainer)
+##### Método 2: Aba "PORTS"
+1. Procure a aba **"PORTS"** (ao lado de "TERMINAL" na parte inferior)
+2. Você verá a porta **3000** listada com um ícone de globo 🌐
+3. Clique no ícone do globo ou clique com botão direito - **"Open in Browser"**
 
-### Pré-requisitos
+##### Método 3: URL Manual
+1. A URL terá este formato:
+```
+https://NOME-DO-CODESPACE-3000.app.github.dev
+```
+2. Acesse esta URL acima
+
+### Opção 2: VS Code Local
+#### 📋 Pré-requisitos
+Você precisa ter instalado:
+
+1. **VS Code**
+2. **Docker Desktop**
+3. **Extensão "Dev Containers" no VS Code**
+
+#### Passo a passo:
+1. Clonar o Repositório: ``git clone https://github.com/elc117/gamification-2025b-renato-e-otavio-pias-do-rs.git``
+2. Entrar na pasta: cd gamification-2025b-renato-e-otavio-pias-do-rs
+3. Escreva ``code .`` ou abra o VS Code manualmente e vá em: **File → Open Folder** - selecione a pasta do projeto
+4. Uma notificação aparecerá no canto inferior direito:
+```
+Folder contains a Dev Container configuration file.
+Reopen in Container
+```
+5. Clique em **"Reopen in Container"**
+**OU** manualmente:
+- Pressione `F1` (ou `Ctrl + Shift + P` / `Cmd + Shift + P`)
+- Digite: **"Dev Containers: Reopen in Container"**
+- Pressione Enter
+6. Aguardar inicialização
+7. Executar a aplicação com ``mvn exec:java``
+8. Acessar a aplicação em http://localhost:3000
+
+### Opção 3: executar localmente (sem DevContainer)
+#### Pré-requisitos
 - Java 17+
 - Maven
 - PostgreSQL
 
-### Configuração do Banco de Dados
-1. Crie o banco: `CREATE DATABASE banco_local;`
-2. Configure as credenciais em `hibernate.cfg.xml`
-3. Insira as tabelas no banco de dados
-4. Popule as tabelas no banco de dados
+#### Passo a passo:
+1. Clonar o Repositório ``git clone https://github.com/elc117/gamification-2025b-renato-e-otavio-pias-do-rs.git``
+2. Entrar na pasta cd gamification-2025b-renato-e-otavio-pias-do-rs
 
-### Executar
-```bash
-mvn clean package
-mvn exec:java
-```
+##### Windows (PowerShell):
+3. Digite ``psql -U postgres -c "CREATE DATABASE banco_local;"`` para criar o banco de dados
+4. Digite ``psql -U postgres -d banco_local -f "src\main\resources\db\migration\criar_tabelas_iniciais.sql"`` para criar as tabelas iniciais
+5. Digite ``psql -U postgres -d banco_local -f "src\main\resources\db\migration\popular_tabelas.sql"`` para popular as tabelas
 
-A API estará disponível para teste em: `http://localhost:3000`
+##### Linux/Mac (Bash):
 
-### itch.io
-Acesse este link: https://otaviozimmer.itch.io/fact-or-fake
+1. Digite ``psql -U postgres -c "CREATE DATABASE banco_local;"`` para criar o banco de dados
+2. Digite ``psql -U postgres -d banco_local -f src/main/resources/db/migration/criar_tabelas_iniciais.sql`` para criar as tabelas iniciais
+3. Digite ``psql -U postgres -d banco_local -f src/main/resources/db/migration/popular_tabelas.sql`` para popular as tabelas
+
+**Observações:**
+- Você será solicitado a inserir a senha e usuário do PostgreSQL. Verifique o arquivo hibernate.cfg.xml, pois nele estão contidos os dados padrão. Você pode alterá-los, se preferir.
+
+Após, para compilar e executar, digite:
+1. ``mvn clean package`` para compilar
+2. ``mvn exec:java`` para executar
+3. Acesse http://localhost:3000
+
+### Opção 4: itch.io
+Para executar no itch.io, que já possui o projeto hospedado, acesse este link: https://otaviozimmer.itch.io/fact-or-fake
 
 ---
 
 ## Resultado final
 
-
 https://github.com/user-attachments/assets/d0554158-9eb3-4832-9241-180da8339c86
-
-
 
 ## Referências e créditos
 - Javalin: https://javalin.io/documentation#getting-started

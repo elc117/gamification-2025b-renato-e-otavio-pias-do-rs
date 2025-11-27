@@ -28,7 +28,7 @@ services:
       POSTGRES_DB: fact_or_fake
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      # Scripts SQL serão executados automaticamente na primeira inicialização
+      # os scripts SQL vão ser executados automaticamente na primeira inicialização
       - ../src/main/resources/db/migration/criar_tabelas_iniciais.sql:/docker-entrypoint-initdb.d/1-criar_tabelas.sql
       - ../src/main/resources/db/migration/popular_tabelas.sql:/docker-entrypoint-initdb.d/2-popular_tabelas.sql
 

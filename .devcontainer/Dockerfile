@@ -20,4 +20,3 @@ WORKDIR /workspaces
 
 # Default to non-root user
 USER vscode
-
