@@ -4,9 +4,10 @@ FROM mcr.microsoft.com/devcontainers/java:17
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install PostgreSQL client and useful tools
+# Install Maven, PostgreSQL client and useful tools
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+       maven \
        postgresql-client \
        curl \
        git \
