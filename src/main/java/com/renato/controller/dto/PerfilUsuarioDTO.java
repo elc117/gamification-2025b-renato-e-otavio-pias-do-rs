@@ -23,8 +23,8 @@ public class PerfilUsuarioDTO {
     }
 
     public PerfilUsuarioDTO(Usuario usuario, List<ProgressoCategoria> progressos, 
-                           List<ConquistaUsuario> conquistas, int totalRespostas, 
-                           int totalAcertos, double taxaAcerto, int pontosAtuais, 
+                           List<ConquistaUsuario> conquistas, int totalRespostas,
+                           int totalAcertos, double taxaAcerto, int pontosAtuais,
                            int pontosFaltam, int pontosProximoNivel) {
         this.usuario = usuario;
         this.progressos = progressos;

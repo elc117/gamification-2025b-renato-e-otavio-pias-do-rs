@@ -22,6 +22,7 @@ class Usuario {
     - id: Long
     - nome: String
     - email: String
+    - senha: String
     - nivel: int
     - pontuacaoTotal: int
     - tituloAtual: String
@@ -35,6 +36,9 @@ class Usuario {
     + getNivel(): int
     + getPontuacaoTotal(): int
     + getTituloAtual(): String
+    + registrarTentativa(boolean): void
+    + adicionarPontos(int): boolean
+    + atualizarTitulo(): boolean
 }
 
 class Categoria {
@@ -42,12 +46,15 @@ class Categoria {
     - nome: String
     - descricao: String
     - totalNiveis: int
+    - pontosParaProximoNivel: int
     - caminhoImagemCompleta: String
+    - caminhoImagemCategoria: String
     --
     + getId(): Long
     + getNome(): String
     + getDescricao(): String
     + getCaminhoImagemCompleta(): String
+    + getCaminhoImagemCategoria(): String
 }
 
 class Noticia {
@@ -79,6 +86,7 @@ class Resposta {
     + isEstaCorreta(): boolean
     + getPontosGanhos(): int
     + getTentativas(): int
+    + incrementarTentativas(): void
 }
 
 class ProgressoCategoria {
@@ -94,6 +102,9 @@ class ProgressoCategoria {
     + getNivelAtual(): int
     + getPontosMaestria(): int
     + getPecasDesbloqueadas(): List<Integer>
+    + adicionarPontos(int): void
+    + incrementarTentativas(): void
+    + atualizarProgresso(double): boolean
 }
 
 class Conquista {
@@ -123,28 +134,6 @@ class ConquistaUsuario {
     + getDataDesbloqueio(): LocalDateTime
 }
 
-class PecaRecompensa {
-    - id: Long
-    - categoriaId: Long
-    - nivelRequerido: int
-    --
-    + getId(): Long
-    + getCategoriaId(): Long
-    + getNivelRequerido(): int
-}
-
-class PecaUsuario {
-    - id: Long
-    - usuarioId: Long
-    - pecaId: Long
-    - dataDesbloqueio: LocalDateTime
-    --
-    + getId(): Long
-    + getUsuarioId(): Long
-    + getPecaId(): Long
-    + getDataDesbloqueio(): LocalDateTime
-}
-
 ' ==========================
 ' RELACIONAMENTOS
 ' ==========================
@@ -152,17 +141,14 @@ class PecaUsuario {
 Usuario "1" -- "0..*" Resposta : responde >
 Usuario "1" -- "0..*" ProgressoCategoria : possui >
 Usuario "1" -- "0..*" ConquistaUsuario : desbloqueou >
-Usuario "1" -- "0..*" PecaUsuario : possui >
 
 Categoria "1" -- "0..*" Noticia : contém >
 Categoria "1" -- "0..*" ProgressoCategoria : rastreia >
-Categoria "1" -- "0..*" PecaRecompensa : oferece >
 
 Noticia "1" -- "0..*" Resposta : recebe >
 
 Conquista "1" -- "0..*" ConquistaUsuario : concedida em >
 
-PecaRecompensa "1" -- "0..*" PecaUsuario : desbloqueada em >
 
 ' ==========================
 ' NOTAS EXPLICATIVAS

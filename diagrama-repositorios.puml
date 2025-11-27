@@ -56,7 +56,7 @@ class NoticiaRepository {
 class RespostaRepository {
     --
     + findByUsuarioId(Long usuarioId): List<Resposta>
-    + findByUsuarioIdAndNoticiaId(Long usuarioId, Long noticiaId): Resposta
+    + findByUsuarioAndNoticia(Long usuarioId, Long noticiaId): Resposta
     + countAcertosUnicosPorCategoria(Long usuarioId, Long categoriaId): long
     + findNoticiasRespondidasCorretamente(Long usuarioId, Long categoriaId): List<Long>
     --
@@ -80,26 +80,10 @@ class ConquistaRepository {
 
 class ConquistaUsuarioRepository {
     --
-    + findByUsuarioId(Long usuarioId): List<ConquistaUsuario>
-    + findByUsuarioIdAndConquistaId(Long usuarioId, Long conquistaId): ConquistaUsuario
+    + findByUsuario(Long usuarioId): List<ConquistaUsuario>
+    + save(ConquistaUsuario): ConquistaUsuario
     --
     <i>Rastreia conquistas desbloqueadas</i>
-}
-
-class PecaRecompensaRepository {
-    --
-    + findByCategoriaId(Long categoriaId): List<PecaRecompensa>
-    --
-    <i>Define peças disponíveis</i>
-    <i>por categoria</i>
-}
-
-class PecaUsuarioRepository {
-    --
-    + findByUsuarioId(Long usuarioId): List<PecaUsuario>
-    --
-    <i>Rastreia peças desbloqueadas</i>
-    <i>pelo usuário</i>
 }
 
 ' ==========================
@@ -113,8 +97,6 @@ GenericRepository <|-- RespostaRepository
 GenericRepository <|-- ProgressoCategoriaRepository
 GenericRepository <|-- ConquistaRepository
 GenericRepository <|-- ConquistaUsuarioRepository
-GenericRepository <|-- PecaRecompensaRepository
-GenericRepository <|-- PecaUsuarioRepository
 
 ' ==========================
 ' NOTAS EXPLICATIVAS

@@ -23,7 +23,7 @@ skinparam class {
 ' ==========================
 
 class AuthController <<Controller>> {
-    - usuarioRepository: UsuarioRepository
+    - usuarioService: UsuarioService
     --
     <b>Rotas de Autenticação:</b>
     + POST /login
@@ -33,11 +33,13 @@ class AuthController <<Controller>> {
     + login(Context ctx): void
     + logout(Context ctx): void
     + getUsuarioLogado(Context ctx): void
+    + {static} getUsuarioAutenticado(Context): Long
 }
 
 class UsuarioController <<Controller>> {
-    - usuarioRepository: UsuarioRepository
-    - respostaRepository: RespostaRepository
+    - usuarioService: UsuarioService
+    - progressoService: ProgressoCategoriaService
+    - conquistaService: ConquistaVerificadorService
     --
     <b>Rotas de Usuário:</b>
     + POST /usuarios
@@ -46,21 +48,18 @@ class UsuarioController <<Controller>> {
     + PUT /usuarios/:id
     + DELETE /usuarios/:id
     + GET /meu-perfil
-    + GET /minhas-respostas
     --
-    + criarUsuario(Context ctx): void
-    + listarUsuarios(Context ctx): void
-    + obterUsuario(Context ctx): void
-    + atualizarUsuario(Context ctx): void
-    + deletarUsuario(Context ctx): void
+    + listarTodos(Context ctx): void
+    + buscarPorId(Context ctx): void
+    + criar(Context ctx): void
+    + atualizar(Context ctx): void
+    + deletar(Context ctx): void
     + obterMeuPerfil(Context ctx): void
-    + obterMinhasRespostas(Context ctx): void
 }
 
 class CategoriaController <<Controller>> {
-    - categoriaRepository: CategoriaRepository
-    - progressoCategoriaRepository: ProgressoCategoriaRepository
-    - respostaRepository: RespostaRepository
+    - categoriaService: CategoriaService
+    - progressoService: ProgressoCategoriaService
     --
     <b>Rotas de Categoria:</b>
     + POST /categorias
@@ -69,53 +68,57 @@ class CategoriaController <<Controller>> {
     + PUT /categorias/:id
     + DELETE /categorias/:id
     + GET /categorias/:id/meu-progresso
-    + GET /categorias/:id/progresso-imagem
+    + GET /categorias/:id/estatisticas
     --
-    + criarCategoria(Context ctx): void
-    + listarCategorias(Context ctx): void
-    + obterCategoria(Context ctx): void
-    + atualizarCategoria(Context ctx): void
-    + deletarCategoria(Context ctx): void
+    + listarTodas(Context ctx): void
+    + buscarPorId(Context ctx): void
+    + criar(Context ctx): void
+    + atualizar(Context ctx): void
+    + deletar(Context ctx): void
     + obterMeuProgresso(Context ctx): void
-    + obterProgressoImagem(Context ctx): void
+    + obterEstatisticas(Context ctx): void
+}
+
+class JogoController <<Controller>> {
+    - jogoService: JogoOrquestradorService
+    - respostaService: RespostaService
+    --
+    <b>Rotas do Jogo:</b>
+    + GET /jogo/categoria/:categoriaId/noticia
+    + POST /jogo/noticia/:id/responder
+    + GET /minhas-respostas
+    --
+    + obterNoticiaAleatoria(Context ctx): void
+    + responderNoticia(Context ctx): void
+    + listarMinhasRespostas(Context ctx): void
 }
 
 class NoticiaController <<Controller>> {
-    - noticiaRepository: NoticiaRepository
-    - jogoService: JogoService
+    - noticiaService: NoticiaService
     --
-    <b>Rotas de Notícia:</b>
+    <b>Rotas de Notícia (CRUD):</b>
     + POST /noticias
     + GET /noticias
     + GET /noticias/:id
     + PUT /noticias/:id
     + DELETE /noticias/:id
-    + GET /noticias/random/categoria/:id
-    + POST /noticias/:id/responder
     --
-    + criarNoticia(Context ctx): void
-    + listarNoticias(Context ctx): void
-    + obterNoticia(Context ctx): void
-    + atualizarNoticia(Context ctx): void
-    + deletarNoticia(Context ctx): void
-    + obterNoticiaAleatoria(Context ctx): void
-    + responderNoticia(Context ctx): void
+    + criar(Context ctx): void
+    + listarTodas(Context ctx): void
+    + buscarPorId(Context ctx): void
+    + atualizar(Context ctx): void
+    + deletar(Context ctx): void
 }
 
 class ConquistaController <<Controller>> {
-    - conquistaRepository: ConquistaRepository
-    - conquistaUsuarioRepository: ConquistaUsuarioRepository
+    - conquistaService: ConquistaVerificadorService
     --
     <b>Rotas de Conquista:</b>
-    + POST /conquistas
     + GET /conquistas
-    + GET /conquistas/:id
     + GET /minhas-conquistas
     --
-    + criarConquista(Context ctx): void
-    + listarConquistas(Context ctx): void
-    + obterConquista(Context ctx): void
-    + obterMinhasConquistas(Context ctx): void
+    + listarTodas(Context ctx): void
+    + listarMinhasConquistas(Context ctx): void
 }
 
 class RecompensaController <<Controller>> {
@@ -123,42 +126,44 @@ class RecompensaController <<Controller>> {
     --
     <b>Rotas de Recompensa:</b>
     + GET /minhas-recompensas
+    + GET /categoria/:categoriaId/progresso-imagem
     --
-    + obterMinhasRecompensas(Context ctx): void
+    + listarMinhasRecompensas(Context ctx): void
+    + obterProgressoImagem(Context ctx): void
 }
 
 ' ==========================
-' SERVIÇOS E REPOSITÓRIOS USADOS
+' SERVIÇOS USADOS
 ' ==========================
 
-class JogoService <<Service>>
+class UsuarioService <<Service>>
+class CategoriaService <<Service>>
+class NoticiaService <<Service>>
+class JogoOrquestradorService <<Service>>
+class RespostaService <<Service>>
 class RecompensaService <<Service>>
-class UsuarioRepository <<Repository>>
-class CategoriaRepository <<Repository>>
-class NoticiaRepository <<Repository>>
-class ConquistaRepository <<Repository>>
-class ConquistaUsuarioRepository <<Repository>>
-class RespostaRepository <<Repository>>
-class ProgressoCategoriaRepository <<Repository>>
+class ProgressoCategoriaService <<Service>>
+class ConquistaVerificadorService <<Service>>
 
 ' ==========================
 ' DEPENDÊNCIAS
 ' ==========================
 
-AuthController ..> UsuarioRepository
+AuthController ..> UsuarioService
 
-UsuarioController ..> UsuarioRepository
-UsuarioController ..> RespostaRepository
+UsuarioController ..> UsuarioService
+UsuarioController ..> ProgressoCategoriaService
+UsuarioController ..> ConquistaVerificadorService
 
-CategoriaController ..> CategoriaRepository
-CategoriaController ..> ProgressoCategoriaRepository
-CategoriaController ..> RespostaRepository
+CategoriaController ..> CategoriaService
+CategoriaController ..> ProgressoCategoriaService
 
-NoticiaController ..> NoticiaRepository
-NoticiaController ..> JogoService
+NoticiaController ..> NoticiaService
 
-ConquistaController ..> ConquistaRepository
-ConquistaController ..> ConquistaUsuarioRepository
+JogoController ..> JogoOrquestradorService
+JogoController ..> RespostaService
+
+ConquistaController ..> ConquistaVerificadorService
 
 RecompensaController ..> RecompensaService
 
@@ -177,26 +182,29 @@ note top of AuthController
     Todas as rotas protegidas requerem login!
 end note
 
-note right of NoticiaController
+note right of JogoController
     <b>Controlador Principal do Jogo</b>
 
     <b>Fluxo de Jogo:</b>
-    1. GET /noticias/random/categoria/:id
+    1. GET /jogo/categoria/:categoriaId/noticia
        → Retorna notícia não respondida
 
-    2. POST /noticias/:id/responder
+    2. POST /jogo/noticia/:id/responder
        Body: { "resposta": true/false }
-       → Processa resposta via JogoService
-       → Retorna feedback + explicação
-       → Atualiza pontuação e nível
+       → Orquestra via JogoOrquestradorService
+       → Retorna ResultadoJogadaDTO completo
+       → Atualiza pontuação, nível, conquistas
 
     Usa sessão para identificar usuário!
 end note
 
 note bottom of CategoriaController
-    <b>Progresso Visual por Categoria</b>
+    <b>Progresso e Estatísticas por Categoria</b>
 
     GET /categorias/:id/meu-progresso
+    → Retorna: progresso detalhado
+
+    GET /categorias/:id/estatisticas
     → Retorna: acertos, total, percentual
 
     GET /categorias/:id/progresso-imagem

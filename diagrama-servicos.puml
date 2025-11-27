@@ -20,32 +20,97 @@ skinparam class {
 ' SERVIÇOS
 ' ==========================
 
-class JogoService <<Service>> {
+class JogoOrquestradorService <<Service>> {
+    - noticiaSelecaoService: NoticiaSelecaoService
+    - respostaProcessorService: RespostaProcessorService
+    - progressoCategoriaService: ProgressoCategoriaService
+    - conquistaVerificadorService: ConquistaVerificadorService
+    - usuarioService: UsuarioService
+    --
+    + processarResposta(Long usuarioId, Long noticiaId, boolean): ResultadoJogadaDTO
+    + obterNoticiaAleatoriaDaCategoria(Long usuarioId, Long categoriaId): Noticia
+    - montarResultadoCompleto(...): ResultadoJogadaDTO
+}
+
+class NoticiaSelecaoService <<Service>> {
     - noticiaRepository: NoticiaRepository
     - respostaRepository: RespostaRepository
-    - progressoCategoriaRepository: ProgressoCategoriaRepository
+    --
+    + obterNoticiaAleatoria(Long usuarioId, Long categoriaId): Noticia
+    + buscarPorId(Long id): Noticia
+}
+
+class RespostaProcessorService <<Service>> {
+    - respostaRepository: RespostaRepository
     - usuarioRepository: UsuarioRepository
+    --
+    + processarResposta(Long usuarioId, Noticia, boolean): ResultadoRespostaDTO
+    - salvarResposta(...): void
+}
+
+class ConquistaVerificadorService <<Service>> {
+    - conquistaRepository: ConquistaRepository
+    - conquistaUsuarioRepository: ConquistaUsuarioRepository
+    - usuarioRepository: UsuarioRepository
+    --
+    + verificarConquistas(Long usuarioId): List<Conquista>
+    + listarConquistas(): List<Conquista>
+    + obtemConquistasUsuario(Long usuarioId): List<ConquistaUsuario>
+    - verificarCriterio(Conquista, int): boolean
+    - desbloquearConquista(Long usuarioId, Conquista): void
+}
+
+class ProgressoCategoriaService <<Service>> {
+    - progressoRepository: ProgressoCategoriaRepository
     - categoriaRepository: CategoriaRepository
+    - respostaRepository: RespostaRepository
     --
-    + obterNoticiaAleatoriaPorCategoria(Long usuarioId, Long categoriaId): Noticia
-    + processarResposta(Long usuarioId, Long noticiaId, boolean resposta): ResultadoJogadaDTO
-    --
-    - verificarConquistas(Long usuarioId): void
-    - calcularNivelUsuario(int pontos): int
-    - calcularTituloUsuario(int nivel): String
-    - calcularPontosParaProximoNivel(int nivelAtual): int
+    + atualizarProgresso(Long usuarioId, Long categoriaId): ProgressoCategoriaDTO
+    + obterProgresso(Long usuarioId, Long categoriaId): ProgressoCategoria
+    + calcularEstatisticas(Long usuarioId, Long categoriaId): EstatisticasCategoriaDTO
 }
 
 class RecompensaService <<Service>> {
-    - progressoCategoriaRepository: ProgressoCategoriaRepository
-    - pecaRecompensaRepository: PecaRecompensaRepository
-    - pecaUsuarioRepository: PecaUsuarioRepository
+    - progressoRepository: ProgressoCategoriaRepository
     - categoriaRepository: CategoriaRepository
     - respostaRepository: RespostaRepository
     --
-    + verificarDesbloqueio(Long usuarioId, Long categoriaId): void
-    + obterPecasDesbloqueadas(Long usuarioId, Long categoriaId): List<Integer>
-    + obterProgressoVisual(Long usuarioId, Long categoriaId): ProgressoImagemDTO
+    + obterTodasRecompensasUsuario(Long usuarioId): List<RecompensaCategoriaDTO>
+    + calcularProgressoImagem(Long usuarioId, Long categoriaId): ProgressoImagemDTO
+}
+
+class UsuarioService <<Service>> {
+    - usuarioRepository: UsuarioRepository
+    --
+    + listarUsuarios(): List<Usuario>
+    + encontrarUsuario(Long id): Usuario
+    + encontrarUsuarioPorEmail(String email): Usuario
+    + salvarUsuario(Usuario): Usuario
+    + atualizarUsuario(Usuario): void
+}
+
+class CategoriaService <<Service>> {
+    - categoriaRepository: CategoriaRepository
+    --
+    + listarCategorias(): List<Categoria>
+    + encontrarCategoria(Long id): Categoria
+    + salvarCategoria(Categoria): Categoria
+    + atualizarCategoria(Categoria): void
+}
+
+class NoticiaService <<Service>> {
+    - noticiaRepository: NoticiaRepository
+    --
+    + listarNoticias(): List<Noticia>
+    + encontrarNoticia(Long id): Noticia
+    + salvarNoticia(Noticia): Noticia
+    + atualizarNoticia(Noticia): void
+}
+
+class RespostaService <<Service>> {
+    - respostaRepository: RespostaRepository
+    --
+    + obtemRespostasUsuario(Long usuarioId): List<Resposta>
 }
 
 ' ==========================
@@ -54,102 +119,149 @@ class RecompensaService <<Service>> {
 
 class NoticiaRepository <<Repository>> {
     + findByCategoriaId(): List
+    + findById(): Noticia
 }
 
 class RespostaRepository <<Repository>> {
     + findByUsuarioId(): List
+    + findByUsuarioAndNoticia(): Resposta
     + countAcertosUnicosPorCategoria(): long
 }
 
 class UsuarioRepository <<Repository>> {
     + findById(): Usuario
+    + findByEmail(): Usuario
     + save(): Usuario
+    + update(): Usuario
 }
 
 class CategoriaRepository <<Repository>> {
     + findById(): Categoria
+    + findAll(): List
 }
 
 class ProgressoCategoriaRepository <<Repository>> {
     + findByUsuarioIdAndCategoriaId(): ProgressoCategoria
-}
-
-class PecaRecompensaRepository <<Repository>> {
-    + findByCategoriaId(): List
-}
-
-class PecaUsuarioRepository <<Repository>> {
     + findByUsuarioId(): List
+}
+
+class ConquistaRepository <<Repository>> {
+    + findAll(): List
+    + findById(): Conquista
+}
+
+class ConquistaUsuarioRepository <<Repository>> {
+    + findByUsuario(): List
+    + save(): ConquistaUsuario
 }
 
 ' ==========================
 ' DEPENDÊNCIAS
 ' ==========================
 
-JogoService ..> NoticiaRepository : usa
-JogoService ..> RespostaRepository : usa
-JogoService ..> UsuarioRepository : usa
-JogoService ..> CategoriaRepository : usa
-JogoService ..> ProgressoCategoriaRepository : usa
+JogoOrquestradorService ..> NoticiaSelecaoService : coordena
+JogoOrquestradorService ..> RespostaProcessorService : coordena
+JogoOrquestradorService ..> ProgressoCategoriaService : coordena
+JogoOrquestradorService ..> ConquistaVerificadorService : coordena
+JogoOrquestradorService ..> UsuarioService : coordena
+
+NoticiaSelecaoService ..> NoticiaRepository : usa
+NoticiaSelecaoService ..> RespostaRepository : usa
+
+RespostaProcessorService ..> RespostaRepository : usa
+RespostaProcessorService ..> UsuarioRepository : usa
+
+ConquistaVerificadorService ..> ConquistaRepository : usa
+ConquistaVerificadorService ..> ConquistaUsuarioRepository : usa
+ConquistaVerificadorService ..> UsuarioRepository : usa
+
+ProgressoCategoriaService ..> ProgressoCategoriaRepository : usa
+ProgressoCategoriaService ..> CategoriaRepository : usa
+ProgressoCategoriaService ..> RespostaRepository : usa
 
 RecompensaService ..> ProgressoCategoriaRepository : usa
-RecompensaService ..> PecaRecompensaRepository : usa
-RecompensaService ..> PecaUsuarioRepository : usa
 RecompensaService ..> CategoriaRepository : usa
 RecompensaService ..> RespostaRepository : usa
+
+UsuarioService ..> UsuarioRepository : usa
+CategoriaService ..> CategoriaRepository : usa
+NoticiaService ..> NoticiaRepository : usa
+RespostaService ..> RespostaRepository : usa
 
 ' ==========================
 ' NOTAS EXPLICATIVAS
 ' ==========================
 
-note right of JogoService
-    <b>Lógica Central do Jogo</b>
+note right of JogoOrquestradorService
+    <b>Orquestrador Principal do Jogo</b>
+
+    <b>Padrão: Service Orchestration</b>
+
+    Coordena múltiplos services especializados:
+    1. NoticiaSelecaoService - seleciona notícia
+    2. RespostaProcessorService - processa resposta
+    3. ProgressoCategoriaService - atualiza progresso
+    4. ConquistaVerificadorService - verifica conquistas
+    5. UsuarioService - gerencia usuário
+
+    <b>Responsabilidade Única:</b>
+    Orquestrar o fluxo completo de uma jogada,
+    delegando tarefas específicas para services
+    especializados.
+
+    <b>Retorna:</b> ResultadoJogadaDTO completo
+end note
+
+note left of RespostaProcessorService
+    <b>Processador de Respostas</b>
 
     <b>Responsabilidades:</b>
-    ✓ Selecionar notícias aleatórias não respondidas
-    ✓ Processar resposta do usuário (FATO/FAKE)
+    ✓ Verificar se resposta está correta
     ✓ Calcular pontuação (+10 por acerto)
-    ✓ Atualizar nível global do usuário
-    ✓ Definir títulos (Reporter, Analista, etc.)
-    ✓ Verificar conquistas desbloqueadas
+    ✓ Registrar tentativa do usuário
+    ✓ Atualizar nível global (via Usuario.adicionarPontos)
+    ✓ Atualizar título (via Usuario.atualizarTitulo)
+    ✓ Salvar/atualizar resposta no banco
 
-    <b>Sistema de Níveis:</b>
+    <b>Sistema de Níveis (na entidade Usuario):</b>
     - XP necessário = 100 × nível atual
-    - Nível 1→2: 100 pontos
-    - Nível 2→3: 200 pontos
     - Nível máximo: 30+
 
     <b>Títulos por Nível:</b>
-    1-4: Reporter
-    5-9: Analista
-    10-14: Investigador
-    15-19: Investigador Sênior
-    20-24: Detetive
-    25-29: Detetive Master
+    1-4: Reporter | 5-9: Analista
+    10-14: Investigador | 15-19: Investigador Sênior
+    20-24: Detetive | 25-29: Detetive Master
     30+: Caçador Supremo
 end note
 
-note left of RecompensaService
+note bottom of RecompensaService
     <b>Sistema de Recompensas Visuais</b>
 
     <b>Responsabilidades:</b>
-    ✓ Desbloquear peças de imagem progressivamente
-    ✓ Calcular progresso em cada categoria
-    ✓ Retornar dados visuais para o frontend
+    ✓ Calcular progresso visual em cada categoria
+    ✓ Retornar dados de peças desbloqueadas
+    ✓ Fornecer informações para o frontend
 
-    <b>Desbloqueio de Peças:</b>
-    - 25% de progresso → Peça 1 (quadrante 1)
-    - 50% de progresso → Peça 2 (quadrante 2)
-    - 75% de progresso → Peça 3 (quadrante 3)
-    - 100% de progresso → Peça 4 (quadrante 4)
+    <b>Desbloqueio de Peças (via ProgressoCategoria):</b>
+    - 25% de progresso → Peça 1
+    - 50% de progresso → Peça 2
+    - 75% de progresso → Peça 3
+    - 100% de progresso → Peça 4
 
     <b>Cálculo de Progresso:</b>
     progresso = (acertos_únicos / total_notícias) × 100
+end note
 
-    Exemplo: Categoria "Futebol" com imagem de estádio
-    - Começa vazia/bloqueada
-    - A cada 25% ganha um pedaço
-    - Ao completar 100% vê a imagem completa
+note top of ConquistaVerificadorService
+    <b>Verificador de Conquistas</b>
+
+    Verifica e desbloqueia conquistas
+    baseadas em critérios:
+    - PONTOS_TOTAIS
+    - Outros critérios futuros
+
+    Retorna lista de conquistas
+    recém-desbloqueadas
 end note
 
 @enduml
